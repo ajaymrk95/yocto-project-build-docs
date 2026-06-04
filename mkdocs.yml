@@ -1,42 +1,97 @@
-site_name: My Docs
-site_url: https://site_name.example
+site_name: "Space Linux — Yocto Build Documentation"
+site_description: "A guide to building a minimal, radiation-hardened Linux system image for the NVIDIA Jetson TX2i on the Connect Tech Elroy carrier board using the Yocto Project."
+site_url: https://ajaymrk95.github.io/yocto-project-build-docs/
+
+repo_name: ajaymrk95/yocto-project-build-docs
+repo_url: https://github.com/ajaymrk95/yocto-project-build-docs
+
+copyright: "&copy; 2026 Space Linux Build Documentation"
 
 theme:
   name: material
   font:
-    text: Merriweather Sans
-    code: Red Hat Mono 
+    text: Inter
+    code: JetBrains Mono
+  icon:
+    repo: fontawesome/brands/github
   features:
-    navigaation.footer
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - navigation.indexes
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
   palette:
-    # Light Theme: Clean, high-contrast engineering laboratory vibe
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: slate
-      accent: cyan
+      primary: white
+      accent: indigo
       toggle:
-        icon: material/weather-night
+        icon: material/brightness-7
         name: Switch to dark mode
 
-    # Dark Theme: Mission Control / Deep Space console vibe
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
       primary: black
-      accent: cyan
+      accent: blue
       toggle:
-        icon: material/weather-sunny
+        icon: material/brightness-4
         name: Switch to light mode
 
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/ajaymrk95/yocto-project-build-docs
+  generator: false
+
+extra_css:
+  - stylesheets/extra.css
+
 markdown_extensions:
+  - abbr
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+      toc_depth: 3
+  - pymdownx.betterem
+  - pymdownx.caret
+  - pymdownx.mark
+  - pymdownx.tilde
+  - pymdownx.details
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
-      pygments_style: material
+      pygments_lang_class: true
   - pymdownx.inlinehilite
-  - admonition 
-  - pymdownx.details
+  - pymdownx.keys
+  - pymdownx.smartsymbols
+  - pymdownx.snippets
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - admonition
+  - tables
+
+plugins:
+  - search
+  - tags
+
+nav:
+  - Overview: index.md
+  - Roadmap: roadmap.md
