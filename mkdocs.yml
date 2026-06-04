@@ -1,0 +1,42 @@
+site_name: My Docs
+site_url: https://site_name.example
+
+theme:
+  name: material
+  font:
+    text: Merriweather Sans
+    code: Red Hat Mono 
+  features:
+    navigaation.footer
+  palette:
+    # Light Theme: Clean, high-contrast engineering laboratory vibe
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: slate
+      accent: cyan
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+
+    # Dark Theme: Mission Control / Deep Space console vibe
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: cyan
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_style: material
+  - pymdownx.inlinehilite
+  - admonition 
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
