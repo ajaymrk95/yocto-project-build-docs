@@ -48,7 +48,6 @@ flowchart TD
     A["Build Complete"] --> B["Put DevKit in\nRecovery Mode"]
     B --> C["Connect USB-C\nto Host"]
     C --> D{"Flash Method?"}
-    D -->|"SDK Manager"| E["Launch SDK Manager\n& Select Image"]
     D -->|"CLI Script"| F["Run flash.sh\nwith Parameters"]
     E --> G["Flash in Progress"]
     F --> G

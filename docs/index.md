@@ -5,14 +5,60 @@ description: "Building a minimal, radiation-aware Linux system image for the NVI
 
 # Space Operating Linux
 
-A minimal Yocto-based system image for the Jetson TX2i + Elroy Carrier Board.
+A minimal memory foot-print operating system for edge computing devices, operating in radiation prone environment.
 
-This project adapts research from the **Space Operating Linux** paper (University of Georgia, 2023) and related radiation-hardening literature to build a flight-viable Linux system image targeting the **NVIDIA Jetson TX2i** system-on-module mounted on the **Connect Tech Elroy carrier board**.
+This project adapts research from the [**Space Operating Linux**](https://ieeexplore.ieee.org/document/10115703) paper — E. Miller, C. Heistand and D. Mishra, "Space-operating Linux: An Operating System for Computer Vision on Commercial-Grade Equipment in LEO," *2023 IEEE Aerospace Conference*, Big Sky, MT, USA, 2023, pp. 1-12 — and related radiation-hardening literature to build a flight-viable Linux system image targeting the **NVIDIA Jetson TX2i** system-on-module mounted on the **Connect Tech Elroy Carrier board**.
 
-The build system is the **Yocto Project** (Kirkstone branch), producing a minimal image with a reduced software footprint, ROS core packages, and a PREEMPT_RT patched kernel for deterministic real-time scheduling — engineered for Low Earth Orbit missions.
+The build system uses the **Yocto Project** (Kirkstone branch), enabling us to produce a minimal image with a reduced software footprint, ROS core packages, and a PREEMPT_RT patched kernel for deterministic real-time scheduling — engineered for Low Earth Orbit missions.
+Yocto is a Open Source Framework which helps create custom linux distros for embedded devices from the ground up.
 
 [Start with the Roadmap](roadmap.md){ .md-button .md-button--primary }
 [Phase 0 — Literature Review](phase0/index.md){ .md-button }
+
+---
+
+## Target Hardware
+
+### NVIDIA Jetson TX2i
+
+![NVIDIA Jetson TX2i module stacked on carrier](https://connecttech.com/wp-content/uploads/2018/03/TX2i_ASG002_Stack.jpg)
+
+The **NVIDIA Jetson TX2i** is the industrial-grade variant of the Jetson TX2 system-on-module, designed for demanding embedded and edge AI applications. Its extended temperature range, vibration tolerance, and ECC-capable memory make it well-suited for space-adjacent deployments.
+
+| Category | Specification |
+|---|---|
+| **GPU** | NVIDIA Pascal™ — 256 CUDA cores, 1.3 TFLOPS (FP16) |
+| **CPU** | Dual-core Denver 2 64-bit + Quad-core ARM Cortex-A57 |
+| **Memory** | 8 GB 128-bit LPDDR4 with ECC support @ 1600 MHz (51.2 GB/s) |
+| **Storage** | 32 GB eMMC 5.1 |
+| **Operating Temp** | −40 °C to +85 °C |
+| **Storage Temp** | −40 °C to +85 °C |
+| **Humidity** | 95 % RH, −10 °C to 65 °C (non-condensing) |
+| **Vibration** | 5 G RMS, 10–500 Hz (random/sinusoidal) |
+| **Shock** | 140 G, half-sine 2 ms |
+| **Voltage Input** | 9 V – 19.6 V DC |
+| **Module Power** | 10 W – 20 W |
+| **Software** | NVIDIA Linux for Tegra® (L4T) driver package |
+
+*Source: [NVIDIA Jetson TX2i — NVIDIA Developer](https://developer.nvidia.com/embedded/jetson-tx2i)*
+
+---
+
+### Jetson TX2i System-on-Module (on TX2 DevKit)
+
+![Jetson TX2 system-on-module mounted on the TX2 Development Kit carrier board](https://jetsonhacks.com/wp-content/uploads/2017/03/IMG_1956.jpg.webp)
+
+The SoM (System-on-Module) plugs into a carrier board via a high-density connector. During **Phase 1**, the standard **TX2 Development Kit** carrier board was used for initial bring-up and validation of the Yocto build before moving to custom hardware.
+
+---
+
+### ConnectTech Elroy Carrier Board + Jetson TX2i
+
+[![ConnectTech Elroy Carrier Board with Jetson TX2i](https://connecttech.com/wp-content/uploads/2023/06/Elroy_header_TX2_image.png)](https://connecttech.com/product-category/form-factors/nvidia-jetson-tx2-tx1/)
+
+The **Connect Tech Elroy** is a compact, rugged carrier board designed specifically for the Jetson TX2/TX2i SoM. It is the target deployment hardware for this project, replacing the development kit in **Phase 2** onwards.
+
+*Image © [Connect Tech Inc.](https://connecttech.com/product-category/form-factors/nvidia-jetson-tx2-tx1/) — used for reference only.*
 
 ---
 
@@ -53,7 +99,6 @@ Added the PREEMPT_RT patch to the Linux kernel via the Yocto build system, enabl
 
 | Task | Status | Details |
 |---|---|---|
-| Testing real-time capabilities of the patched kernel | In Progress | Latency benchmarks, cyclictest validation |
 | Adapting `apt` support via local update servers | In Progress | Offline package management for field updates |
 | Enabling A/B partition redundancy | In Progress | Graceful boot fallback on corruption |
 
@@ -75,7 +120,7 @@ This documentation follows a phased approach. Each phase builds on the previous 
 
 ```mermaid
 graph LR
-    P0["Phase 0\nLiterature &\nRedundancy\nWeek 1-2"]
+    P0["Phase 0\nLiterature &\nRedundancy Initial Study and Understanding \nWeek 1-2"]
     P1["Phase 1\nMinimal Yocto\nBuild\nWeek 2-3"]
     P2["Phase 2\nCustom Hardware\nAdaptation\nWeek 3-4"]
     P3["Phase 3\nPREEMPT_RT\nPatch\nWeek 4"]
@@ -87,15 +132,4 @@ graph LR
 
 ---
 
-## Target Hardware
 
-| Component | Specification |
-|---|---|
-| **SoM** | NVIDIA Jetson TX2i (Industrial) |
-| **Carrier Board** | Connect Tech Elroy (CTI) |
-| **CPU** | Dual Denver 2 + Quad ARM Cortex-A57 |
-| **GPU** | NVIDIA Pascal, 256 CUDA cores |
-| **RAM** | 8 GB LPDDR4 |
-| **Storage** | 32 GB eMMC |
-| **Build System** | Yocto Project — Kirkstone Branch |
-| **Target Orbit** | Low Earth Orbit (LEO) |

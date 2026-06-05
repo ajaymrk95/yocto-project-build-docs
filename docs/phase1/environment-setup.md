@@ -36,7 +36,7 @@ title: "Environment Setup"
 
 ```mermaid
 flowchart LR
-    A["Install Ubuntu\n20.04 / 22.04"] --> B["Install apt\nDependencies"]
+    A["Install Ubuntu 22.04 LTS"] --> B["Install apt\nDependencies"]
     B --> C["Create Project\nDirectory"]
     C --> D["Clone Poky\nKirkstone"]
     D --> E["Verify Setup"]

@@ -17,11 +17,11 @@ This roadmap guides you through the entire development lifecycle of the Space Op
 | Week | Phase | Activity | Status |
 |:---:|---|---|:---:|
 | 1–2 | Phase 0 | Literature review and redundancy concepts | Complete |
-| 2–3 | Phase 1 | Minimal Yocto build for TX2 DevKit | Complete |
-| 3–4 | Phase 2 | Adaptation for Elroy carrier board | Complete |
-| 4   | Phase 3 | PREEMPT_RT kernel patch | Complete |
-| 5+  | Current | RT testing, apt support, A/B partitioning | In Progress |
-| —   | Future  | TMR bootloader, RAM filesystem, image minimization | Planned |
+| 2–3 | Phase 1 | Minimal Yocto build for TX2i Device + TX2 DevKit Carrier Board | Complete |
+| 3–4 | Phase 2 | Adaptation for TX2i + Elroy carrier board | Complete |
+| 4   | Phase 3 (Current)| Applying the PREEMPT_RT kernel patch to Phase 2, RT testing,| Complete |
+| 5-6 | Phase 4 | apt support for target devices, A/B partitioning | Planned |
+| 5-6+ | Phase 5 | TMR bootloader, RAM filesystem, image minimization | Planned |
 
 ---
 
@@ -34,11 +34,11 @@ flowchart TD
     end
 
     subgraph P1["Phase 1 — Minimal Build"]
-        B0["Set Up Host\nEnvironment"] --> B1["Clone Poky &\nRequired Layers"] --> B2["Configure bblayers.conf\n& local.conf"] --> B3["Build Image\nvia bitbake"] --> B4["Flash TX2 DevKit"]
+        B0["Set Up Host\nEnvironment"] --> B1["Clone Poky &\nRequired Layers"] --> B2["Configure bblayers.conf\n& local.conf"] --> B3["Build Image\nvia bitbake"] --> B4["Flash TX2i + DevKit"]
     end
 
     subgraph P2["Phase 2 — Custom Hardware"]
-        C0["Compare Elroy\nvs DevKit"] --> C1["Modify Build\nArtifacts"] --> C2["Edit extlinux.conf\n& Partition Table"] --> C3["Generate Sparse\nImage"] --> C4["Flash via\nConnectTech Scripts"]
+        C0["Compare Elroy\nvs DevKit"] --> C1["Modify Build\nArtifacts"] --> C2["Edit extlinux.conf\n& Partition Table"] --> C3["Generate Sparse\nImage"] -->C4["Setup NVIDIA and Hardware Specific "] --> C4["Flash via\n Modified ConnectTech Scripts"]
     end
 
     subgraph P3["Phase 3 — PREEMPT_RT"]
@@ -81,7 +81,7 @@ A deep dive into the research papers that form the theoretical foundation of thi
 
 Build a minimal system image using the Yocto Project for the Jetson TX2i, initially targeting the TX2 Development Kit board. This phase covers the complete build pipeline from host setup to flashing.
 
-**Key Topics:** Poky, meta-tegra, meta-ros, bblayers.conf, local.conf, bitbake, Kirkstone branch, SDK Manager flashing.
+**Key Topics:** Poky, meta-tegra, meta-ros, bblayers.conf, local.conf, bitbake, Kirkstone branch.
 
 → [Enter Phase 1](phase1/index.md)
 

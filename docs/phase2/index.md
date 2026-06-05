@@ -45,7 +45,7 @@ flowchart TD
     subgraph S4["Stage 4 — ConnectTech Flash"]
         SPARSE --> COPY["Copy system.img to\nbootloader/ directory"]
         COPY --> SCRIPTS["Configure ConnectTech\nFlash Scripts"]
-        SCRIPTS --> MACHINE_CONF["Set Machine Conf\njetson-tx2i flag"]
+        SCRIPTS --> MACHINE_CONF["Set Machine Conf\nfrom ConnectTech instead of jetson-tx2i flag"]
         MACHINE_CONF --> FLASH["Flash to Elroy\nCarrier Board"]
     end
 

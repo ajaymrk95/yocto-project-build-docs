@@ -23,7 +23,7 @@ title: "Custom Layers & BSP"
 - <!-- TODO: meta-tegra — NVIDIA Tegra BSP -->
 - <!-- TODO: meta-openembedded — additional recipes -->
 - <!-- TODO: meta-ros — ROS Melodic/Noetic recipes -->
-- <!-- TODO: meta-cti — Connect Tech carrier board support -->
+
 
 ### Cloning & Adding Layers
 
@@ -47,7 +47,6 @@ flowchart BT
     POKY --> META_YOCTO["meta-yocto-bsp"]
 
     META_TEGRA["meta-tegra"] --> META
-    META_CTI["meta-cti"] --> META_TEGRA
     META_OE["meta-openembedded"] --> META
     META_ROS["meta-ros"] --> META_OE
     META_ROS --> META

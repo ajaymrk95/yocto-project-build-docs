@@ -26,8 +26,8 @@ flowchart TD
         CLONE --> LAYERS["Add Required Layers"]
         LAYERS --> L1["meta-tegra"]
         LAYERS --> L2["meta-openembedded"]
-        LAYERS --> L3["meta-ros"]
-        LAYERS --> L4["meta-cti"]
+        LAYERS --> L3["meta-ros and sublayers"]
+        LAYERS --> L4["(sublayers of meta-openembedded:meta-python, meta-xfce and meta-networking)"]
         L1 --> BBLAYERS["Update\nbblayers.conf"]
         L2 --> BBLAYERS
         L3 --> BBLAYERS
@@ -64,14 +64,15 @@ flowchart TD
 
 | Resource | Link |
 |---|---|
+| Yocto Project | <!-- TODO: Add link --> |
 | Yocto Project Quick Build Guide | <!-- TODO: Add link --> |
 | Yocto Project Documentation (Kirkstone) | <!-- TODO: Add link --> |
+| Open Embedded for Tegra (IMPORTANT) | <!-- TODO: Add link --> |
 | Poky Repository (Kirkstone branch) | <!-- TODO: Add link --> |
 | meta-tegra Layer | <!-- TODO: Add link --> |
 | meta-openembedded | <!-- TODO: Add link --> |
 | meta-ros (Melodic / Noetic) | <!-- TODO: Add link --> |
-| meta-cti (Connect Tech) | <!-- TODO: Add link --> |
-| NVIDIA SDK Manager | <!-- TODO: Add link --> |
+| Flashing Process| <!-- TODO: Add link --> |
 | Yocto — Adding Layers Guide | <!-- TODO: Add link --> |
 | Yocto — Adapting to Custom Hardware | <!-- TODO: Add link --> |
 

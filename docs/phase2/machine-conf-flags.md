@@ -15,8 +15,8 @@ title: "Machine Conf & Flags"
 
 ### Machine Configuration Files
 
-- <!-- TODO: Where machine confs live in meta-tegra / meta-cti -->
-- <!-- TODO: Contents of a machine conf file -->
+- <!-- TODO: Where machine confs live in meta-tegra / NVIDIA -->
+ <!-- TODO: Contents of a machine conf file -->
 
 ### jetson-tx2i Flag vs Elroy Board
 
@@ -41,7 +41,7 @@ title: "Machine Conf & Flags"
 flowchart LR
     A["Identify SoM:\nJetson TX2i"] --> B{"Which Carrier\nBoard?"}
     B -->|"NVIDIA DevKit"| C["Use DevKit\nMachine Conf"]
-    B -->|"Elroy Carrier"| D["Use CTI Elroy\nMachine Conf"]
+    B -->|"Elroy Carrier"| D["Use ConnectTech Elroy\nMachine Conf"]
     D --> E["Select Correct\nDTB for Elroy"]
     D --> F["Select Correct\nCFG for TX2i"]
     E --> G["Configure\nFlash Scripts"]

@@ -31,7 +31,7 @@ title: "Dead End — Warrior Branch"
 ### Lessons Learned
 
 - <!-- TODO: Always verify layer branch compatibility first -->
-- <!-- TODO: Kirkstone is the supported target for this project -->
+- <!-- TODO: Kirkstone is the better supported target for this project -->
 
 ---
 

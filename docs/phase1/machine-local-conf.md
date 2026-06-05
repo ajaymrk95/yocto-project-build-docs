@@ -22,7 +22,6 @@ title: "Machine & Local Configuration"
 ### Configuring local.conf
 
 - <!-- TODO: MACHINE assignment -->
-- <!-- TODO: DISTRO selection -->
 - <!-- TODO: IMAGE_INSTALL additions -->
 - <!-- TODO: Package format (deb/rpm/ipk) -->
 - <!-- TODO: Download and sstate cache directories -->
