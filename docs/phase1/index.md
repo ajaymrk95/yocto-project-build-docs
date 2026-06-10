@@ -10,11 +10,22 @@ description: "Building a minimal system image with Yocto for the Jetson TX2i on 
 !!! abstract "Goal"
     Build a minimal system image (< 5 GB) using the Yocto Project (Kirkstone branch) for the Jetson TX2i on the TX2 Development Kit board. The image includes a minimal GUI, ROS core packages, and essential networking and system utilities.
 
+!!! warning "Important"
+    Okay, you might have just read that abstract and thought, what is even going on ? Not to worry, read through the pages of this phase and you will get the hang of it. This phase is a bit different from other phases, it will guide you through a more comprehensive process and will make sure you understand the Yocto Project from a application level perspective and basic usage.
+
+!!! warning "AI Usage"
+    Having an LLM model to query for doubts will be a necessity, the docs encompass a lot of information and recursive reading might make it difficult to grasp everything in the first go. An actual build process and project based learning works far better than reading every page of documentation when prototyping for the first time.
+
+!!! info "Flowcharts"
+    Flowcharts are a representation of what each page does or contributes to the build in a high level, and will be useful to understand the overall build process. These are for quick explanations and a way to present a long build process in visual format.
+
 ---
 
-## Phase Process Overview
 
-```mermaid
+
+## Flowchart
+
+<pre class="mermaid">
 flowchart TD
     START(["Start"]) --> ENV
 
@@ -53,42 +64,65 @@ flowchart TD
     end
 
     BOOT --> DONE(["Phase 1 Complete"])
-```
-
+</pre>
 ---
 
 ## Important Links & Repos
 
 !!! tip "Key References"
-    These are the primary resources you will need throughout this phase.
+    These are the primary resources used throughout Phase 1. Listed Again for a Sequential Flow of Reading, see **[Page 2 — Prerequisite Reading & Key Links](02-prerequisite-reading.md)**.
+
+### Yocto Project Documentation
+
+!!! warning "Yocto's Original Docs are Actively Updated "
+    As of writing this documentation (June 2026), Yocto's original documentation for the branch used here is still up. All Documentation is available at [docs.yoctoproject.org](https://docs.yoctoproject.org/). However, be aware that the docs may be updated frequently, and you may need to adjust the links below:
+
+    Google Search and Navigate to yoctoproject.org and there we have releases, check the left sidebar and navigate to release manuals. Select the corresponding branch for the documentation.
 
 | Resource | Link |
-|---|---|
-| Yocto Project | <!-- TODO: Add link --> |
-| Yocto Project Quick Build Guide | <!-- TODO: Add link --> |
-| Yocto Project Documentation (Kirkstone) | <!-- TODO: Add link --> |
-| Open Embedded for Tegra (IMPORTANT) | <!-- TODO: Add link --> |
-| Poky Repository (Kirkstone branch) | <!-- TODO: Add link --> |
-| meta-tegra Layer | <!-- TODO: Add link --> |
-| meta-openembedded | <!-- TODO: Add link --> |
-| meta-ros (Melodic / Noetic) | <!-- TODO: Add link --> |
-| Flashing Process| <!-- TODO: Add link --> |
-| Yocto — Adding Layers Guide | <!-- TODO: Add link --> |
-| Yocto — Adapting to Custom Hardware | <!-- TODO: Add link --> |
+|----------|------|
+| Yocto Project on Kirkstone - The Roadmap uses this branch primarily | [yoctoproject.org](https://docs.yoctoproject.org/4.0.35/) |
 
----
+!!! info "Use these links"
+    The Current Links are still hosted and checked, these will be checked and updated regularly.
 
-## Subpages
+| Resource | Link |
+|----------|------|
+| Yocto Project Overview | [yoctoproject.org](https://www.yoctoproject.org/) |
+| Quick Build Guide (Kirkstone) - Must Read | [Quick Build](https://docs.yoctoproject.org/kirkstone/brief-yoctoprojectqs/index.html) |
+| What I wished I know about Yocto - Must Read (Kirkstone) | [What to know](https://docs.yoctoproject.org/kirkstone/brief-yoctoprojectqs/index.html) |
+| Reference Manual (Kirkstone) | [Major Reference Manual](https://docs.yoctoproject.org/kirkstone/ref-manual/index.html) |
 
-| Page | Description |
-|---|---|
-| [Environment Setup](environment-setup.md) | Host dependencies, directory structure, initial clone |
-| [Yocto Quick Build](yocto-quick-build.md) | Running a reference build to validate the toolchain |
-| [Custom Layers & BSP](custom-layers-bsp.md) | Adding meta-tegra, meta-ros, meta-cti and configuring bblayers.conf |
-| [Machine & Local Configuration](machine-local-conf.md) | Choosing machine, setting packages, local.conf tweaks |
-| [Build Process](build-process.md) | Running bitbake, build stages, expected outputs |
-| [Flashing the DevKit](flashing-devkit.md) | Flash workflow, SDK Manager, first boot verification |
-| [Naming Conventions & Gotchas](naming-gotchas.md) | Common errors, naming pitfalls, tips and screenshots |
+### Github Project Repositories - (Links for Cloning - Specific Commands are also provided inline in the stages pages)
+| Repository | Branch | Link |
+|-----------|--------|------|
+| Poky (BitBake + OE-Core) | `kirkstone` | [git.yoctoproject.org/poky]| (https://github.com/yoctoproject/poky/tree/kirkstone) |
+| meta-tegra (OE4T) This is a Board Support Repo for the NVIDIA Jetson Devices, further stages in Phase 1 will explain this branch.| `kirkstone-l4t-32.7.x` | [github.com/OE4T/meta-tegra](https://github.com/OE4T/meta-tegra/tree/kirkstone-l4t-r32.7.x) |
+| meta-openembedded  | `kirkstone` | [git.openembedded.org/meta-openembedded](https://git.openembedded.org/meta-openembedded) |
+| meta-ros | `kirkstone` | [github.com/ros/meta-ros](https://github.com/ros/meta-ros/tree/kirkstone) |
+
+### NVIDIA & Hardware Resources
+
+| Resource | Link |
+|----------|------|
+| OE4T (Open Embedded for Tegra) Wiki (Single Most Important Reference ! ) - Pages from this will be listed to read inline during stages | [oe4t-wiki](https://oe4t.github.io/master/) |
+
+
+## Pages
+
+| # | Page | Description |
+|---|---|---|
+| 1 | [What Is the Yocto Project?](01-what-is-yocto.md) | An introduction to the Yocto Project — what it is, how it works, and why it's the right tool for this build. |
+| 2 | [Prerequisite Reading & Key Links](02-prerequisite-reading.md) | Curated reading list and essential links for the Yocto Project, NVIDIA Tegra BSP, and all repositories used. |
+| 3 | [Host Environment Setup](03-host-setup.md) | Setting up your Linux host with all dependencies, disk space, and directory structure for a Yocto build. |
+| 4 | [Yocto Quick Build](04-quick-build.md) | Run the official Yocto Quick Build for QEMU to validate your host setup before Tegra-specific builds. |
+| 5 | [Cloning Poky & Branch Strategy](05-cloning-and-branching.md) | Clone all required repositories, align on the Kirkstone branch, and set up the project workspace. |
+| 6 | [Adding Layers — Step by Step](06-adding-layers.md) | A detailed walkthrough of every Yocto layer used in this build and how to add them to your project. |
+| 7 | [Configuring bblayers.conf](07-bblayers-conf.md) | A complete annotated bblayers.conf for the Jetson TX2i build — what each line means and how to verify it. |
+| 8 | [Deep Dive: local.conf](08-local-conf.md) | Complete guide to local.conf — MACHINE, DISTRO, IMAGE_INSTALL, build tuning, and a full annotated config. |
+| 9 | [Kicking Off the Build](09-kickoff-build.md) | Pre-flight checklist and the actual bitbake command. What to expect, how long it takes, and what success looks like. |
+| 10 | [Build Process Under the Hood](10-build-under-the-hood.md) | How BitBake works internally — the task pipeline, recipe parsing, shared state, and build directory anatomy. |
+| 11 | [Navigating Build Output & Flashing](11-navigating-output-and-flashing.md) | Find your build artifacts, understand the tegraflash bundle, prepare the flash workspace, and flash the DevKit. |
 
 ---
 

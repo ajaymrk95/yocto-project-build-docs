@@ -1,5 +1,5 @@
 site_name: "Space Linux — Yocto Build Documentation"
-site_description: "A guide to building a minimal, radiation-hardened Linux system image for the NVIDIA Jetson TX2i on the Connect Tech Elroy carrier board using the Yocto Project."
+site_description: "A guide to building a minimal Linux system image for the NVIDIA Jetson TX2i on NVIDIA Devkit and Connect Tech Elroy carrier board using the Yocto Project."
 site_url: https://ajaymrk95.github.io/yocto-project-build-docs/
 
 repo_name: ajaymrk95/yocto-project-build-docs

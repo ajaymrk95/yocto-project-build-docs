@@ -38,7 +38,7 @@ The **NVIDIA Jetson TX2i** is the industrial-grade variant of the Jetson TX2 sys
 | **Shock** | 140 G, half-sine 2 ms |
 | **Voltage Input** | 9 V – 19.6 V DC |
 | **Module Power** | 10 W – 20 W |
-| **Software** | NVIDIA Linux for Tegra® (L4T) driver package |
+| **Software** | NVIDIA Linux for Tegra® (L4T) driver package - We Will Build our own custom image though. |
 
 *Source: [NVIDIA Jetson TX2i — NVIDIA Developer](https://developer.nvidia.com/embedded/jetson-tx2i)*
 
@@ -99,7 +99,6 @@ Added the PREEMPT_RT patch to the Linux kernel via the Yocto build system, enabl
 
 | Task | Status | Details |
 |---|---|---|
-| Adapting `apt` support via local update servers | In Progress | Offline package management for field updates |
 | Enabling A/B partition redundancy | In Progress | Graceful boot fallback on corruption |
 
 ---
