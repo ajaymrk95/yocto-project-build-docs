@@ -5,7 +5,7 @@ description: "Clone all required repositories, align on the Kirkstone branch, an
 
 # Cloning Poky & Branch Strategy
 
-<span class="phase-label">Phase 1 · Page 5 of 11</span>
+<span class="phase-label">Phase 1 · Page 5 of 10</span>
 
 !!! abstract "Page Goal"
     Clone Poky and all required layer repositories into your workspace, ensuring every repo is checked out to a compatible Kirkstone branch.

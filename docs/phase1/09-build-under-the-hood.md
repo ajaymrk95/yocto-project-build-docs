@@ -5,7 +5,7 @@ description: "How BitBake works internally — the task pipeline, recipe parsing
 
 # Build Process Under the Hood
 
-<span class="phase-label">Phase 1 · Page 10 of 11</span>
+<span class="phase-label">Phase 1 · Page 9 of 10</span>
 
 !!! info "Why Learn This Now?"
     You've already kicked off the build (Page 9) — it'll run for hours. Use that time to understand what's happening behind the scenes. This **parallel learning** approach means you're productive while waiting, and when the build finishes (or fails), you'll know exactly what happened.
@@ -163,5 +163,5 @@ bitbake -c cleansstate <recipe-name> # Wipe sstate for one recipe and rebuild
 
 ---
 
-[← Kick Off the Build](09-kickoff-build.md){ .md-button }
-[Next: Navigating Output & Flashing →](11-navigating-output-and-flashing.md){ .md-button .md-button--primary }
+[← Kick Off the Build](08-kickoff-build.md){ .md-button }
+[Next: Navigating Output & Flashing →](10-navigating-output-and-flashing.md){ .md-button .md-button--primary }

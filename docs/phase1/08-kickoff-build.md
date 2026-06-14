@@ -5,7 +5,7 @@ description: "Pre-flight checklist and the actual bitbake command to build your 
 
 # Kicking Off the Build
 
-<span class="phase-label">Phase 1 · Page 9 of 11</span>
+<span class="phase-label">Phase 1 · Page 8 of 10</span>
 
 !!! abstract "Page Goal"
     Run the actual build. This is the "press the button" page — short, action-oriented, no theory.
@@ -141,5 +141,5 @@ Now, while you wait (or after it's done):
 
 ---
 
-[← local.conf](08-local-conf.md){ .md-button }
-[Next: Build Under the Hood →](10-build-under-the-hood.md){ .md-button .md-button--primary }
+[← local.conf](07-local-conf.md){ .md-button }
+[Next: Build Under the Hood →](09-build-under-the-hood.md){ .md-button .md-button--primary }

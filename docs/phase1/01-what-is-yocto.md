@@ -5,7 +5,7 @@ description: "An introduction to the Yocto Project — what it is, how it works,
 
 # What Is the Yocto Project?
 
-<span class="phase-label">Phase 1 · Page 1 of 11</span>
+<span class="phase-label">Phase 1 · Page 1 of 10</span>
 
 !!! abstract "Page Goal"
     By the end of this page you should understand what the Yocto Project is, what its core components are, and why we chose it to build a custom Linux image for the Jetson TX2i.
@@ -26,113 +26,48 @@ flowchart LR
 
 ## What Is Yocto?
 
-<!-- CONTENT: 
-- Yocto is NOT a Linux distribution — it's an open-source collaboration project and framework
-- It provides templates, tools, and methods to create custom Linux-based systems for embedded/IoT
-- The output of Yocto is a complete Linux image: bootloader, kernel, rootfs, packages — all built from source
-- Hosted by the Linux Foundation
-- Used in automotive, aerospace, industrial, consumer electronics
--->
+- Yocto Project is an open source framework that helps developers create custom Linux-based systems regardless of the hardware architecture.
+- The project provides a flexible set of tools and a space where embedded developers worldwide can share technologies, software stacks, configurations, and best practices that can be used to create tailored Linux images for embedded and IOT devices, or anywhere a customized Linux OS is needed.
+- It is the de facto industry tool-kit used for custom Linux development, widely used in System-on-chip(SoC) development, Automotive Applications and so on.
 
----
 
-## Core Components
 
-<!-- CONTENT:
-Explain each component briefly — 2-3 sentences each. A table works well here.
+## Core Components and Terms of Yocto 
+
+
 
 | Component | What It Is |
 |-----------|-----------|
-| **Poky** | The reference distribution and build system. Contains BitBake + OpenEmbedded-Core + meta-poky + meta-yocto-bsp. This is what you `git clone` to start. |
-| **BitBake** | The task executor / build engine. Parses recipes, resolves dependencies, and runs build tasks. Think of it as "make on steroids" for cross-compilation. |
-| **OpenEmbedded-Core (OE-Core)** | The core metadata layer (`meta`). Contains the fundamental recipes for the base Linux system — glibc, busybox, systemd, gcc, etc. |
-| **Metadata** | The collective term for recipes (`.bb`), configuration (`.conf`), classes (`.bbclass`), and append files (`.bbappend`) that describe *what* to build and *how*. |
-| **Recipes (`.bb` files)** | Instructions for building a single piece of software — where to fetch it, how to configure, compile, install, and package it. |
-| **Images** | Special recipes that define a complete root filesystem by aggregating packages. e.g., `core-image-minimal`. |
-| **Machine Configuration** | A `.conf` file that describes target hardware — CPU architecture, kernel, bootloader, flash layout. |
--->
+| **Configuration Files** | Files which hold global definitions of variables, user defined variables and hardware configuration information. They tell the build system what to build and put into the image to support a particular platform. |
+| **Metadata** | A key element of the Yocto Project is the meta-data which is used to construct a Linux distribution, contained in the files that the build system parses when building an image. In general, Metadata includes recipes, configuration files and other information referring to the build instructions themselves, as well as the data used to control what things get built and to affect how they are built. The meta-data also includes commands and data used to indicate what versions of software are used, and where they are obtained from, as well as changes or additions to the software itself (patches or auxiliary files) which are used to fix bugs or customize the software for use in a particular situation. OpenEmbedded Core is an important set of validated metadata. |
+| **Recipe** | The most common form of metadata. A recipe will contain a list of settings and tasks (instructions) for building packages which are then used to build the binary image. A recipe describes where you get source code and which patches to apply. Recipes describe dependencies for libraries or for other recipes, as well as configuration and compilation options. They are stored in layers. |
+| **Layer** | A collection of related recipes. Layers allow you to consolidate related metadata to customize your build, and isolate information for multiple architecture builds. Layers are hierarchical in their ability to override previous specifications. You can include any number of available layers from the Yocto Project and customize the build by adding your layers after them. The Layer Index is searchable for layers within Yocto Project. |          
+| **OpenEmbedded-Core**| OE-core is meta-data composed of foundation recipes, classes and associated files that are meant to be common among many different OpenEmbedded-derived systems, including the Yocto Project. It is a curated subset of an original repository developed by the OpenEmbedded community which has been pared down into a smaller, core set of continuously validated recipes resulting in a tightly controlled and a quality-assured core set of recipes. |
+| **Poky** |A reference embedded distribution and a reference test configuration created to 1) provide a base level functional distro which can be used to illustrate how to customize a distribution, 2) to test the Yocto Project components, Poky is used to validate Yocto Project, and 3) as a vehicle for users to download Yocto Project. Poky is not a product level distro, but a good starting point for customization. Poky is an integration layer on top of oe-core.|
+| **Build System – “Bitbake”** | a scheduler and execution engine which parses instructions (recipes) and configuration data. It then creates a dependency tree to order the compilation, schedules the compilation of the included code, and finally, executes the building of the specified, custom Linux image (distribution). BitBake is a make-like build tool. BitBake recipes specify how a particular package is built. They include all the package dependencies, source code locations, configuration, compilation, build, install and remove instructions. Recipes also store the metadata for the package in standard variables. Related recipes are consolidated into a layer. During the build process dependencies are tracked and native or cross-compilation of the package is performed. As a first step in a cross-build setup, the framework will attempt to create a cross-compiler toolchain (Extensible SDK) suited for the target platform.|
+| **Packages** | The output of the build system used to create your final image.|
+
 
 ---
 
 ## The Layer Model (Conceptual)
 
-<!-- CONTENT:
-- Yocto organizes everything into "layers" — directories of metadata following a specific structure
-- Layers are modular: you stack them to compose your final image
-- Base layer: `meta` (OE-Core) — provides the Linux fundamentals
-- BSP layer: `meta-tegra` — adds hardware-specific support for NVIDIA Tegra SoCs
-- Feature layers: `meta-ros`, `meta-openembedded` sub-layers — add specific functionality
-- Your own layer: custom recipes and configuration
-- Layers have priorities — higher-priority layers can override lower ones
-- This is covered hands-on in Page 6
--->
+- Yocto Project has a development model for embedded Linux creation which distinguishes it from other simple build systems. It is called the Layer Model.
 
-```mermaid
-flowchart BT
-    META["meta\n(OE-Core)"] --- BASE["Linux Fundamentals"]
-    BSP["meta-tegra\n(BSP)"] --- HW["Hardware Support"]
-    FEAT["meta-ros / meta-oe\n(Features)"] --- SW["Additional Software"]
-    CUSTOM["Your Custom Layer\n(Overrides)"] --- YOU["Project-Specific"]
-    
-    BASE --> BSP
-    BSP --> FEAT
-    FEAT --> CUSTOM
-```
+- The Layer Model is designed to support both collaboration and customization at the same time. Layers are repositories containing related sets of instructions which tell the build system what to do. Users can collaborate, share, and reuse layers. Layers can contain changes to previous instructions or settings at any time.
+ 
+- This powerful override capability is what allows you to customize previous collaborative or community supplied layers to suit your product requirements.
 
----
+- Use different layers to logically separate information in your build. As an example, you could have a BSP layer, a GUI layer, a distro configuration, middleware, or an application. Putting your entire build into one layer limits and complicates future customization and reuse. Isolating information into layers, on the other hand, helps simplify future customizations and reuse. Use BSP layers from silicon vendors when possible.
 
-## Recipes, Images, and Machines
+- Familiarize yourself with the curated (tested) [YOCTO PROJECT COMPATIBLE LAYER INDEX](https://www.yoctoproject.org/software-overview/layers/){:target="_blank"}. There is also the [OpenEmbedded Layer Index](https://layers.openembedded.org/){:target="_blank"} which contains more layers but the content is less universally validated.
 
-<!-- CONTENT:
-### Recipes
-- A recipe = one `.bb` file = one software package
-- Example: `linux-tegra_5.10.bb` is the recipe for the NVIDIA-patched Linux kernel
-- Recipes define: SRC_URI (source location), do_compile (build steps), do_install (install steps)
 
-### Images
-- An image recipe = a recipe that assembles a root filesystem from packages
-- `core-image-minimal` — the smallest bootable image
-- `demo-image-full-cmdline` — a more complete image with utilities
-- IMAGE_INSTALL variable controls what packages go into the image
+The Layer Model for this Phase is as follows:
 
-### Machines
-- A machine configuration defines the target hardware
-- Located in a BSP layer: `meta-tegra/conf/machine/`
-- Example: `jetson-tx2i.conf`
-- Sets CPU architecture, kernel provider, bootloader, flash layout
--->
+![Layer Model for Phase 1](../assets/layers-phase1.png)
 
----
 
-## Why Yocto for This Project?
 
-<!-- CONTENT:
-- **Minimal footprint** — we need < 5 GB images; Yocto builds only what we include
-- **Reproducibility** — every build is deterministic; critical for flight-certified systems
-- **BSP integration** — meta-tegra provides first-class NVIDIA Jetson support
-- **Customizability** — we can patch the kernel (PREEMPT_RT), select exact packages, control the boot chain
-- **Cross-compilation** — builds ARM64 images on an x86_64 host
-- **Long-term support** — Kirkstone is an LTS release (April 2022, supported until April 2026)
--->
 
----
-
-## Yocto vs Alternatives
-
-<!-- CONTENT:
-Brief comparison — not exhaustive, just enough context.
-
-| Criteria | Yocto | Buildroot | Manual Cross-Compile |
-|----------|-------|-----------|---------------------|
-| **Output** | Full distro (packages, package manager) | Minimal rootfs (no package manager) | Whatever you build |
-| **Complexity** | High learning curve | Lower learning curve | Highest (DIY everything) |
-| **Customizability** | Excellent — layer model | Good — menuconfig | Total, but manual |
-| **BSP Support** | Extensive (meta-tegra, meta-freescale, etc.) | Limited | None |
-| **Package Management** | deb / rpm / ipk | None by default | None |
-| **Reproducibility** | Excellent (sstate, hash equivalence) | Good | Poor |
-| **Why not for us?** | — | No meta-tegra equivalent; no package management for field updates | Not scalable for a full OS |
--->
-
----
-
-[Next: Prerequisite Reading →](02-prerequisite-reading.md){ .md-button .md-button--primary }
+[Next: Important Links →](02-prerequisite-reading.md){ .md-button .md-button--primary }

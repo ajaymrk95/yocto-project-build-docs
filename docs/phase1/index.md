@@ -10,17 +10,10 @@ description: "Building a minimal system image with Yocto for the Jetson TX2i on 
 !!! abstract "Goal"
     Build a minimal system image (< 5 GB) using the Yocto Project (Kirkstone branch) for the Jetson TX2i on the TX2 Development Kit board. The image includes a minimal GUI, ROS core packages, and essential networking and system utilities.
 
-!!! warning "Important"
-    Okay, you might have just read that abstract and thought, what is even going on ? Not to worry, read through the pages of this phase and you will get the hang of it. This phase is a bit different from other phases, it will guide you through a more comprehensive process and will make sure you understand the Yocto Project from a application level perspective and basic usage.
-
-!!! warning "AI Usage"
-    Having an LLM model to query for doubts will be a necessity, the docs encompass a lot of information and recursive reading might make it difficult to grasp everything in the first go. An actual build process and project based learning works far better than reading every page of documentation when prototyping for the first time.
-
 !!! info "Flowcharts"
     Flowcharts are a representation of what each page does or contributes to the build in a high level, and will be useful to understand the overall build process. These are for quick explanations and a way to present a long build process in visual format.
 
 ---
-
 
 
 ## Flowchart
@@ -58,8 +51,7 @@ flowchart TD
     end
 
     subgraph S5["Stage 5 — Flash & Test"]
-        ARTIFACTS --> SDK["NVIDIA SDK Manager\nor Flash Script"]
-        SDK --> FLASH["Flash to TX2\nDevKit"]
+        ARTIFACTS --> FLASH["Flash to TX2\nDevKit"]
         FLASH --> BOOT["First Boot\n& Verify"]
     end
 
@@ -84,7 +76,7 @@ flowchart TD
 | Yocto Project on Kirkstone - The Roadmap uses this branch primarily | [yoctoproject.org](https://docs.yoctoproject.org/4.0.35/) |
 
 !!! info "Use these links"
-    The Current Links are still hosted and checked, these will be checked and updated regularly.
+    The Current Links are still hosted and live, these will be checked and updated regularly.
 
 | Resource | Link |
 |----------|------|
@@ -105,7 +97,7 @@ flowchart TD
 
 | Resource | Link |
 |----------|------|
-| OE4T (Open Embedded for Tegra) Wiki (Single Most Important Reference ! ) - Pages from this will be listed to read inline during stages | [oe4t-wiki](https://oe4t.github.io/master/) |
+| OE4T (Open Embedded for Tegra) Wiki (Single Most Important Reference ! ) | [oe4t-wiki](https://oe4t.github.io/master/) |
 
 
 ## Pages
@@ -113,16 +105,15 @@ flowchart TD
 | # | Page | Description |
 |---|---|---|
 | 1 | [What Is the Yocto Project?](01-what-is-yocto.md) | An introduction to the Yocto Project — what it is, how it works, and why it's the right tool for this build. |
-| 2 | [Prerequisite Reading & Key Links](02-prerequisite-reading.md) | Curated reading list and essential links for the Yocto Project, NVIDIA Tegra BSP, and all repositories used. |
+| 2 | [Important Links](02-prerequisite-reading.md) | Essential links for the Yocto Project, NVIDIA Tegra BSP, and all repositories used. |
 | 3 | [Host Environment Setup](03-host-setup.md) | Setting up your Linux host with all dependencies, disk space, and directory structure for a Yocto build. |
 | 4 | [Yocto Quick Build](04-quick-build.md) | Run the official Yocto Quick Build for QEMU to validate your host setup before Tegra-specific builds. |
 | 5 | [Cloning Poky & Branch Strategy](05-cloning-and-branching.md) | Clone all required repositories, align on the Kirkstone branch, and set up the project workspace. |
-| 6 | [Adding Layers — Step by Step](06-adding-layers.md) | A detailed walkthrough of every Yocto layer used in this build and how to add them to your project. |
-| 7 | [Configuring bblayers.conf](07-bblayers-conf.md) | A complete annotated bblayers.conf for the Jetson TX2i build — what each line means and how to verify it. |
-| 8 | [Deep Dive: local.conf](08-local-conf.md) | Complete guide to local.conf — MACHINE, DISTRO, IMAGE_INSTALL, build tuning, and a full annotated config. |
-| 9 | [Kicking Off the Build](09-kickoff-build.md) | Pre-flight checklist and the actual bitbake command. What to expect, how long it takes, and what success looks like. |
-| 10 | [Build Process Under the Hood](10-build-under-the-hood.md) | How BitBake works internally — the task pipeline, recipe parsing, shared state, and build directory anatomy. |
-| 11 | [Navigating Build Output & Flashing](11-navigating-output-and-flashing.md) | Find your build artifacts, understand the tegraflash bundle, prepare the flash workspace, and flash the DevKit. |
+| 6 | [Adding Layers & Configuring bblayers.conf](06-adding-layers.md) | A detailed walkthrough of every Yocto layer used in this build, how to add them, and how to configure bblayers.conf. |
+| 7 | [Deep Dive: local.conf](07-local-conf.md) | Complete guide to local.conf — MACHINE, DISTRO, IMAGE_INSTALL, build tuning, and a full annotated config. |
+| 8 | [Kicking Off the Build](08-kickoff-build.md) | Pre-flight checklist and the actual bitbake command. What to expect, how long it takes, and what success looks like. |
+| 9 | [Build Process Under the Hood](09-build-under-the-hood.md) | How BitBake works internally — the task pipeline, recipe parsing, shared state, and build directory anatomy. |
+| 10 | [Navigating Build Output & Flashing](10-navigating-output-and-flashing.md) | Find your build artifacts, understand the tegraflash bundle, prepare the flash workspace, and flash the DevKit. |
 
 ---
 

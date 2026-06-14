@@ -5,7 +5,7 @@ description: "Find your build artifacts, understand the tegraflash bundle, prepa
 
 # Navigating Build Output & Flashing
 
-<span class="phase-label">Phase 1 · Page 11 of 11</span>
+<span class="phase-label">Phase 1 · Page 10 of 10</span>
 
 !!! abstract "Page Goal"
     Navigate the build output directory, identify key artifacts, prepare the flash workspace, and flash the Jetson TX2i on the DevKit carrier board.
@@ -233,5 +233,5 @@ Check if Xfce or display manager is running.
 
 ---
 
-[← Build Under the Hood](10-build-under-the-hood.md){ .md-button }
+[← Build Under the Hood](09-build-under-the-hood.md){ .md-button }
 [Next: Phase 2 Overview →](../phase2/index.md){ .md-button .md-button--primary }

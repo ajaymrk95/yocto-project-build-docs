@@ -1,41 +1,64 @@
 ---
-title: "Prerequisite Reading & Key Links"
-description: "Curated reading list and essential links for the Yocto Project, NVIDIA Tegra BSP, and all repositories used in this build."
+title: "Important Links"
+description: "Essential links for the Yocto Project, NVIDIA Tegra BSP, and all repositories used in this build."
 ---
 
-# Prerequisite Reading & Key Links
+# Important Links
 
-<span class="phase-label">Phase 1 · Page 2 of 11</span>
+<span class="phase-label">Phase 1 · Page 2 of 10</span>
 
 !!! abstract "Page Goal"
-    This is your reference page. Bookmark it. Every official doc, repository, and external resource used in this build is linked here, sections to be read will be marked as a mandatory read, some sections are constant references and will be used throughout the build. Constant References contain information or subpages which help and add information throughout all phases and enable any additional functionality, which the Phase 1 build lacks.
+    This is a reference page. Every official doc, repository, and external resource used in this build is linked here. References contain information or subpages which help enable additional functionality and are often referenced throughout the build.
+
+
+!!! note "Recommended Reading"
+    | Resource | Link |
+    |----------|------|
+    | Yocto Project Overview | [Yocto - Technical Overview ](https://www.yoctoproject.org/development/technical-overview/) |
+    | What I wished I know about Yocto - Must Read (Kirkstone) | [What to know](https://docs.yoctoproject.org/kirkstone/brief-yoctoprojectqs/index.html) |
 
 
 
 ---
 
-## Yocto Key Terms Quick Reference
+## Important Links & Repos
 
-<!-- CONTENT:
-Quick glossary of terms you'll see repeatedly in this documentation.
 
-| Term | Meaning |
-|------|---------|
-| **Poky** | The Yocto reference distribution — your starting point |
-| **BitBake** | The build engine that parses recipes and executes tasks |
-| **Recipe (`.bb`)** | Build instructions for one software component |
-| **Layer** | A directory of related recipes, configs, and classes |
-| **BSP** | Board Support Package — hardware-specific layer |
-| **Machine** | A Yocto configuration defining target hardware |
-| **Image** | A recipe that assembles a complete root filesystem |
-| **`local.conf`** | Per-build configuration — machine, packages, build tuning |
-| **`bblayers.conf`** | Declares which layers are active in your build |
-| **Kirkstone** | Yocto release 4.0 (LTS) — the version we use |
-| **sstate** | Shared state cache — speeds up rebuilds |
-| **`do_fetch`, `do_compile`, etc.** | BitBake tasks — the steps of building a recipe |
--->
+### Yocto Project Documentation
 
----
+!!! warning "Yocto's Original Docs are Actively Updated "
+    As of writing this documentation (June 2026), Yocto's original documentation for the branch used here is still up. All Documentation is available at [docs.yoctoproject.org](https://docs.yoctoproject.org/). However, be aware that the docs may be updated frequently, and you may need to adjust the links below:
+
+    Google Search and Navigate to yoctoproject.org and there we have releases, check the left sidebar and navigate to release manuals. Select the corresponding branch for the documentation.
+
+| Resource | Link |
+|----------|------|
+| Yocto Project on Kirkstone - The Roadmap uses this branch primarily | [yoctoproject.org](https://docs.yoctoproject.org/4.0.35/) |
+
+!!! info "Use these links"
+    The Current Links are still hosted and live, these will be checked and updated regularly.
+
+| Resource | Link |
+|----------|------|
+| Yocto Project Overview | [yoctoproject.org](https://www.yoctoproject.org/) |
+| Quick Build Guide (Kirkstone) - Must Read | [Quick Build](https://docs.yoctoproject.org/kirkstone/brief-yoctoprojectqs/index.html) |
+| What I wished I know about Yocto - Must Read (Kirkstone) | [What to know](https://docs.yoctoproject.org/kirkstone/brief-yoctoprojectqs/index.html) |
+| Reference Manual (Kirkstone) | [Major Reference Manual](https://docs.yoctoproject.org/kirkstone/ref-manual/index.html) |
+
+### Github Project Repositories - (Links for Cloning - Specific Commands are also provided inline in the stages pages)
+| Repository | Branch | Link |
+|-----------|--------|------|
+| Poky (BitBake + OE-Core) | `kirkstone` | [git.yoctoproject.org/poky]| (https://github.com/yoctoproject/poky/tree/kirkstone) |
+| meta-tegra (OE4T) This is a Board Support Repo for the NVIDIA Jetson Devices, further stages in Phase 1 will explain this branch.| `kirkstone-l4t-32.7.x` | [github.com/OE4T/meta-tegra](https://github.com/OE4T/meta-tegra/tree/kirkstone-l4t-r32.7.x) |
+| meta-openembedded  | `kirkstone` | [git.openembedded.org/meta-openembedded](https://git.openembedded.org/meta-openembedded) |
+| meta-ros | `kirkstone` | [github.com/ros/meta-ros](https://github.com/ros/meta-ros/tree/kirkstone) |
+
+### NVIDIA & Hardware Resources
+
+| Resource | Link |
+|----------|------|
+| OE4T (Open Embedded for Tegra) Wiki (Single Most Important Reference ! ) | [oe4t-wiki](https://oe4t.github.io/master/) |
+
 
 [← What Is Yocto?](01-what-is-yocto.md){ .md-button }
 [Next: Host Setup →](03-host-setup.md){ .md-button .md-button--primary }

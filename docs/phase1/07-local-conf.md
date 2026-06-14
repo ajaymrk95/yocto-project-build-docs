@@ -5,7 +5,7 @@ description: "A complete guide to local.conf — the single most important confi
 
 # Deep Dive: `local.conf`
 
-<span class="phase-label">Phase 1 · Page 8 of 11</span>
+<span class="phase-label">Phase 1 · Page 7 of 10</span>
 
 !!! abstract "Page Goal"
     Understand every important variable in `local.conf`, why each setting was chosen for this project, and have a complete copy-pasteable configuration.
@@ -230,5 +230,5 @@ EXTRA_IMAGE_FEATURES += "debug-tweaks"  # Allows root login without password (de
 
 ---
 
-[← bblayers.conf](07-bblayers-conf.md){ .md-button }
-[Next: Kick Off the Build →](09-kickoff-build.md){ .md-button .md-button--primary }
+[← Adding Layers & bblayers.conf](06-adding-layers.md){ .md-button }
+[Next: Kick Off the Build →](08-kickoff-build.md){ .md-button .md-button--primary }
