@@ -57,5 +57,5 @@ flowchart TD
 
 ---
 
-[← Kernel Configuration](kernel-config.md){ .md-button }
-[Current Work →](../current-work/index.md){ .md-button .md-button--primary }
+[← Kernel Configuration](03-kernel-configuration.md){ .md-button }
+[Current Work →](../roadmap.md){ .md-button .md-button--primary }

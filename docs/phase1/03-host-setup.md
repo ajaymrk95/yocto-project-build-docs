@@ -5,7 +5,7 @@ description: "Setting up your Linux host machine with all the dependencies, disk
 
 # Host Environment Setup
 
-<span class="phase-label">Phase 1 · Page 3 of 10</span>
+<span class="phase-label">Phase 1 · Page 3 of 9</span>
 
 !!! abstract "Page Goal"
     This short document steps you through the process for setting up your machine to configure and build a Yocto Image. This is almost exactly adapted as per Yocto's official setup guide.
@@ -57,7 +57,7 @@ Make sure your Build Host meets the following requirements:
 
 - The Tested Setup was a x86 based machine running Ubuntu 22.04 LTS, with a Core i7-13700K, 64GB of RAM and 1TB HDD. Having a high performance desktop machine as such is very helpful in speeding up the build process and having an SSD can further reduce the build time.
 
-- Using VSCode is immensely helpful 
+- Using VSCode with the Yocto Extension is helpful and helps understand the folder structure of the build more efficiently. 
 
 
 ---

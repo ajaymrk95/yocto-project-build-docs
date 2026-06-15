@@ -50,5 +50,5 @@ flowchart LR
 
 ---
 
-[← ConnectTech Scripts](connecttech-scripts.md){ .md-button }
-[Flashing & Testing →](flashing-testing.md){ .md-button .md-button--primary }
+[← ConnectTech Scripts](05-connecttech-flash-scripts.md){ .md-button }
+[Flashing & Testing →](07-flashing-and-verification.md){ .md-button .md-button--primary }

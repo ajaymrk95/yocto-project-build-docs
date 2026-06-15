@@ -1,40 +1,74 @@
 ---
-title: "Build Process Under the Hood"
-description: "How BitBake works internally — the task pipeline, recipe parsing, shared state, and build directory anatomy. Read this while your build runs."
+title: "The Build Process Explained"
+description: "Pre-flight checklist, running bitbake, understanding the task pipeline, shared state cache, build directory anatomy, and debugging failed builds."
 ---
 
-# Build Process Under the Hood
+# The Build Process Explained
 
-<span class="phase-label">Phase 1 · Page 9 of 10</span>
-
-!!! info "Why Learn This Now?"
-    You've already kicked off the build (Page 9) — it'll run for hours. Use that time to understand what's happening behind the scenes. This **parallel learning** approach means you're productive while waiting, and when the build finishes (or fails), you'll know exactly what happened.
+<span class="phase-label">Phase 1 · Page 8 of 9</span>
 
 !!! abstract "Page Goal"
-    Understand the BitBake task pipeline, how recipes are parsed, what the shared state cache does, and how to navigate the build directory to debug issues.
+    Run the actual build, understand what BitBake does under the hood, and know how to debug when things go wrong.
 
 ---
 
-## Page Process Overview
 
-```mermaid
-flowchart LR
-    FETCH["do_fetch\nDownload\nSources"] --> UNPACK["do_unpack\nExtract"]
-    UNPACK --> PATCH["do_patch\nApply Patches"]
-    PATCH --> CONFIG["do_configure\nConfigure Build"]
-    CONFIG --> COMPILE["do_compile\nCompile Code"]
-    COMPILE --> INSTALL["do_install\nInstall to\nStaging"]
-    INSTALL --> PACKAGE["do_package\nCreate\nPackages"]
-    PACKAGE --> IMAGE["do_image /\ndo_rootfs\nAssemble\nFilesystem"]
-    IMAGE --> DEPLOY["do_deploy\nFinal Artifacts"]
+!!! note "Starting the build"
+   
+   ```bash
+    Remember the Max File watches error from page 4 of phase 1, max sure to increase max file watches
+
+    To Check our build in the commandline -  run the commands as below in the build directory.
+
+    verify layers again using bitbake-layers show-layers
+
+    bitbake core-image-sato or bitbake core-image-full-cmdline
+
+
+   ```
+
+---
+
+### Terminal Output
+You'll see lines like:
+```
+NOTE: Preparing RunQueue
+NOTE: Executing Tasks
+Currently 3 running tasks (245 of 4521)  5% |##                    |
+0: linux-tegra-5.10.104+gitAUTOINC+...-r0 do_fetch (from OE4T/...)
+1: glibc-2.35-r0 do_compile
+2: busybox-1.35.0-r0 do_configure
+
+This is representative, a screenshot will be attached here again for reference.
+```
+---
+
+## Rebuilds
+- Subsequent builds are **much faster** thanks to the sstate cache. Only changed recipes are rebuilt.
+
+## Monitoring the Build
+- BitBake shows real-time task progress in the terminal
+- You can open another terminal and check disk usage: `du -sh ~/yocto/poky/build/tmp`
+- To see what's currently building: the terminal output shows running tasks
+- Logs for each recipe are in `tmp/work/<ARCH>/<RECIPE>/<VERSION>/temp/log.do_<task>`
+
+---
+
+## Build Complete — What Success Looks Like
+
+A successful build ends with:
+```
+NOTE: Tasks Summary: Attempted X tasks of which Y didn't need to be rerun and all succeeded.
 ```
 
----
+No `ERROR:` lines. You're done!
 
 ## The BitBake Task Pipeline
 
-<!-- CONTENT:
-Every recipe (`.bb` file) goes through a sequence of tasks. Each task is a function defined in the recipe or inherited from a class.
+The diagram below shows the high-level workflow of the Yocto Project build process, showing how configuration inputs and source materials flow through the system to produce package feeds, target images, and SDKs:
+
+![Yocto Project Flow Diagram](../assets/yp-flow-diagram.svg)
+
 
 ### Task-by-Task Breakdown
 
@@ -51,58 +85,15 @@ Every recipe (`.bb` file) goes through a sequence of tasks. Each task is a funct
 | `do_rootfs` | Assembles selected packages into a root filesystem | Creates the ext4 image |
 | `do_image` | Converts rootfs to final image format(s) | Generates `.ext4`, `.wic`, etc. |
 | `do_deploy` | Copies final artifacts to `tmp/deploy/images/<MACHINE>/` | Kernel, DTB, rootfs, flash tools |
--->
 
----
 
-## Recipe Parsing
 
-<!-- CONTENT:
-### How BitBake Finds Recipes
-1. BitBake reads `bblayers.conf` → finds all layers
-2. Each layer's `layer.conf` declares recipe paths via `BBFILES`
-3. BitBake parses all `.bb` and `.bbappend` files it finds
-4. It builds a dependency graph of all recipes and tasks
-
-### `.bb` vs `.bbappend`
-- `.bb` files are the original recipe — they define everything from scratch
-- `.bbappend` files modify an existing recipe — you use these to add patches, change config, etc.
-- `.bbappend` files are matched by recipe name — `linux-tegra_%.bbappend` appends to `linux-tegra_<version>.bb`
-
-### Variables and Overrides
-- Variables can be set, appended, prepended, and overridden
-- Kirkstone uses `:` syntax for overrides: `SRC_URI:append`, `DEPENDS:remove`, `RDEPENDS:${PN}`
-- Machine-specific overrides: `SRC_URI:append:jetson-tx2i = "file://my-patch.patch"`
--->
-
----
-
-## Shared State Cache (`sstate`)
-
-<!-- CONTENT:
-The sstate cache is what makes Yocto tolerable for daily use.
-
-### How It Works
-1. After each task completes, BitBake computes a hash of all inputs (source, config, dependencies)
-2. The task output is stored in `SSTATE_DIR` keyed by this hash
-3. On subsequent builds, if the hash matches, the cached result is used — the task is **skipped**
-4. This is why rebuild #2 takes 10 minutes instead of 4 hours
-
-### Sharing sstate
-- Multiple developers can share an sstate cache via NFS or a shared directory
-- CI/CD pipelines can pre-populate sstate to speed up builds
-- `DL_DIR` (download directory) can also be shared to avoid re-downloading sources
-
-### Invalidation
-- If you change a recipe, its hash changes, and all dependent tasks are rebuilt
-- Changing `local.conf` (e.g., adding a package) invalidates the image task but not individual package builds
--->
 
 ---
 
 ## Build Directory Anatomy
 
-<!-- CONTENT:
+
 After a build, the `build/` directory looks like this:
 
 ```
@@ -112,7 +103,7 @@ build/
 │   └── bblayers.conf       ← Your layer configuration
 ├── tmp/
 │   ├── deploy/
-│   │   ├── images/         ← ⭐ Final images (ext4, kernel, DTB) — Page 11
+│   │   ├── images/         ←  Final images (ext4, kernel, DTB)
 │   │   ├── deb/            ← Built .deb packages
 │   │   └── licenses/       ← License files for all packages
 │   ├── work/
@@ -133,13 +124,11 @@ build/
 Key directories:
 - `tmp/deploy/images/<MACHINE>/` — your final build artifacts (next page)
 - `tmp/work/<ARCH>/<recipe>/<version>/temp/` — logs for debugging failed tasks
--->
 
 ---
 
-## Debugging a Failed Task
+## Debugging a Failed Build
 
-<!-- CONTENT:
 ### Finding the Error
 1. BitBake prints the failed recipe and task: `ERROR: Task (...) failed`
 2. It tells you the log file: `ERROR: Logfile of failure stored in: /path/to/log.do_compile`
@@ -159,9 +148,8 @@ bitbake -c cleansstate <recipe-name> # Wipe sstate for one recipe and rebuild
 | `do_compile: ld returned 1 exit status` | Link error — missing dependency | Check `DEPENDS` in recipe |
 | `do_rootfs: Unable to install ...` | Package not found | Check `IMAGE_INSTALL` spelling, check layer provides the package |
 | `Nothing PROVIDES 'virtual/kernel'` | MACHINE not set or wrong | Check `local.conf` MACHINE value |
--->
 
----
 
-[← Kick Off the Build](08-kickoff-build.md){ .md-button }
-[Next: Navigating Output & Flashing →](10-navigating-output-and-flashing.md){ .md-button .md-button--primary }
+
+[← local.conf](07-local-conf.md){ .md-button }
+[Next: Build Output & Flashing →](09-navigating-output-and-flashing.md){ .md-button .md-button--primary }

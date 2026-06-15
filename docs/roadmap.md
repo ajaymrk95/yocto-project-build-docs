@@ -115,12 +115,8 @@ Apply the PREEMPT_RT real-time patch to the Linux kernel through the Yocto build
 
 Active development tasks including real-time validation, package management, and partition redundancy implementation.
 
-→ [Current Work](current-work/index.md)
-
 ---
 
 ### Future Work
 
 Planned enhancements including TMR bootloader patching, RAM-based filesystem testing, and system image minimization.
-
-→ [Future Work](future-work/index.md)

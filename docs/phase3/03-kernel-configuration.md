@@ -48,5 +48,5 @@ flowchart LR
 
 ---
 
-[← Applying the Patch](applying-patch.md){ .md-button }
-[Validation & Testing →](validation-testing.md){ .md-button .md-button--primary }
+[← Applying the Patch](02-applying-the-patch.md){ .md-button }
+[Validation & Testing →](04-validation-and-testing.md){ .md-button .md-button--primary }

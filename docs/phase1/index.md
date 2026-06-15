@@ -111,9 +111,8 @@ flowchart TD
 | 5 | [Cloning Poky & Branch Strategy](05-cloning-and-branching.md) | Clone all required repositories, align on the Kirkstone branch, and set up the project workspace. |
 | 6 | [Adding Layers & Configuring bblayers.conf](06-adding-layers.md) | A detailed walkthrough of every Yocto layer used in this build, how to add them, and how to configure bblayers.conf. |
 | 7 | [Deep Dive: local.conf](07-local-conf.md) | Complete guide to local.conf — MACHINE, DISTRO, IMAGE_INSTALL, build tuning, and a full annotated config. |
-| 8 | [Kicking Off the Build](08-kickoff-build.md) | Pre-flight checklist and the actual bitbake command. What to expect, how long it takes, and what success looks like. |
-| 9 | [Build Process Under the Hood](09-build-under-the-hood.md) | How BitBake works internally — the task pipeline, recipe parsing, shared state, and build directory anatomy. |
-| 10 | [Navigating Build Output & Flashing](10-navigating-output-and-flashing.md) | Find your build artifacts, understand the tegraflash bundle, prepare the flash workspace, and flash the DevKit. |
+| 8 | [The Build Process Explained](08-build-process.md) | Pre-flight checklist, running bitbake, the task pipeline, shared state cache, build directory anatomy, and debugging. |
+| 9 | [Build Output & Flashing](09-navigating-output-and-flashing.md) | Find your build artifacts, understand the tegraflash bundle, prepare the flash workspace, and flash the DevKit. |
 
 ---
 

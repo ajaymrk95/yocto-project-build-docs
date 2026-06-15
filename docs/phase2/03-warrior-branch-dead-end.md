@@ -1,10 +1,10 @@
 ---
-title: "Dead End — Warrior Branch"
+title: "Warrior Branch — A Dead End"
 ---
 
-# Dead End — Warrior Branch Approach
+# Warrior Branch — A Dead End
 
-<span class="phase-label">Phase 2 · Lesson Learned</span>
+<span class="phase-label">Phase 2 · Page 3 of 7</span>
 
 !!! danger "Dead End — Do Not Repeat"
     The approach documented on this page was abandoned due to fundamental incompatibilities. It is included here to prevent future developers from repeating this path.
@@ -51,5 +51,5 @@ flowchart TD
 
 ---
 
-[← DTBs & CFG Files](dtb-cfg-files.md){ .md-button }
-[Build Artifact Modification →](build-artifacts.md){ .md-button .md-button--primary }
+[← Device Trees & Configuration](02-device-trees-and-configuration.md){ .md-button }
+[Next: Build Artifact Modification →](04-build-artifact-modification.md){ .md-button .md-button--primary }

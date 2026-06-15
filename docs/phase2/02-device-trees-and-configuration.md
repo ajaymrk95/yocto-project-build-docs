@@ -1,10 +1,10 @@
 ---
-title: "DTBs & CFG Files"
+title: "Device Trees & Flash Configuration"
 ---
 
-# Device Tree Binaries & CFG Files
+# Device Trees & Flash Configuration
 
-<span class="phase-label">Phase 2 · Concepts</span>
+<span class="phase-label">Phase 2 · Page 2 of 7</span>
 
 !!! info "Outline Page"
     This page is an outline only.
@@ -49,5 +49,5 @@ flowchart LR
 
 ---
 
-[← Elroy vs DevKit](elroy-vs-devkit.md){ .md-button }
-[Warrior Dead End →](warrior-dead-end.md){ .md-button .md-button--primary }
+[← Hardware Comparison](01-hardware-comparison.md){ .md-button }
+[Next: Warrior Branch Dead End →](03-warrior-branch-dead-end.md){ .md-button .md-button--primary }

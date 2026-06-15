@@ -56,4 +56,4 @@ flowchart LR
 ---
 
 [← Phase 3 Overview](index.md){ .md-button }
-[Applying the Patch →](applying-patch.md){ .md-button .md-button--primary }
+[Applying the Patch →](02-applying-the-patch.md){ .md-button .md-button--primary }

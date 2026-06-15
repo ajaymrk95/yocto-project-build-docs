@@ -5,7 +5,7 @@ description: "Essential links for the Yocto Project, NVIDIA Tegra BSP, and all r
 
 # Important Links
 
-<span class="phase-label">Phase 1 · Page 2 of 10</span>
+<span class="phase-label">Phase 1 · Page 2 of 9</span>
 
 !!! abstract "Page Goal"
     This is a reference page. Every official doc, repository, and external resource used in this build is linked here. References contain information or subpages which help enable additional functionality and are often referenced throughout the build.

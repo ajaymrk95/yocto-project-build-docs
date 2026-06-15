@@ -5,10 +5,11 @@ description: "A detailed walkthrough of every Yocto layer used in this build, ho
 
 # Adding Layers & Configuring `bblayers.conf`
 
-<span class="phase-label">Phase 1 · Page 6 of 10</span>
+<span class="phase-label">Phase 1 · Page 6 of 9</span>
 
 !!! abstract "Page Goal"
-    Understand what each layer provides, add them to your build one by one, validate the layer stack, and configure `bblayers.conf` for the Jetson TX2i build.
+    - The main files to be edited are the local.conf and bblayers.conf which are located in the conf folder inside the build directory.
+    - Here we understand what each layer provides, add them to your build one by one, validate the layer stack, and configure `bblayers.conf` for the Jetson TX2i build.
 
 ---
 
@@ -23,12 +24,11 @@ flowchart LR
 ```
 
 ---
-
 ## What Is a Yocto Layer?
 
-<!-- CONTENT:
-A layer is a directory containing:
-```
+A Yocto layer is a directory structured to store metadata configuration files, classes, and recipes. The generic directory layout of a layer looks like this:
+
+```text
 meta-example/
 ├── conf/
 │   └── layer.conf          ← Layer configuration (name, priority, compatibility)
@@ -42,235 +42,235 @@ meta-example/
 └── README                  ← Layer documentation
 ```
 
-Key concepts:
-- Every layer has a `conf/layer.conf` that declares its name and compatibility
-- Layers can depend on other layers
-- Layers have a priority (`BBFILE_PRIORITY`) — higher priority wins on conflicts
-- Layers are modular — add only what you need
--->
+### Key Layer Concepts:
+- **`layer.conf`**: Located in `conf/`, it declares the layer's name, priority, and compatibility.
+- **Layer Dependencies**: A layer can declare dependencies on other layers; BitBake will parse and verify these dependencies during initialization.
+- **Layer Priority (`BBFILE_PRIORITY`)**: Controls which recipe takes precedence if multiple layers define the same recipe.
 
 ---
 
-## Layer Table — What We Use
+## Sourcing the Build Environment
 
-<!-- CONTENT:
-| Layer | Repository | Sub-Layers to Include | What It Provides | Dependencies |
-|-------|-----------|----------------------|------------------|-------------|
-| **meta** (OE-Core) | Included in Poky | — | Core Linux recipes (glibc, busybox, systemd, gcc) | None |
-| **meta-poky** | Included in Poky | — | Poky distro configuration | meta |
-| **meta-yocto-bsp** | Included in Poky | — | Reference BSP for QEMU and BeagleBone | meta |
-| **meta-tegra** | OE4T/meta-tegra | — | NVIDIA Tegra BSP: kernel, bootloader, flash tools, CUDA | meta |
-| **meta-oe** | meta-openembedded | `meta-oe` | Extra recipes not in OE-Core (utilities, libs) | meta |
-| **meta-python** | meta-openembedded | `meta-python` | Python packages and runtime | meta, meta-oe |
-| **meta-networking** | meta-openembedded | `meta-networking` | Network utilities and daemons | meta, meta-oe |
-| **meta-xfce** | meta-openembedded | `meta-xfce` | Xfce desktop environment | meta, meta-oe |
-| **meta-ros** | ros/meta-ros | *(check sub-layers)* | ROS Melodic/Noetic recipes | meta, meta-oe, meta-python |
--->
+Before you can query or modify layers, you must source the Yocto Project initialization script from the terminal. 
 
----
-
-## Step-by-Step: Adding Layers
-
-<!-- CONTENT:
-First, source the build environment:
 ```bash
-cd ~/yocto/poky
-source oe-init-build-env
+cd ~/yocto
+source poky/oe-init-build-env poky/build
 ```
 
-Then add layers one at a time. Order matters — add dependencies first.
+!!! note "The Build Directory Location"
+    By passing `poky/build` to the initialization script, the build folder is created inside the `poky` directory. Sourcing the script automatically changes your working directory to `~/yocto/poky/build/`.
 
-### Step 1: Add meta-tegra
+---
+
+## Sourcing & Initial `bblayers.conf`
+
+Sourcing the environment script generates a baseline configuration directory (`conf/`) containing the `bblayers.conf` file. This configuration tells BitBake which layers are active.
+
+By default, the initial generated `build/conf/bblayers.conf` file includes only the core Poky distribution metadata:
+
+```bash
+# POKY_BBLAYERS_CONF_VERSION is increased each time build/conf/bblayers.conf
+# changes incompatibly
+POKY_BBLAYERS_CONF_VERSION = "2"
+
+BBPATH = "${TOPDIR}"
+BBFILES ?= ""
+
+BBLAYERS ?= " \
+  /home/yocto/recreate/poky/meta \
+  /home/yocto/recreate/poky/meta-poky \
+  /home/yocto/recreate/poky/meta-yocto-bsp \
+  "
+```
+
+---
+
+## How to Add Layers
+
+There are two primary methods to add a new layer to your build environment:
+
+### Method 1: Using the `bitbake-layers` CLI (Recommended)
+You can use the `bitbake-layers add-layer` utility to automatically register layers in your config. The path can be absolute, or **relative to your build directory** (`~/yocto/poky/build`).
+
+Since the build directory is nested two levels deep inside `poky/build`, a layer located at `~/yocto/meta-tegra` is represented relatively as `../../meta-tegra`.
+
 ```bash
 bitbake-layers add-layer ../../meta-tegra
 ```
 
-### Step 2: Add meta-openembedded sub-layers
+Using relative paths makes your build directory portable across host environments (e.g., if you share your build configuration with another developer whose home directory path differs).
+
+### Method 2: Manually Editing `bblayers.conf`
+You can open `build/conf/bblayers.conf` in a text editor and add the absolute or relative path directly to the `BBLAYERS` list:
+
 ```bash
+BBLAYERS ?= " \
+  /home/yocto/recreate/poky/meta \
+  /home/yocto/recreate/poky/meta-poky \
+  /home/yocto/recreate/poky/meta-yocto-bsp \
+  /home/yocto/recreate/meta-tegra \
+  "
+```
+
+---
+
+## Cloning the optional `meta-qt5` Layer
+
+To extend package options in our build configuration and support graphical utilities, we can clone the `meta-qt5` layer. This is useful if you plan to compile custom Qt5-based user interfaces or run GUI-based data plotting applications directly on target hardware.
+
+!!! info "Status Note"
+    Although `meta-qt5` packages are available in the recipe configuration, GUI components and real-time GUI plots are not actively tested in the core flight build image. 
+
+Run the following command from the workspace parent directory (`~/yocto`) to clone `meta-qt5`:
+
+```bash
+git clone -b kirkstone https://github.com/meta-qt5/meta-qt5.git
+```
+
+---
+
+## Detailed Build Layer Summary
+
+| Layer | Repository Path | What It Provides |
+|---|---|---|
+| **meta** | `poky/meta` | Core OS components, systemd, compiler tools. |
+| **meta-poky** | `poky/meta-poky` | Reference distribution configurations. |
+| **meta-yocto-bsp** | `poky/meta-yocto-bsp` | Reference board support package configs. |
+| **meta-tegra** | `meta-tegra` | NVIDIA Tegra L4T kernel, bootloader, and flashing scripts. |
+| **meta-oe** | `meta-openembedded/meta-oe` | General utility packages (dependency for other sub-layers). |
+| **meta-python** | `meta-openembedded/meta-python` | Python modules and utilities. |
+| **meta-networking** | `meta-openembedded/meta-networking` | Network protocol utilities, SSH, and firewalls. |
+| **meta-multimedia** | `meta-openembedded/meta-multimedia` | Audio/video processing tools. |
+| **meta-gnome** | `meta-openembedded/meta-gnome` | GNOME desktop and library components. |
+| **meta-xfce** | `meta-openembedded/meta-xfce` | Lightweight XFCE Desktop recipes. |
+| **meta-ros-common** | `meta-ros/meta-ros-common` | Core ROS utilities and common build helpers. |
+| **meta-ros2** | `meta-ros/meta-ros2` | Generic ROS 2 metadata recipes. |
+| **meta-ros2-humble** | `meta-ros/meta-ros2-humble` | Specific ROS 2 Humble packages. |
+| **meta-qt5** | `meta-qt5` | Qt5 applications, modules, and platform support. |
+
+---
+
+## Step-by-Step CLI Commands to Add All Layers
+
+Run these relative-path commands sequentially from the build directory (`~/yocto/poky/build`) to add the required layers in the correct dependency order:
+
+```bash
+# 1. Add NVIDIA BSP Layer
+bitbake-layers add-layer ../../meta-tegra
+
+# 2. Add OpenEmbedded Sub-Layers
 bitbake-layers add-layer ../../meta-openembedded/meta-oe
 bitbake-layers add-layer ../../meta-openembedded/meta-python
 bitbake-layers add-layer ../../meta-openembedded/meta-networking
+bitbake-layers add-layer ../../meta-openembedded/meta-multimedia
+bitbake-layers add-layer ../../meta-openembedded/meta-gnome
 bitbake-layers add-layer ../../meta-openembedded/meta-xfce
-```
 
-### Step 3: Add meta-ros
-```bash
+# 3. Add ROS and ROS 2 Layers
 bitbake-layers add-layer ../../meta-ros/meta-ros-common
-bitbake-layers add-layer ../../meta-ros/meta-ros2  # or meta-ros1 depending on your target
+bitbake-layers add-layer ../../meta-ros/meta-ros2
+bitbake-layers add-layer ../../meta-ros/meta-ros2-humble
+
+# 4. Add Qt5 Layer (optional GUI libraries)
+bitbake-layers add-layer ../../meta-qt5
 ```
 
-Each `add-layer` command checks dependencies automatically and will error if a required layer is missing.
--->
-
 ---
 
-## Layer Priority
+## Final Output: `bblayers.conf`
 
-<!-- CONTENT:
-- `BBFILE_PRIORITY` is set in each layer's `layer.conf`
-- Higher number = higher priority
-- When two layers provide the same recipe, the higher-priority layer wins
-- Default priority is 6; BSP layers are typically higher (e.g., meta-tegra = 8)
-- You rarely need to change this — just be aware of it when debugging
--->
+Once all layers are added, the final contents of `poky/build/conf/bblayers.conf` will look like this:
 
----
+### Option A: Using Absolute Workspace Paths
+This configuration maps to a static folder layout on the target build machine (using `/home/raigyocto` as an example):
 
-## Layer Dependency Diagram
+```bash
+# POKY_BBLAYERS_CONF_VERSION is increased each time build/conf/bblayers.conf
+# changes incompatibly
+POKY_BBLAYERS_CONF_VERSION = "2"
 
-```mermaid
-flowchart BT
-    POKY["poky\n(meta, meta-poky,\nmeta-yocto-bsp)"] 
-    META_TEGRA["meta-tegra\n(NVIDIA BSP)"]
-    META_OE["meta-oe"]
-    META_PYTHON["meta-python"]
-    META_NET["meta-networking"]
-    META_XFCE["meta-xfce"]
-    META_ROS["meta-ros"]
+BBPATH = "${TOPDIR}"
+BBFILES ?= ""
 
-    META_TEGRA --> POKY
-    META_OE --> POKY
-    META_PYTHON --> META_OE
-    META_NET --> META_OE
-    META_XFCE --> META_OE
-    META_ROS --> META_OE
-    META_ROS --> META_PYTHON
-    
-    BUILD["Your Build"] --> POKY
-    BUILD --> META_TEGRA
-    BUILD --> META_OE
-    BUILD --> META_PYTHON
-    BUILD --> META_NET
-    BUILD --> META_XFCE
-    BUILD --> META_ROS
+BBLAYERS ?= " \
+  /home/yocto/poky/meta \
+  /home/yocto/poky/meta-poky \
+  /home/yocto/poky/meta-yocto-bsp \
+  /home/yocto/meta-openembedded/meta-oe \
+  /home/yocto/meta-openembedded/meta-python \
+  /home/yocto/meta-openembedded/meta-networking \
+  /home/yocto/meta-openembedded/meta-multimedia \
+  /home/yocto/meta-openembedded/meta-gnome \
+  /home/yocto/meta-openembedded/meta-xfce \
+  /home/yocto/meta-ros/meta-ros-common \
+  /home/yocto/meta-ros/meta-ros2 \
+  /home/yocto/meta-ros/meta-ros2-humble \
+  /home/yocto/meta-qt5 \
+  /home/yocto/meta-tegra \
+  "
+```
+
+### Option B: Using Relative Workspace Paths
+This layout utilizes `../` and `../../` relative paths from the build environment context. It is the preferred method for sharing build directories:
+
+```bash
+# POKY_BBLAYERS_CONF_VERSION is increased each time build/conf/bblayers.conf
+# changes incompatibly
+POKY_BBLAYERS_CONF_VERSION = "2"
+
+
+BBFILES ?= ""
+
+BBLAYERS ?= " \
+  /../meta \
+  /../meta-poky \
+  /../meta-yocto-bsp \
+  /../../meta-openembedded/meta-oe \
+  /../../meta-openembedded/meta-python \
+  /../../meta-openembedded/meta-networking \
+  /../../meta-openembedded/meta-multimedia \
+  /../../meta-openembedded/meta-gnome \
+  /../../meta-openembedded/meta-xfce \
+  /../../meta-ros/meta-ros-common \
+  /../../meta-ros/meta-ros2 \
+  /../../meta-ros/meta-ros2-humble \
+  /../../meta-qt5 \
+  /../../meta-tegra \
+  "
 ```
 
 ---
 
 ## Validating Layers
 
-<!-- CONTENT:
-After adding all layers, verify:
+After adding all layers, verify the layer stack configuration by running the following command from your build directory:
 
 ```bash
 bitbake-layers show-layers
 ```
 
-Expected output:
+### Expected Output
+The command prints out each registered layer, its location path, and its parsing priority:
+
+```text
+layer                 path                                                 priority
+====================================================================================
+meta                  /home/raigyocto/yocto/poky/meta                      5
+meta-poky             /home/raigyocto/yocto/poky/meta-poky                 5
+meta-yocto-bsp        /home/raigyocto/yocto/poky/meta-yocto-bsp             5
+meta-oe               /home/raigyocto/yocto/meta-openembedded/meta-oe      6
+meta-python           /home/raigyocto/yocto/meta-openembedded/meta-python  7
+meta-networking       /home/raigyocto/yocto/meta-openembedded/meta-net...  5
+meta-multimedia       /home/raigyocto/yocto/meta-openembedded/meta-mul...  5
+meta-gnome            /home/raigyocto/yocto/meta-openembedded/meta-gnome   5
+meta-xfce             /home/raigyocto/yocto/meta-openembedded/meta-xfce    7
+meta-ros-common       /home/raigyocto/yocto/meta-ros/meta-ros-common       10
+meta-ros2             /home/raigyocto/yocto/meta-ros/meta-ros2            11
+meta-ros2-humble      /home/raigyocto/yocto/meta-ros/meta-ros2-humble      12
+meta-qt5              /home/raigyocto/yocto/meta-qt5                       7
+meta-tegra            /home/raigyocto/yocto/meta-tegra                     5
 ```
-layer                 path                                      priority
-==========================================================================
-meta                  /home/user/yocto/poky/meta                5
-meta-poky             /home/user/yocto/poky/meta-poky           5
-meta-yocto-bsp        /home/user/yocto/poky/meta-yocto-bsp      5
-meta-tegra            /home/user/yocto/meta-tegra               8
-meta-oe               /home/user/yocto/meta-openembedded/meta-oe 6
-meta-python           ...                                        7
-meta-networking       ...                                        5
-meta-xfce             ...                                        7
-meta-ros-common       ...                                        ...
-```
-
-If a layer is missing, add it. If there are dependency errors, check branch alignment (Page 5).
--->
-
----
-
-## Configuring `bblayers.conf`
-
-<!-- CONTENT:
-- Location: `build/conf/bblayers.conf`
-- Created automatically by `source oe-init-build-env`
-- Declares which layers are active in your build via the `BBLAYERS` variable
-- BitBake reads this file first — if a layer isn't listed here, it doesn't exist to the build system
-- Edited automatically by `bitbake-layers add-layer` or manually
--->
-
----
-
-### Full Annotated `bblayers.conf`
-
-<!-- CONTENT:
-```bash
-# bblayers.conf — Layer configuration for Jetson TX2i Yocto Build
-# Location: ~/yocto/poky/build/conf/bblayers.conf
-# 
-# This file tells BitBake which layers to include in the build.
-# Paths are absolute. Adjust YOCTO_ROOT to match your workspace.
-
-# Convenience variable — not a BitBake standard, just for readability
-YOCTO_ROOT := "${TOPDIR}/../.."
-
-BBLAYERS ?= " \
-  ${YOCTO_ROOT}/poky/meta                              \
-  ${YOCTO_ROOT}/poky/meta-poky                         \
-  ${YOCTO_ROOT}/poky/meta-yocto-bsp                    \
-  \
-  ${YOCTO_ROOT}/meta-tegra                             \
-  \
-  ${YOCTO_ROOT}/meta-openembedded/meta-oe              \
-  ${YOCTO_ROOT}/meta-openembedded/meta-python           \
-  ${YOCTO_ROOT}/meta-openembedded/meta-networking       \
-  ${YOCTO_ROOT}/meta-openembedded/meta-xfce             \
-  \
-  ${YOCTO_ROOT}/meta-ros/meta-ros-common                \
-  ${YOCTO_ROOT}/meta-ros/meta-ros2                      \
-  "
-```
-
-### Line-by-Line Breakdown
-
-| Line(s) | Layer | Why It's Here |
-|---------|-------|---------------|
-| `poky/meta` | OE-Core | Core Linux recipes — this is always required |
-| `poky/meta-poky` | Poky distro | Default distro configuration |
-| `poky/meta-yocto-bsp` | Reference BSP | Provides QEMU machines (used in quick build) |
-| `meta-tegra` | NVIDIA BSP | Machine configs, kernel, bootloader, flash tools for Jetson |
-| `meta-oe` | OpenEmbedded extras | Additional utilities and libraries |
-| `meta-python` | Python packages | Python runtime and packages (dependency of meta-ros) |
-| `meta-networking` | Network stack | Networking daemons and tools |
-| `meta-xfce` | Desktop | Xfce desktop environment components |
-| `meta-ros-common` | ROS shared | Common ROS infrastructure |
-| `meta-ros2` | ROS 2 recipes | ROS 2 packages |
--->
-
----
-
-### Layer Ordering — Does It Matter?
-
-<!-- CONTENT:
-- The order in `BBLAYERS` does NOT determine priority — that's controlled by `BBFILE_PRIORITY` in each layer's `layer.conf`
-- However, convention is to list base layers first, BSP second, and feature layers after
-- This makes the file more readable and easier to debug
--->
-
----
-
-### Verifying the Configuration
-
-<!-- CONTENT:
-```bash
-bitbake-layers show-layers
-```
-
-Check:
-1. All expected layers appear in the output
-2. No `ERROR: Layer` dependency warnings
-3. Priorities look reasonable (meta-tegra should be higher than meta)
--->
-
----
-
-### Common Mistakes
-
-<!-- CONTENT:
-| Mistake | Symptom | Fix |
-|---------|---------|-----|
-| Missing sub-layer (e.g., `meta-python` not listed) | `ERROR: Nothing PROVIDES 'python3-...'` | Add the missing layer |
-| Wrong path (typo) | `ERROR: Layer directory '...' does not exist` | Check path in bblayers.conf |
-| Relative vs absolute paths | Works on one machine, fails on another | Use `${TOPDIR}` or absolute paths |
-| Forgot to add meta-oe but added meta-python | Dependency error on parse | meta-python depends on meta-oe — add meta-oe first |
--->
 
 ---
 

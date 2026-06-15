@@ -1,127 +1,175 @@
 ---
-title: "Cloning Poky & Branch Strategy"
+title: "Cloning the Necessary Repositories and Folder Structure"
 description: "Clone all required repositories, align on the Kirkstone branch, and set up the project workspace for the Jetson TX2i Yocto build."
 ---
 
-# Cloning Poky & Branch Strategy
+# Cloning the Necessary Repositories and Folder Structure
 
-<span class="phase-label">Phase 1 · Page 5 of 10</span>
+<span class="phase-label">Phase 1 · Page 5 of 9</span>
 
 !!! abstract "Page Goal"
-    Clone Poky and all required layer repositories into your workspace, ensuring every repo is checked out to a compatible Kirkstone branch.
+    - Building up from the quick build setup on Page 1 - Page 4, add Yocto Layers that allow us to build a Linux Image that runs on Specific Target Hardware - The Jetson TX2i with the TX2 Developer Kit.
+
+    - This document also explains some other important layers which are necessary to provide additional software functionality and importance of maintaining a consistent branch/release accross all layers.
 
 ---
 
-## Page Process Overview
+!!! info "Generalised Example — Customizing a Build for Specific Hardware"
+    The official Yocto Project Quick Build guide includes a concise walkthrough of how to add a hardware layer and target a specific machine in its
+    [**Customizing Your Build for Specific Hardware**](https://docs.yoctoproject.org/kirkstone/brief-yoctoprojectqs/index.html#customizing-your-build-for-specific-hardware){:target="_blank"} section.
 
-```mermaid
-flowchart TD
-    A["Create Project\nRoot ~/yocto/"] --> B["Clone Poky\nKirkstone"]
-    B --> C["Clone meta-tegra\nKirkstone"]
-    C --> D["Clone meta-oe\nKirkstone"]
-    D --> E["Clone meta-ros\n(correct branch)"]
-    E --> F["Verify All\nBranches Match"]
-```
+    That example uses the **meta-altera** BSP layer and the **cyclone5** machine as a minimal demonstration of:
+
+    1. **Finding and cloning a hardware layer** (e.g. `git clone` of `meta-altera` into the Poky directory).
+    2. **Setting the `MACHINE` variable** in `local.conf` to target the new hardware.
+    3. **Registering the layer** using `bitbake-layers add-layer`.
+
+    It is a great starting point if you want to understand the general workflow before diving into the project-specific setup below, where we apply the same concepts to build for the **NVIDIA Jetson TX2i** using the **meta-tegra** BSP layer and multiple companion layers.
 
 ---
+
+
 
 ## Project Workspace Layout
 
-<!-- CONTENT:
-Before cloning, establish a clean workspace. All repos live side by side:
+Before cloning, establish a parent folder, this is a simple way to keep the project organised. The parent folder contains all the cloned layers including poky. This way the `build` directory is 2 levels below all the cloned layers and running bitbake to add layers is straightforward. 
 
 ```bash
 mkdir -p ~/yocto && cd ~/yocto
 ```
 
-After cloning, your directory should look like:
+## Metadata vs. Build Data
 
-```
-~/yocto/
-├── poky/                  ← Reference distribution
-├── meta-tegra/            ← NVIDIA BSP
-├── meta-openembedded/     ← Community layers
-└── meta-ros/              ← ROS recipes
-```
--->
+!!! note "Understanding Yocto Metadata"
+    Yocto layers contain *metadata* (recipes `.bb`, appends `.bbappend`, classes `.bbclass`, and configurations `.conf`). Simply cloning these repositories onto your host system does **not** add their data, packages, or configurations to the final build image.
+    
+    To use these layers in your build, you must:
+    1. Explicitly register them in your build configuration file (`build/conf/bblayers.conf`).
+    2. Explicitly request the packages you want to install in the final image (e.g., using `IMAGE_INSTALL:append` in `local.conf` or referencing them in your custom image recipe).
 
 ---
 
-## Cloning Each Repository
+## What is a BSP Layer?
 
-<!-- CONTENT:
-### Poky (Reference Distribution)
-```bash
-git clone -b kirkstone git://git.yoctoproject.org/poky
-```
+A **BSP (Board Support Package) Layer** is a collection of hardware-specific recipe metadata, configuration files, and software tools required to enable a specific physical target hardware platform to boot and run Linux. 
 
-### meta-tegra (NVIDIA Tegra BSP)
-```bash
-git clone -b kirkstone https://github.com/OE4T/meta-tegra.git
-```
-
-### meta-openembedded
-```bash
-git clone -b kirkstone https://git.openembedded.org/meta-openembedded
-```
-
-### meta-ros
-```bash
-git clone -b <branch> https://github.com/ros/meta-ros.git
-```
-Note: meta-ros branch naming may differ — verify compatibility with Kirkstone.
--->
+In a Yocto Project environment, a BSP layer sits near the bottom of the layer stack and translates generic OS packages into machine-usable binaries. It typically supplies:
+- Bootloader configuration and build files (e.g., U-Boot, CBoot, coreboot).
+- Target-specific kernel versions, patches, and configurations.
+- Device tree sources (DTS) and binaries (DTB) representing the board layout.
+- Hardware-accelerated drivers (such as GPU, display, and multimedia decoders).
 
 ---
 
-## Branch Alignment
+## Active Branches & Hardware Support Strategy
 
-!!! warning "Critical: All Layers Must Be on the Same Release"
-    Mixing branches (e.g., Kirkstone Poky with Dunfell meta-tegra) will cause **build failures**. Every layer must target the same Yocto release.
+To support target devices using the **meta-tegra** BSP layer (the official community-driven Yocto layer for NVIDIA Jetson platforms), we look to the official documentation at [oe4t.github.io](https://oe4t.github.io). 
 
-<!-- CONTENT:
-Why branch alignment matters:
-- Each Yocto release changes API, variable names, and class behavior
-- Recipes in one branch may depend on features that don't exist in another
-- meta-tegra Kirkstone expects OE-Core Kirkstone APIs
+As of the latest updates (May 2026), the active branches for the meta-tegra layer correspond to specific hardware generations and L4T (Linux for Tegra) versions:
 
-How to verify:
-```bash
-cd ~/yocto/poky && git branch
-cd ~/yocto/meta-tegra && git branch
-cd ~/yocto/meta-openembedded && git branch
-cd ~/yocto/meta-ros && git branch
-```
+| Branch Name | Stability | L4T / JetPack Release | Supported Platforms |
+|---|---|---|---|
+| `master` | Unstable | L4T R36.5.0 / JetPack 6.2.2 | AGX Orin, Orin NX, Orin Nano |
+| `master-l4t-r38.4.x` | Unstable | L4T R38.4.0 / JetPack 7.1 | AGX Thor |
+| `wrynose` | Stable | L4T R36.5.0 / JetPack 6.2.2 | AGX Orin, Orin NX, Orin Nano |
+| `whinlatter` | Stable | L4T R36.4.4 / JetPack 6.2.1 | AGX Orin, Orin NX, Orin Nano |
+| `scarthgap` | Stable | L4T R36.5.0 / JetPack 6.2.2 | AGX Orin, Orin NX, Orin Nano |
+| `scarthgap-l4t-r35.x` | Stable | L4T R35.6.4 / JetPack 5.1.6 | AGX Xavier, Xavier NX, AGX Orin, Orin NX, Orin Nano |
+| `kirkstone` | Stable | L4T R35.6.4 / JetPack 5.1.6 | AGX Xavier, Xavier NX, AGX Orin, Orin NX, Orin Nano |
+| **`kirkstone-l4t-r32.7.x`** | **Stable** | **L4T R32.7.6 / JetPack 4.6.6** | **TX1, TX2, TX2-NX, Xavier, Xavier-NX, Nano, Nano-2GB** |
 
-All should show `kirkstone` (or a branch tracking `origin/kirkstone`).
--->
+!!! note "Hardware Compatibility Limitation"
+    Because we are building for the **Jetson TX2i** (a TX2-series module), the regular `kirkstone` branch of `meta-tegra` does not support our target platform. We **must** use the specialized **`kirkstone-l4t-r32.7.x`** branch of `meta-tegra` to maintain support for TX2-series hardware while aligning with the stable Kirkstone environment.
 
 ---
 
-## Directory Listing After Cloning
+## Why Branch Alignment is Critical
 
-<!-- CONTENT:
-Verify your workspace:
+`kirkstone` is a stable release of the Yocto Project. To ensure a successful build, all companion layers must remain aligned to the `kirkstone` release cycle.
 
+!!! warning "The Danger of Mixing Branches"
+    Mixing branches (e.g., using `kirkstone` for Poky and `dunfell - an older yocto release` for OpenEmbedded/ROS layers) will introduce severe underlying conflicts in:
+    - **Git links and source endpoints**: Repositories constantly change URLs, hashes, and tag schemes between releases, leading to build-time fetcher errors.
+    - **BitBake syntax and API changes**: Internal variables, override character syntax (e.g., the transition from underscore `_` to colon `:` overrides), and Python class APIs change, causing syntax/parsing errors.
+    - **Package dependency issues**: Mixing branches leads to package name mismatches, mismatched library versions, and missing packages.
+
+---
+
+## Cloning the Necessary Layers (HTTPS)
+
+Execute these commands to clone the correct branches of each layer into your project parent directory:
+
+### 1. Poky (Reference Distribution)
+The main reference build system framework.
 ```bash
-ls ~/yocto/
-# poky  meta-tegra  meta-openembedded  meta-ros
+git clone -b kirkstone https://git.yoctoproject.org/git/poky
 ```
 
+### 2. meta-tegra (NVIDIA BSP Layer)
+Provides the specific board support files, flashing scripts, and kernel drivers for Tegra modules.
 ```bash
-for dir in poky meta-tegra meta-openembedded meta-ros; do
-    echo "$dir: $(cd ~/yocto/$dir && git rev-parse --abbrev-ref HEAD)"
-done
+git clone -b kirkstone-l4t-r32.7.x https://github.com/OE4T/meta-tegra.git
 ```
 
-Expected output:
+### 3. meta-openembedded (Main System Utilities)
+The primary collection of metadata layers providing a wide array of system software, Python runtimes, GNU/GCC tooling, networking utilities, and graphical user interfaces.
+```bash
+git clone -b kirkstone https://github.com/openembedded/meta-openembedded.git
 ```
-poky: kirkstone
-meta-tegra: kirkstone
-meta-openembedded: kirkstone
-meta-ros: kirkstone
+### 4. meta-ros (Robot Operating System Layer)
+Brings ROS/ROS 2 libraries, build systems (like `catkin` and `ament`), and packages to the Yocto platform for edge robotic operations.
+```bash
+git clone -b kirkstone https://github.com/ros/meta-ros.git
 ```
--->
+
+---
+
+## Workspace Folder Structure Validation
+
+Once you have cloned the repositories and initialized your environment, your directory layout must match the following structure. Use this in-depth outline to verify your workspace before running `bitbake`:
+
+```text
+~/yocto/                          ← Project Workspace Root
+├── poky/                         ← Reference Distribution Repo
+│   ├── bitbake/                  ← BitBake engine files
+│   ├── meta/                     ← OpenEmbedded Core metadata
+│   ├── meta-poky/                ← Poky distribution configurations
+│   ├── meta-selftest/            ← Poky test suites
+│   ├── meta-yocto-bsp/           ← Reference hardware board support
+│   ├── oe-init-build-env         ← Initialization script
+│   └── build/                    ← Active Build Directory (created by oe-init-build-env)
+│       ├── conf/                 ← Environment Configuration
+│       │   ├── bblayers.conf     ← Layer path registration
+│       │   └── local.conf        ← Machine, package, and distribution settings
+│       │
+│       ├── downloads/            ← Downloaded source tarballs & git checkouts
+│       ├── sstate-cache/         ← Shared state cache for build speedup
+│       └── tmp/                  ← Compiler outputs, rootfs, and final images
+│
+├── meta-tegra/                   ← NVIDIA Jetson BSP Layer Repo
+│   ├── classes/                  ← Tegra-specific helper classes
+│   ├── conf/                     ← Machine/layer configuration files
+│   ├── recipes-bsp/              ← Bootloader, flash scripts, device tree recipes
+│   ├── recipes-devtools/         ← Flash tools and host utilities
+│   └── recipes-kernel/           ← NVIDIA L4T Linux kernel recipes & patches
+│
+├── meta-openembedded/            ← Multi-utility Core Layers Repo
+│   ├── meta-filesystems/         ← Ext4, XFS, and network filesystem recipes
+│   ├── meta-gnome/               ← GNOME environment software
+│   ├── meta-multimedia/          ← Audio and video codecs/libraries
+│   ├── meta-networking/          ← Networking daemons, tools, and libraries
+│   ├── meta-oe/                  ← Core system software, libraries, and Python
+│   ├── meta-perl/                ← Perl language dependencies
+│   ├── meta-python/              ← Additional Python 3 modules
+│   └── meta-xfce/                ← XFCE desktop packages
+│
+└── meta-ros/                     ← ROS/ROS 2 Layer Repo
+    ├── meta-ros-common/          ← Common ROS infrastructure
+    ├── meta-ros1/                ← ROS 1 (Noetic) recipes
+    ├── meta-ros1-noetic/         ← Specific Noetic packages
+    ├── meta-ros2/                ← ROS 2 recipes
+    └── meta-ros2-humble/         ← Specific Humble packages
+```
 
 ---
 

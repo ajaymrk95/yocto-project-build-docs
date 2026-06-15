@@ -1,10 +1,10 @@
 ---
-title: "Elroy vs DevKit"
+title: "Hardware Comparison — Elroy vs DevKit"
 ---
 
-# Elroy Carrier Board vs TX2 DevKit
+# Hardware Comparison — Elroy vs DevKit
 
-<span class="phase-label">Phase 2 · Concepts</span>
+<span class="phase-label">Phase 2 · Page 1 of 7</span>
 
 !!! info "Outline Page"
     This page is an outline only.
@@ -54,4 +54,4 @@ title: "Elroy vs DevKit"
 ---
 
 [← Phase 2 Overview](index.md){ .md-button }
-[DTBs & CFG Files →](dtb-cfg-files.md){ .md-button .md-button--primary }
+[Next: Device Trees & Configuration →](02-device-trees-and-configuration.md){ .md-button .md-button--primary }

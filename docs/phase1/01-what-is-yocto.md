@@ -5,7 +5,7 @@ description: "An introduction to the Yocto Project — what it is, how it works,
 
 # What Is the Yocto Project?
 
-<span class="phase-label">Phase 1 · Page 1 of 10</span>
+<span class="phase-label">Phase 1 · Page 1 of 9</span>
 
 !!! abstract "Page Goal"
     By the end of this page you should understand what the Yocto Project is, what its core components are, and why we chose it to build a custom Linux image for the Jetson TX2i.
@@ -67,7 +67,12 @@ The Layer Model for this Phase is as follows:
 
 ![Layer Model for Phase 1](../assets/layers-phase1.png)
 
+## Why Yocto here
 
+-  Since we are aiming to build a minimal footprint (reduced system size image) and add multiple redundancies from the OS side , Yocto provides the exact control and customization needed to do this.
 
+- Yocto follows the principle of adding every necessary package to the build during the build itself, ensuring finite and strict package/software footprint control.
+
+- Yocto compiles every part of the system image from binaries, allowing us to modify the core system components like the kernel and bootloader, allowing for extreme customization that helps create a system that can have high levels of redundancy.
 
 [Next: Important Links →](02-prerequisite-reading.md){ .md-button .md-button--primary }

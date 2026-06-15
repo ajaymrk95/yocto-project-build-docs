@@ -58,5 +58,5 @@ flowchart TD
 
 ---
 
-[← Machine Conf & Flags](machine-conf-flags.md){ .md-button }
+[← Machine Conf & Flags](06-machine-configuration.md){ .md-button }
 [Phase 3 — PREEMPT_RT →](../phase3/index.md){ .md-button .md-button--primary }

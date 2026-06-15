@@ -1,10 +1,10 @@
 ---
-title: "Build Artifact Modification"
+title: "Modifying Build Artifacts"
 ---
 
-# Build Artifact Modification
+# Modifying Build Artifacts
 
-<span class="phase-label">Phase 2 · Stage 3</span>
+<span class="phase-label">Phase 2 · Page 4 of 7</span>
 
 !!! info "Outline Page"
     This page is an outline only.
@@ -56,5 +56,5 @@ flowchart TD
 
 ---
 
-[← Warrior Dead End](warrior-dead-end.md){ .md-button }
-[ConnectTech Scripts →](connecttech-scripts.md){ .md-button .md-button--primary }
+[← Warrior Branch Dead End](03-warrior-branch-dead-end.md){ .md-button }
+[Next: ConnectTech Flash Scripts →](05-connecttech-flash-scripts.md){ .md-button .md-button--primary }

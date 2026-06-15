@@ -4,7 +4,7 @@ title: "ConnectTech Flash Scripts"
 
 # ConnectTech Flash Scripts
 
-<span class="phase-label">Phase 2 · Stage 4</span>
+<span class="phase-label">Phase 2 · Page 5 of 7</span>
 
 !!! info "Outline Page"
     This page is an outline only.
@@ -56,5 +56,5 @@ flowchart TD
 
 ---
 
-[← Build Artifacts](build-artifacts.md){ .md-button }
-[Machine Conf & Flags →](machine-conf-flags.md){ .md-button .md-button--primary }
+[← Modifying Build Artifacts](04-build-artifact-modification.md){ .md-button }
+[Next: Machine Configuration →](06-machine-configuration.md){ .md-button .md-button--primary }

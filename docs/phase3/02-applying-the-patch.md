@@ -51,5 +51,5 @@ flowchart TD
 
 ---
 
-[← Understanding PREEMPT_RT](preempt-rt-overview.md){ .md-button }
-[Kernel Configuration →](kernel-config.md){ .md-button .md-button--primary }
+[← Understanding PREEMPT_RT](01-understanding-preempt-rt.md){ .md-button }
+[Kernel Configuration →](03-kernel-configuration.md){ .md-button .md-button--primary }

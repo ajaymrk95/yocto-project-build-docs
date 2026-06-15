@@ -5,7 +5,7 @@ description: "Run the official Yocto Quick Build Guide to validate your host set
 
 # Yocto Quick Build 
 
-<span class="phase-label">Phase 1 · Page 4 of 10</span>
+<span class="phase-label">Phase 1 · Page 4 of 9</span>
 
 !!! abstract "Page Goal"
     - Build a `core-image-minimal` to test if the image works, this page also serves as a guide on the basic directory structure and commands of Yocto. 

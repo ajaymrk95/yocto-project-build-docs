@@ -67,12 +67,12 @@ flowchart TD
 
 | Page | Description |
 |---|---|
-| [Understanding PREEMPT_RT](preempt-rt-overview.md) | What PREEMPT_RT is and why it matters for space |
-| [Applying the Patch via Yocto](applying-patch.md) | Kernel recipe modification, SRC_URI, bbappend |
-| [Kernel Configuration](kernel-config.md) | menuconfig, defconfig, RT-specific flags |
-| [Validation & Testing](validation-testing.md) | cyclictest, latency profiling, verification |
+| [Understanding PREEMPT_RT](01-understanding-preempt-rt.md) | What PREEMPT_RT is and why it matters for space |
+| [Applying the Patch via Yocto](02-applying-the-patch.md) | Kernel recipe modification, SRC_URI, bbappend |
+| [Kernel Configuration](03-kernel-configuration.md) | menuconfig, defconfig, RT-specific flags |
+| [Validation & Testing](04-validation-and-testing.md) | cyclictest, latency profiling, verification |
 
 ---
 
 [← Phase 2](../phase2/index.md){ .md-button }
-[Current Work →](../current-work/index.md){ .md-button .md-button--primary }
+[Current Work →](../roadmap.md){ .md-button .md-button--primary }

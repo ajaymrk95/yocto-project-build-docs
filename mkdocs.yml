@@ -95,3 +95,16 @@ plugins:
 nav:
   - Overview: index.md
   - Roadmap: roadmap.md
+  - Phase 1 — Minimal Build:
+    - Overview: phase1/index.md
+    - What Is Yocto?: phase1/01-what-is-yocto.md
+    - Important Links: phase1/02-prerequisite-reading.md
+    - Host Setup: phase1/03-host-setup.md
+    - Quick Build: phase1/04-quick-build.md
+    - Cloning & Branching: phase1/05-cloning-and-branching.md
+    - Adding Layers & bblayers.conf: phase1/06-adding-layers.md
+    - "Deep Dive: local.conf": phase1/07-local-conf.md
+    - Build Process Explained: phase1/08-build-process.md
+    - Build Output & Flashing: phase1/09-navigating-output-and-flashing.md
+  - Phase 2 — Custom Hardware: phase2/index.md
+  - Phase 3 — PREEMPT_RT: phase3/index.md

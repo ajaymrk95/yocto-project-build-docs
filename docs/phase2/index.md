@@ -66,13 +66,13 @@ flowchart TD
 
 | Page | Description |
 |---|---|
-| [Elroy vs DevKit](elroy-vs-devkit.md) | Hardware comparison, form factor, connector differences |
-| [DTBs & CFG Files](dtb-cfg-files.md) | Device tree binaries and flash configuration concepts |
-| [Dead End — Warrior Branch](warrior-dead-end.md) | Why the Warrior branch failed and lessons learned |
-| [Build Artifact Modification](build-artifacts.md) | Mounting ext4, editing extlinux.conf, creating sparse image |
-| [ConnectTech Flash Scripts](connecttech-scripts.md) | CTI BSP scripts, directory setup, flash configuration |
-| [Machine Conf & Flags](machine-conf-flags.md) | jetson-tx2i flag, Elroy board cfg, machine configuration |
-| [Flashing & Testing](flashing-testing.md) | Flash procedure and verification on Elroy hardware |
+| [Elroy vs DevKit](01-hardware-comparison.md) | Hardware comparison, form factor, connector differences |
+| [DTBs & CFG Files](02-device-trees-and-configuration.md) | Device tree binaries and flash configuration concepts |
+| [Dead End — Warrior Branch](03-warrior-branch-dead-end.md) | Why the Warrior branch failed and lessons learned |
+| [Build Artifact Modification](04-build-artifact-modification.md) | Mounting ext4, editing extlinux.conf, creating sparse image |
+| [ConnectTech Flash Scripts](05-connecttech-flash-scripts.md) | CTI BSP scripts, directory setup, flash configuration |
+| [Machine Conf & Flags](06-machine-configuration.md) | jetson-tx2i flag, Elroy board cfg, machine configuration |
+| [Flashing & Testing](07-flashing-and-verification.md) | Flash procedure and verification on Elroy hardware |
 
 ---
 
