@@ -15,6 +15,15 @@ description: "Adapting the Yocto build for the Jetson TX2i on the Connect Tech E
 
 ---
 
+## Why a custom carrier board?
+
+- 
+
+---
+
+## Adapting from the Yocto Perspective
+
+
 ## Phase Process Overview
 
 ```mermaid
@@ -59,7 +68,6 @@ flowchart TD
 
     TEST --> DONE(["Phase 2 Complete"])
 ```
-
 ---
 
 ## Subpages
@@ -75,6 +83,8 @@ flowchart TD
 | [Flashing & Testing](07-flashing-and-verification.md) | Flash procedure and verification on Elroy hardware |
 
 ---
+
+
 
 [← Phase 1](../phase1/index.md){ .md-button }
 [Next: Phase 3 →](../phase3/index.md){ .md-button .md-button--primary }

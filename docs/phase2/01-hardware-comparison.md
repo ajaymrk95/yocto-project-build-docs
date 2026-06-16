@@ -25,31 +25,7 @@ title: "Hardware Comparison — Elroy vs DevKit"
 - <!-- TODO: Available interfaces -->
 - <!-- TODO: Target applications (embedded, rugged, space) -->
 
-### Key Differences
-
-- <!-- TODO: Pin mapping differences -->
-- <!-- TODO: Connector differences -->
-- <!-- TODO: Power delivery differences -->
-- <!-- TODO: Available I/O -->
-
-### Why This Matters for Flashing
-
-- <!-- TODO: DTB differences -->
-- <!-- TODO: Flash configuration differences -->
-- <!-- TODO: Bootloader behavior differences -->
-
----
-
-## Comparison Table
-
-| Feature | TX2 DevKit | Elroy Carrier |
-|---|---|---|
-| Form Factor | <!-- TODO --> | <!-- TODO --> |
-| USB Ports | <!-- TODO --> | <!-- TODO --> |
-| Ethernet | <!-- TODO --> | <!-- TODO --> |
-| Display | <!-- TODO --> | <!-- TODO --> |
-| GPIO | <!-- TODO --> | <!-- TODO --> |
-| DTB Required | <!-- TODO --> | <!-- TODO --> |
+### Understanding Changes in Kernel Configuration, DTB in boot process and Flashing Changes
 
 ---
 
