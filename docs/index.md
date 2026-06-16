@@ -66,7 +66,7 @@ The **Connect Tech Elroy** is a compact, rugged carrier board designed specifica
 
 - [x] Reduced software footprint — target system image < 5 GB on the Jetson TX2i + Devkit.
 - [x] ROS (Robot Operating System) — core packages for robotic payload control
-- [x] Adapted the System Image for the Jetson TX2i + Devkit. 
+- [x] Adapted the System Image for the Jetson TX2i + Connect Tech Elroy Carrier Board. 
 - [x] PREEMPT_RT kernel patch — deterministic real-time scheduling
 - [ ] A/B partition redundancy — graceful recovery from boot failures
 - [ ] RAM-based filesystem — protection against flash corruption under radiation
