@@ -4,7 +4,7 @@ title: "Machine Conf & Flags"
 
 # Machine Configuration & Flags
 
-<span class="phase-label">Phase 2 · Stage 4</span>
+<span class="phase-label">Phase 2 · Page 5 of 6</span>
 
 !!! info "Outline Page"
     This page is an outline only.
@@ -50,5 +50,5 @@ flowchart LR
 
 ---
 
-[← ConnectTech Scripts](05-connecttech-flash-scripts.md){ .md-button }
-[Flashing & Testing →](07-flashing-and-verification.md){ .md-button .md-button--primary }
+[← ConnectTech Scripts](04-connecttech-flash-scripts.md){ .md-button }
+[Flashing & Testing →](06-flashing-and-verification.md){ .md-button .md-button--primary }

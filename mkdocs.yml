@@ -108,11 +108,10 @@ nav:
     - Build Output & Flashing: phase1/09-navigating-output-and-flashing.md
   - Phase 2 — Custom Hardware:
     - Overview: phase2/index.md
-    - Elroy vs DevKit: phase2/01-hardware-comparison.md
-    - DTBs & CFG Files: phase2/02-device-trees-and-configuration.md
-    - "Dead End: Warrior Branch": phase2/03-warrior-branch-dead-end.md
-    - Build Artifact Modification: phase2/04-build-artifact-modification.md
-    - ConnectTech Flash Scripts: phase2/05-connecttech-flash-scripts.md
-    - Machine Conf & Flags: phase2/06-machine-configuration.md
-    - Flashing & Verification: phase2/07-flashing-and-verification.md
+    - "Device Trees, DTBs & Configuration": phase2/01-device-trees-and-configuration.md
+    - "Warrior Branch & Custom Machine Setup": phase2/02-warrior-branch-dead-end.md
+    - Build Artifact Modification: phase2/03-build-artifact-modification.md
+    - ConnectTech Flash Scripts: phase2/04-connecttech-flash-scripts.md
+    - Machine Conf & Flags: phase2/05-machine-configuration.md
+    - Flashing & Verification: phase2/06-flashing-and-verification.md
   - Phase 3 — PREEMPT_RT: phase3/index.md

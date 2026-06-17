@@ -4,7 +4,7 @@ title: "Flashing & Testing"
 
 # Flashing & Testing on Elroy
 
-<span class="phase-label">Phase 2 · Stage 5</span>
+<span class="phase-label">Phase 2 · Page 6 of 6</span>
 
 !!! info "Outline Page"
     This page is an outline only.
@@ -58,5 +58,5 @@ flowchart TD
 
 ---
 
-[← Machine Conf & Flags](06-machine-configuration.md){ .md-button }
+[← Machine Conf & Flags](05-machine-configuration.md){ .md-button }
 [Phase 3 — PREEMPT_RT →](../phase3/index.md){ .md-button .md-button--primary }

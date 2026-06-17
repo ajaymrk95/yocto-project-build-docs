@@ -4,7 +4,7 @@ title: "Modifying Build Artifacts"
 
 # Modifying Build Artifacts
 
-<span class="phase-label">Phase 2 · Page 4 of 7</span>
+<span class="phase-label">Phase 2 · Page 3 of 6</span>
 
 !!! info "Outline Page"
     This page is an outline only.
@@ -56,5 +56,5 @@ flowchart TD
 
 ---
 
-[← Warrior Branch Dead End](03-warrior-branch-dead-end.md){ .md-button }
-[Next: ConnectTech Flash Scripts →](05-connecttech-flash-scripts.md){ .md-button .md-button--primary }
+[← Warrior Branch Dead End](02-warrior-branch-dead-end.md){ .md-button }
+[Next: ConnectTech Flash Scripts →](04-connecttech-flash-scripts.md){ .md-button .md-button--primary }
