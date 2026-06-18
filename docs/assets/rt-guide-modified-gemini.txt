@@ -1,0 +1,125 @@
+Step 1: Install Required Packages
+Bash
+
+sudo apt-get update
+sudo apt-get install -y libncurses5-dev build-essential bc lbzip2 qemu-user-static python checkpolicy libssl-dev
+
+Step 2: Create Folder
+Bash
+
+mkdir -p /home/nvidia/rt_workspace
+cd /home/nvidia/rt_workspace
+
+Step 3: Download Required Files
+Bash
+
+# L4T Jetson Driver Package (R32.7.6)
+wget -O jetson_linux_r32.7.6_aarch64.tbz2 https://developer.nvidia.com/downloads/embedded/l4t/r32_release_v7.6/t186/jetson_linux_r32.7.6_aarch64.tbz2
+
+# L4T Sample Root File System (R32.7.6)
+wget -O tegra_linux_sample-root-filesystem_r32.7.6_aarch64.tbz2 https://developer.nvidia.com/downloads/embedded/l4t/r32_release_v7.6/t186/tegra_linux_sample-root-filesystem_r32.7.6_aarch64.tbz2
+
+# L4T Sources (R32.7.6 for T186 Platforms)
+wget -O public_sources.tbz2 https://developer.nvidia.com/downloads/embedded/l4t/r32_release_v7.6/sources/t186/public_sources.tbz2
+
+# FIXED: GCC Tool Chain for 64-bit BSP (Directly from Nvidia Asset Mirror)
+wget -O gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz https://developer.nvidia.com/embedded/dlc/l4t-gcc-7-3-1-toolchain-64-bit
+
+Step 4: Extract Files
+Bash
+
+cd /home/nvidia/rt_workspace
+
+# Unpack L4T Base BSP
+sudo tar xpf jetson_linux_r32.7.6_aarch64.tbz2
+
+# Unpack Sample Root Filesystem directly into the generated structure
+cd Linux_for_Tegra/rootfs/
+sudo tar xpf ../../tegra_linux_sample-root-filesystem_r32.7.6_aarch64.tbz2
+
+# Drop back out to the main workspace root
+cd /home/nvidia/rt_workspace/
+tar -xvf gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
+sudo tar -xjf public_sources.tbz2
+
+# Isolate and extract kernel core archive
+cd Linux_for_Tegra/source/public/
+tar -xjf kernel_src.tbz2
+
+# Move the clean kernel source folder straight up to your workspace root
+mv kernel /home/nvidia/rt_workspace/
+
+Step 5: Apply Real-Time Patches
+Bash
+
+cd /home/nvidia/rt_workspace/kernel/kernel-4.9/
+./scripts/rt-patch.sh apply-patches
+
+Step 6: Configure and Compile the Kernel
+Bash
+
+cd /home/nvidia/rt_workspace/kernel/kernel-4.9/
+
+# Initialize target output directory for build clutter
+TEGRA_KERNEL_OUT=/home/nvidia/rt_workspace/jetson_tx2_kernel
+mkdir -p $TEGRA_KERNEL_OUT
+
+# Map cross compilation tool paths explicitly
+export CROSS_COMPILE=/home/nvidia/rt_workspace/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
+
+# Generate standard configuration structure
+make ARCH=arm64 O=$TEGRA_KERNEL_OUT tegra_defconfig
+make ARCH=arm64 O=$TEGRA_KERNEL_OUT menuconfig
+
+Modify These Options in the Configuration UI:
+
+    General setup → Timer subsystem → Timer tick handling → Full dynticks system (tickless)
+
+    Kernel Features → Preemption Model → Fully Preemptible Kernel (RT)
+
+    Kernel Features → Timer frequency → 1000 HZ
+
+    CPU Power Management → CPU idle → ARM CPU Idle Drivers → CPU Idle Driver for NVIDIA Tegra 18x SoCs (Ensure this stays ticked with [*]).
+
+Save and select Exit to trigger compilation:
+Bash
+
+make ARCH=arm64 O=$TEGRA_KERNEL_OUT -j$(nproc)
+
+Step 7: Inject RT Assets Safely Into Your Existing Connectech Folder
+Bash
+
+# 1. Overwrite the non-RT kernel Image in your Connectech directory with your new RT image
+sudo cp /home/nvidia/rt_workspace/jetson_tx2_kernel/arch/arm64/boot/Image /home/nvidia/cti_elroy_flash/Linux_for_Tegra/kernel/Image
+
+# 2. Extract and mount the new RT kernel modules directly to your existing Connectech rootfs
+sudo make ARCH=arm64 O=/home/nvidia/rt_workspace/jetson_tx2_kernel modules_install INSTALL_MOD_PATH=/home/nvidia/cti_elroy_flash/Linux_for_Tegra/rootfs/
+
+# 3. Enter your active flashing rootfs to create fresh kernel supplements archives
+cd /home/nvidia/cti_elroy_flash/Linux_for_Tegra/rootfs/
+sudo tar --owner root --group root -cjf kernel_supplements.tbz2 lib/modules
+
+# 4. Move that supplements archive back up to where flash.sh parses kernel packages
+sudo mv kernel_supplements.tbz2 ../kernel/
+
+(Note: We deliberately do not copy anything from the dts outputs to avoid breaking the custom serial/USB layout configuration built into your Elroy flash tree).
+Step 8: Apply Binaries
+Bash
+
+cd /home/nvidia/cti_elroy_flash/Linux_for_Tegra/
+sudo ./apply_binaries.sh
+
+Step 9: Flash the Jetson TX2i
+
+    Connect a Micro-USB cable to the physical OTG port on your Connectech Elroy Carrier Board.
+
+    Put the board into Force Recovery mode (Hold REC, pulse RST, release REC).
+
+    Validate connection using lsusb (Ensure 0955:7c18 NVIDIA Corp is present).
+
+    Flash the target while explicitly targeting the industrial TX2i variant parameters:
+
+Bash
+
+cd /home/nvidia/cti_elroy_flash/Linux_for_Tegra/
+sudo ./flash.sh jetson-tx2-devkit-tx2i mmcblk0p1            

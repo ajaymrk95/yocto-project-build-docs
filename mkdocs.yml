@@ -95,6 +95,7 @@ plugins:
 nav:
   - Overview: index.md
   - Roadmap: roadmap.md
+  - Latest Trends: latest-trends.md
   - Phase 1 — Minimal Build:
     - Overview: phase1/index.md
     - What Is Yocto?: phase1/01-what-is-yocto.md
@@ -113,4 +114,13 @@ nav:
     - "Executing the Build & Build Problems": phase2/03-executing-the-build.md
     - Build Artifact Modification: phase2/04-build-artifact-modification.md
     - "Setting up NVIDIA Flashing Directory, ConnectTech Utilities, Machine Confs & Flashing": phase2/05-connecttech-flash-scripts.md
-  - Phase 3 — PREEMPT_RT: phase3/index.md
+  - Phase 3 — PREEMPT_RT:
+    - Overview: phase3/index.md
+    - Native RT Patching: phase3/01-native-rt-patching.md
+    - Yocto RT Integration: phase3/02-yocto-rt-integration.md
+    - Real-Time Scheduling Concepts: phase3/03-real-time-scheduling.md
+    - OSADL Latency Testing: phase3/04-osadl-latency-testing.md
+    - Hardware Robotics Interfacing: phase3/05-hardware-robotics-interfacing.md
+    - Results & High-Resolution Timers: phase3/06-results-and-timers.md
+  - Phase 4 — A/B Redundancy: phase4/index.md
+
