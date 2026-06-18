@@ -5,7 +5,7 @@ description: "Understanding Device Tree file formats (DTS, DTSI, DTB), how they 
 
 # Device Trees, DTBs & Configuration Files
 
-<span class="phase-label">Phase 2 · Page 1 of 6</span>
+<span class="phase-label">Phase 2 · Page 1 of 5</span>
 
 !!! abstract "Page Goal"
     Understand the three Device Tree file formats (DTS, DTSI, DTB), how they describe hardware to the Linux kernel, how they are compiled and deployed, and which files change when adapting the Yocto build from the NVIDIA DevKit to the ConnectTech Elroy carrier board.
@@ -114,4 +114,4 @@ A crucial aspect of carrier board adaptation is configuring the pinmux and power
 ---
 
 [← Phase 2 Overview](index.md){ .md-button }
-[Next: Warrior Branch Dead-End →](02-warrior-branch-dead-end.md){ .md-button .md-button--primary }
+[Next: Custom Machine Setup →](02-custom-machine-setup.md){ .md-button .md-button--primary }

@@ -85,11 +85,10 @@ flowchart TD
 | # | Page | Description |
 |---|---|---|
 | 1 | [Device Trees, DTBs & Configuration Files](01-device-trees-and-configuration.md) | Understanding DTS/DTSI/DTB file formats, the P3489 DevKit default files, ConnectTech Elroy (ASG002) changes, and CFG files. |
-| 2 | [Warrior Branch Dead-End & Custom Machine Setup](02-warrior-branch-dead-end.md) | A detailed review of the Warrior branch attempt, build errors, and the ideal Yocto machine setup configuration. |
-| 3 | [Build Artifact Modification](03-build-artifact-modification.md) | Mounting the ext4 rootfs, editing extlinux.conf for the Elroy, and creating a sparse image. |
-| 4 | [ConnectTech Flash Scripts](04-connecttech-flash-scripts.md) | Setting up the CTI BSP, understanding the Linux_for_Tegra directory, and configuring flash scripts. |
-| 5 | [Machine Configuration & Flags](05-machine-configuration.md) | Machine conf files, jetson-tx2i vs Elroy target, and selecting the correct CFG files. |
-| 6 | [Flashing & Verification](06-flashing-and-verification.md) | End-to-end flash procedure on Elroy hardware and post-flash system verification. |
+| 2 | [Custom Machine Setup](02-custom-machine-setup.md) | A detailed review of the Warrior branch attempt, build errors, and the ideal Yocto machine setup configuration. |
+| 3 | [Executing the Build & Build Problems](03-executing-the-build.md) | Details the process of executing the custom machine build on the Warrior branch, the build errors encountered, and the decision to revert to Kirkstone. |
+| 4 | [Build Artifact Modification](04-build-artifact-modification.md) | Mounting the ext4 rootfs, editing extlinux.conf for the Elroy, and creating a sparse image. |
+| 5 | [Setting up NVIDIA Flashing Directory, ConnectTech Utilities, Machine Confs & Flashing](05-connecttech-flash-scripts.md) | Setting up the flashing directory, overlaying ConnectTech utilities, selecting machine configurations, and executing/verifying the flash. |
 
 ---
 
