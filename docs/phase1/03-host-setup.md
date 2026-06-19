@@ -37,11 +37,11 @@ description: "Setting up your Linux host machine with all the dependencies, disk
 
 Make sure your Build Host meets the following requirements:
 
-- At least 90 Gbytes of free disk space, though much more will help to run multiple builds and increase performance by reusing build artifacts.
+- At least 90 Gbytes of free disk space, though much more will help to run multiple builds and increase performance by reusing build artifacts. Recommended 500GB + storage space to run large builds.
 
 - At least 8 Gbytes of RAM, though a modern build host with as much RAM and as many CPU cores as possible is strongly recommended to maximize build performance.
 
-- Runs a supported Linux distribution (i.e. recent releases of Fedora, openSUSE, CentOS, Debian, or Ubuntu). For a list of Linux distributions that support the Yocto Project, see the Supported Linux Distributions section in the Yocto Project Reference Manual. For detailed information on preparing your build host, see the Preparing the Build Host section in the Yocto Project Development Tasks Manual.
+- Runs a supported Linux distribution (i.e. recent releases of Fedora, openSUSE, CentOS, Debian, or Ubuntu). For a list of Linux distributions that support the Yocto Project, see the Supported Linux Distributions section in the Yocto Project Reference Manual. For detailed information on preparing your build host, see the Preparing the Build Host section in the Yocto Project Development Tasks Manual. The testing setup was a 22.04 Ubuntu LTS.
 
 - Ensure that the following utilities have these minimum version numbers:
 

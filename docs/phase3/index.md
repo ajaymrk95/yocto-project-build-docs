@@ -5,56 +5,46 @@ description: "Introduction to PREEMPT_RT real-time kernel patching for the Jetso
 
 # Phase 3 — PREEMPT_RT Real-Time Integration
 
-<span class="phase-label">Real-Time · Week   4-5</span>
+<span class="phase-label">Real-Time · Week 4-5</span>
 
 !!! abstract "Goal"
-    - Understand the core concepts of the `PREEMPT_RT` patch and why deterministic worst-case scheduling latency is critical for space systems.
+    - Understand the core concepts of the `PREEMPT_RT` patch and why deterministic worst-case scheduling latency is much more important for space systems.
     - Compare and implement two separate paths for real-time kernel integration: **Native host compilation** within NVIDIA's L4T flashing folder and **Yocto-based Kirkstone recipe integration**.
-    - Explore real-time thread scheduling theory (`SCHED_FIFO` vs. `SCHED_OTHER`) and validate latency improvements using cyclictest under load.
-    - Implement a hardware-level robotics testing loop (Ethernet-based Kinova arm control) to prove system stability under a strict 4ms hard deadline.
-
----
+    - Explore real-time thread scheduling (`SCHED_FIFO` vs. `SCHED_OTHER`) and validate latency improvements using industry standard tests under heavy CPU loads.
+    - Implement a practical application level test - achieving hard-bounded latency for an actuator.
 
 ## 1. What is PREEMPT_RT & Why is it Critical for Space?
 
-In a standard Linux kernel, when a thread is running inside kernel space (executing a system call or handling a hardware interrupt), it cannot be interrupted or preempted by a higher-priority user-space thread. This behavior introduces unpredictable delays (jitter) in scheduling, meaning a critical thread might miss its execution window.
+In a standard Linux kernel, when a thread is running inside kernel space (executing a system call or handling a hardware interrupt), it cannot be interrupted or preempted by a user-space thread or application level thread, even if scheduled with higher priority. This behavior introduces unpredictable delays (jitter) in scheduling cases where a thread has to complete its execution based on a deterministic deadline, regardless of background or competing processes.
 
-The **`PREEMPT_RT`** patch modifies the kernel source to make almost all sections of kernel code fully preemptible. It achieves this by:
+By default Linux is not a real time operating system. The **`PREEMPT_RT`** patch modifies the kernel source to make almost all sections of kernel code fully preemptible,giving Linux a near RTOS (Real Time Operating System) Capability. It achieves this by:
 1. Converting spinlocks into sleeping mutexes (which can be preempted).
-2. Forcing hardware interrupt handlers (ISRs) to run as preemptible kernel threads.
+2. Forcing hardware interrupt handlers (Interrupt Service Routines) to run as preemptible kernel threads.
 3. Implementing priority inheritance to prevent priority inversion bugs.
 
-```text
-Standard Kernel:
-[ High-Pri User Thread ] ========> [ Wait... ] ==================> [ Run ]
-[ Low-Pri System Call ]  ===========> [ Non-Preemptible Kernel Code ]
-
-PREEMPT_RT Kernel:
-[ High-Pri User Thread ] ========> [ Preempt! ] ===> [ Run ]
-[ Low-Pri System Call ]  ===========> [ Preempted ] ... [ Resume ]
-```
 
 ### Determinism in Space Payloads
-For spacecraft control systems, sensor fusion engines (GNC - Guidance, Navigation, and Control), and robotic manipulators, timing is everything. Missing a control loop deadline by even a few milliseconds can lead to:
-- Thruster firing misalignment during orbital maneuvers.
-- Instability in high-rate control loops, causing mechanical damage.
-- Lost frames or sync errors in sensor telemetry.
 
-By applying `PREEMPT_RT`, we guarantee a **deterministic upper bound on the worst-case latency time**, ensuring critical code executes exactly when required.
-
+- By applying PREEMPT_RT, we guarantee a deterministic upper bound on the worst-case latency time, ensuring critical code executes exactly when required. 
+- This can have several applications in space for example, a precise timed payload movement, internal parts or actuator movements, on-board robotics movements, collision detection, and timed telemetry and logging based on stringent requirements (at the millisecond level).    
 ---
 
 ## 2. Two Approaches to Real-Time Integration
 
-This phase documents two separate implementation pathways to provide developers with flexibility during development and deployment:
+This phase documents two separate implementation pathways to provide developers with flexibility to add a Real Time Kernel, both from native L4T and the Yocto perspective:
 
 ### Approach A: Native L4T Flashing Directory Integration
-This approach compiles the RT kernel natively on an Ubuntu 18.04 host system, applying NVIDIA's `rt-patch.sh` script to the L4T source package. The compiled kernel `Image` and modules are then copied directly into the `Linux_for_Tegra/` flashing folder.
-- **Best for**: Rapid hardware verification, direct debugging, and developers matching standard NVIDIA-based development workflows.
+- This approach compiles the RT kernel natively on an Ubuntu 18.04 host system, applying NVIDIA's `rt-patch.sh` script to the L4T source package. The compiled kernel `Image` and modules are then copied directly into the `Linux_for_Tegra/` flashing folder.
+- **Stable**: This approach is more stable, providing complete control over kernel compilation, feature selection, and settings. This allows you to manually configure power management options and adjust the Kernel Tick Frequency Timer (from 250 Hz / 4 ms up to a maximum of 1000 Hz / 1 ms).
+- **Direct Flashing Integration**: The kernel is pulled from the `/Linux_for_Tegra/kernel` folder, and the RT-patch kernel modules are integrated directly during the flashing phase itself.
+- **Clear References**: Offers a user-friendly implementation path with well-documented, guided examples available online, and clean integration with NVIDIA's official folder structure and sample ROOTFS.
+
 
 ### Approach B: Yocto-Based BSP Build Integration
-This approach integrates the PREEMPT_RT patch directly into the Yocto Kirkstone build system. By adding a recipe append (`.bbappend`) to the kernel recipe, the build system automatically fetches, patches, and configures the RT kernel, outputting a reproducible real-time image.
-- **Best for**: Production builds, continuous integration (CI/CD), and maintaining a clean, version-controlled repository.
+This approach integrates the PREEMPT_RT patch directly into the Yocto Kirkstone build system. By adding a recipe append (`.bbappend`) to the kernel recipe, the build system automatically fetches, patches, and configures the RT kernel, outputting a reproducible image, with a realtime kernel.
+- **Yocto Model Integration**: Ties directly into the Yocto framework, using a layer-based configuration. It extends the BSP Layers by adding a custom meta-layer, ensuring changes do not impact cloned layers.
+- **File Structure & Naming Caveats**: Covers specific Yocto structure requirements and strict naming conventions for `.bbappend` files to successfully override and patch upstream recipes.
+- **Full Build Customizability**: Establishes Yocto's capacity to customize every component of the build process, in this case the kernel and its real time modules.
 
 ---
 
@@ -70,10 +60,10 @@ flowchart TD
     C --> D["Apply rt-patch.sh\nConfigure menuconfig"]
     D --> E["Compile & Copy to\nLinux_for_Tegra/"]
     
-    B -->|"Yocto Path"| F["Add Yocto bbappend\n& RT Kernel Patch"]
-    F --> G["bitbake -c clean linux-tegra\nBuild RT Image"]
+    B -->|"Yocto Path"| F["Configure local.conf\n& Clean Kernel States"]
+    F --> G["bitbake core-image-sato\nBuild RT Image"]
     
-    E --> H["Flash RT Kernel\nto eMMC"]
+    E --> H["Flash Image with RT Kernel\nto the TX2i"]
     G --> H
     
     H --> I["Test 1: Latency Tests\n(cyclictest & stress-ng)"]

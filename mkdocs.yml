@@ -120,7 +120,8 @@ nav:
     - Yocto RT Integration: phase3/02-yocto-rt-integration.md
     - Real-Time Scheduling Concepts: phase3/03-real-time-scheduling.md
     - OSADL Latency Testing: phase3/04-osadl-latency-testing.md
-    - Hardware Robotics Interfacing: phase3/05-hardware-robotics-interfacing.md
-    - Results & High-Resolution Timers: phase3/06-results-and-timers.md
-  - Phase 4 — A/B Redundancy: phase4/index.md
-
+    - Hardware Interfacing & Results: phase3/05-hardware-robotics-interfacing.md
+  - Phase 4 — A/B Redundancy:
+    - Overview: phase4/index.md
+    - Bootloader & RootFS Redundancy: phase4/01-bootloader-rootfs-redundancy.md
+    - Yocto Integration Outline & Phase Conclusion: phase4/02-yocto-integration-outline.md

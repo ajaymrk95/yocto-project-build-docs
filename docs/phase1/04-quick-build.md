@@ -727,20 +727,44 @@ For information on using the `bitbake` command, see the [BitBake section in the 
 
     On Linux, the kernel limits how many file changes a user can monitor simultaneously using `inotify`. BitBake tracks a large number of files during the build, and the default limit is often too low, causing the build to fail with an error like:
 
-    ```
-    NOTE: The number of inotify watches needed to monitor all the source directories is greater than the current max number of watches.
+    ```text
+    Traceback (most recent call last):
+      File "/home/raigyocto/yocto/poky/bitbake/bin/bitbake", line 36, in <module>
+        sys.exit(bitbake_main(BitBakeConfigParameters(sys.argv),
+      File "/home/raigyocto/yocto/poky/bitbake/lib/bb/main.py", line 378, in bitbake_main
+        return ui_module.main(server_connection.connection, server_connection.events,
+      File "/home/raigyocto/yocto/poky/bitbake/lib/bb/ui/knotty.py", line 415, in main
+        params.updateToServer(server, os.environ.copy())
+      File "/home/raigyocto/yocto/poky/bitbake/lib/bb/cookerdata.py", line 75, in updateToServer
+        raise Exception("Unable to update the server configuration with local parameters: %s" % error)
+    Exception: Unable to update the server configuration with local parameters: Traceback (most recent call last):
+      File "/home/raigyocto/yocto/poky/bitbake/lib/bb/command.py", line 90, in runCommand
+        result = command_method(self, commandline)
+      File "/home/raigyocto/yocto/poky/bitbake/lib/bb/command.py", line 286, in updateConfig
+        command.cooker.updateConfigOpts(options, environment, cmdline)
+      File "/home/raigyocto/yocto/poky/bitbake/lib/bb/cooker.py", line 535, in updateConfigOpts
+        self.reset()
+      File "/home/raigyocto/yocto/poky/bitbake/lib/bb/cooker.py", line 1774, in reset
+        self.initConfigurationData()
+      File "/home/raigyocto/yocto/poky/bitbake/lib/bb/cooker.py", line 404, in initConfigurationData
+        self.add_filewatch(mc.getVar("__base_depends", False), self.configwatcher)
+      File "/home/raigyocto/yocto/poky/bitbake/lib/bb/cooker.py", line 313, in add_filewatch
+        watcher.add_watch(f, self.watchmask, quiet=False)
+      File "/home/raigyocto/yocto/poky/bitbake/lib/pyinotify.py", line 1888, in add_watch
+        raise WatchManagerError(err, ret_)
+    pyinotify.WatchManagerError: add_watch: cannot watch /home/raigyocto/yocto/poky/build/conf WD=-1, Errno=No space left on device (ENOSPC)
     ```
 
     **Fix — increase the watch limit temporarily:**
 
     ```bash
-    sudo sysctl fs.inotify.max_user_watches=65536
+    sudo sysctl fs.inotify.max_user_watches=500000
     ```
 
     **Fix — make it permanent (survives reboot):**
 
     ```bash
-    echo "fs.inotify.max_user_watches=65536" | sudo tee -a /etc/sysctl.conf
+    echo "fs.inotify.max_user_watches=5000000" | sudo tee -a /etc/sysctl.conf
     sudo sysctl -p
     ```
 

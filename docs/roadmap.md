@@ -19,9 +19,9 @@ This roadmap guides you through the entire development lifecycle of the Space Op
 | 1–2 | Phase 0 | Literature review and redundancy concepts | Complete |
 | 2–3 | Phase 1 | Minimal Yocto build for TX2i Device + TX2 DevKit Carrier Board | Complete |
 | 3–4 | Phase 2 | Adaptation for TX2i + Elroy carrier board | Complete |
-| 4   | Phase 3 (Current)| Applying the PREEMPT_RT kernel patch to Phase 2, RT testing,| Complete |
-| 5-6 | Phase 4 | apt support for target devices, A/B partitioning | Planned |
-| 5-6+ | Phase 5 | TMR bootloader, RAM filesystem, image minimization | Planned |
+| 4   | Phase 3 | Applying the PREEMPT_RT kernel patch to Phase 2, RT testing | Complete |
+| 4-5 | Phase 4 (Current) | A/B partitioning redundancy and bootloader failover config | In Progress |
+| 5–6 | Phase 5 | TMR bootloader, RAM filesystem, image minimization | Planned |
 
 ---
 
@@ -45,15 +45,19 @@ flowchart TD
         D0["Locate RT Patch"] --> D1["Integrate via\nYocto Recipe"] --> D2["Configure Kernel\nFlags"] --> D3["Build & Flash\nRT Image"] --> D4["Validate with\ncyclictest"]
     end
 
+    subgraph P4["Phase 4 — A/B Redundancy"]
+        E0["Modify smd_info.cfg"] --> E1["Set ROOTFS_AB=1"] --> E2["Flash target via cti-flash.sh"] --> E3["Trigger Kernel Panic"] --> E4["Verify Fallback"]
+    end
+
     subgraph CW["Current & Future Work"]
-        E0["RT Latency Testing"] --> E1["Local apt Server"] --> E2["A/B Partition\nRedundancy"]
-        E2 --> E3["TMR Bootloader"] --> E4["RAM-Based\nFilesystem"] --> E5["Image\nMinimization"]
+        F1["Local apt Server"] --> F2["TMR Bootloader"] --> F3["RAM-Based\nFilesystem"] --> F4["Image\nMinimization"]
     end
 
     A2 --> B0
     B4 --> C0
     C4 --> D0
     D4 --> E0
+    E4 --> F1
 ```
 
 ---
@@ -108,6 +112,18 @@ Apply the PREEMPT_RT real-time patch to the Linux kernel through the Yocto build
 **Key Topics:** PREEMPT_RT patch series, kernel menuconfig, Yocto kernel recipes, cyclictest, latency profiling.
 
 → [Enter Phase 3](phase3/index.md)
+
+---
+
+### Phase 4 — A/B Partition Redundancy
+
+<span class="phase-label">Redundancy · Weeks 4-5</span>
+
+Configure A/B hardware and software redundancy on the Jetson TX2i, including bootloader-level failover parameters (`smd_info.cfg`), RootFS slot allocations (`ROOTFS_AB=1`), and serial boot console recovery validation.
+
+**Key Topics:** Slot Metadata Database (SMD), RootFS partition switching, Connect Tech flashing wrappers, kernel panic fallback loop.
+
+→ [Enter Phase 4](phase4/index.md)
 
 ---
 

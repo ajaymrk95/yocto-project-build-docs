@@ -5,12 +5,11 @@ description: "Detailed analysis of Linux scheduling classes (SCHED_OTHER, SCHED_
 
 # Real-Time Scheduling Concepts
 
-<span class="phase-label">Phase 3 · Page 3 of 6</span>
+<span class="phase-label">Phase 3 · Page 3 of 5</span>
 
 !!! abstract "Page Goal"
     - Introduce Linux scheduling classes and contrast timesharing (`SCHED_OTHER`) with real-time (`SCHED_FIFO`, `SCHED_RR`) policies.
-    - Detail the mechanics of Priority Inversion and how the `PREEMPT_RT` kernel resolves it using Priority Inheritance.
-    - Provide C++ code reference blocks showing how to configure real-time priorities natively.
+    - Detail the mechanics of Priority Inversion and how the `PREEMPT_RT` kernel resolves it using Priority Inheritance..
 
 ---
 
@@ -40,9 +39,51 @@ Standard processes use nice values ranging from `-20` (highest) to `19` (lowest)
    (SCHED_OTHER / CFS)                 (SCHED_FIFO / SCHED_RR)
 ```
 
+## 2. How the Linux Kernel Manages Task Priorities Internally
+
+While user-space interfaces like `nice` and POSIX scheduling configurations present simple scales, the Linux kernel manages task priorities internally using multiple variables within the `task_struct` structure. Understanding this internal mapping is crucial for real-time developers debugging scheduling behavior.
+
+### Internal Priority Variables
+
+The kernel evaluates priority using four key variables:
+1. **`static_prio`**: The base priority of a non-real-time task, derived from its nice value. It is calculated as:
+   `static_prio = 120 + nice`
+   Since nice values range from `-20` to `19`, the internal `static_prio` range is **100 to 139** (with 100 being the highest priority).
+2. **`rt_priority`**: The real-time priority configured by user-space applications (ranging from `1` to `99`).
+3. **`normal_prio`**: The standard priority a task is expected to have based on its scheduling class, before any temporary runtime boosts:
+   * For **real-time tasks**, it maps user-space priority to the kernel scale:
+     `normal_prio = MAX_RT_PRIO - 1 - rt_priority`
+     Where `MAX_RT_PRIO = 100`. Thus, a user-space RT priority of `99` (highest) maps to an internal `normal_prio` of `0`, and an RT priority of `1` (lowest) maps to `98`.
+   * For **normal tasks**, it is simply equal to `static_prio` (range 100 to 139).
+4. **`prio`**: The **effective priority** used by the scheduler to select the next running task. It is typically equal to `normal_prio`. However, if the task is temporarily boosted (for instance, via Priority Inheritance when a high-priority thread blocks on a lock it holds), `prio` is set to the higher priority of the waiting task without modifying the task's base `normal_prio` or `static_prio` values.
+
+```text
+Kernel Internal Priority Scale (0 to 139):
+┌───────────────────────────────┬───────────────────────────────┐
+│     Real-Time (0 - 99)        │       Normal (100 - 139)      │
+├───────────────┬───────────────┼───────────────┬───────────────┤
+│ User RT: 99   │ User RT: 1    │ Nice: -20     │ Nice: 19      │
+│ Kernel: 0     │ Kernel: 98    │ Kernel: 100   │ Kernel: 139   │
+└───────────────┴───────────────┴───────────────┴───────────────┘
+  ▲                                                           ▲
+  Highest Priority                                            Lowest Priority
+```
+
+### User-Space Visualization: `top` and `ps`
+
+When using tools like `top` or `ps`, the priority columns do not display internal kernel variables directly. Instead, they transform them for readability:
+* **In `top` (`PR` column)**:
+  * For **normal processes**, `PR` is calculated as `prio - 100`, displaying values from `0` (high) to `39` (low) with `20` as the default.
+  * For **real-time processes**, `PR` is displayed as `rt` or as a negative number (e.g., `-2` to `-100`), representing the high scheduling urgency below internal value 100.
+* **In `ps` (`PRI` column)**:
+  Depending on the command flags, `ps` displays priorities using custom offsets to prevent negative numbers or to align standard priority scales.
+
+!!! info "Further Reading & Reference"
+   For more details on how Linux manages kernel-space scheduling priorities and handles user-space reporting offsets, refer to the official Oracle Linux Blog guide: [Understanding process/thread priorities in Linux](https://blogs.oracle.com/linux/post/task-priority){:target="_blank"}.
+
 ---
 
-## 2. Priority Inversion and Priority Inheritance
+## 3. Priority Inversion and Priority Inheritance
 
 In real-time systems, shared resources (like hardware busses, buffers, or files) must be protected using mutual exclusion locks (mutexes). This can lead to a critical scheduling bug known as **Priority Inversion**.
 
@@ -71,51 +112,6 @@ When a high-priority thread blocks waiting for a lock held by a low-priority thr
 
 ---
 
-## 3. Programming Real-Time Applications in C/C++
-
-To run a process under real-time scheduling constraints, you must configure the scheduling parameters using the POSIX library (`<sched.h>`).
-
-### Example: Setting `SCHED_FIFO` and Priority 80
-This C++ code block demonstrates how to elevate the current thread's priority:
-
-```cpp
-#include <iostream>
-#include <sched.h>
-#include <pthread.h>
-#include <cstring>
-
-int configure_realtime_priority(int priority) {
-    struct sched_param param;
-    std::memset(&param, 0, sizeof(param));
-    
-    // Set priority value (range 1 to 99)
-    param.sched_priority = priority;
-
-    // Apply FIFO scheduling policy to the current thread
-    int result = pthread_setschedparam(pthread_self(), SCHED_FIFO, &param);
-    if (result != 0) {
-        std::cerr << "Error: Failed to set RT priority. Code: " << result << std::endl;
-        std::cerr << "Note: Ensure the program is executed with root/sudo privileges." << std::endl;
-        return -1;
-    }
-
-    std::cout << "Success: Thread configured under SCHED_FIFO at priority " << priority << std::endl;
-    return 0;
-}
-
-int main() {
-    // Elevate current thread priority to 80
-    configure_realtime_priority(80);
-    
-    // Core application loop here...
-    return 0;
-}
-```
-
-!!! important "Root Privileges Required"
-    Process scheduler overrides require administrative access. If you run the compiled binary as a standard user, `pthread_setschedparam` will fail with an `EPERM` (Operation not permitted) error. The binary must be run with `sudo`.
-
----
 
 [← Yocto PREEMPT_RT Integration](02-yocto-rt-integration.md){ .md-button }
 [Next: OSADL Latency Validation →](04-osadl-latency-testing.md){ .md-button .md-button--primary }
