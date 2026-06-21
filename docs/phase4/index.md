@@ -14,7 +14,7 @@ description: "Introduction to dual partition redundancy, boot failover, system w
 
 ## 1. Phase Overview
 
-For mission-critical payloads, software single-point failures must be prevented. If an over-the-air update fails or a filesystem partition becomes corrupted due to single-event upsets (SEU), the bootloader must automatically fall back to a secondary, known-good boot partition.
+For operating in extreme environments (such as aerospace or autonomous defense platforms), software single-point failures must be prevented. If a system update fails or a filesystem partition becomes corrupted due to single-event upsets (SEU), the bootloader must automatically fall back to a secondary, known-good boot partition to preserve system availability.
 
 To achieve this level of reliability, we configured:
 - **Bootloader A/B Redundancy**: Enabled the Slot Metadata Database (SMD) on the Nvidia Jetson TX2i, allowing the Tegra bootloader to count boot retries and switch boot slots.

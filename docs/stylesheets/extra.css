@@ -43,12 +43,12 @@
 .md-typeset h2 {
   font-weight: 600;
   letter-spacing: -0.012em;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   padding-bottom: 0.4rem;
 }
 
 [data-md-color-scheme="slate"] .md-typeset h2 {
-  border-bottom-color: rgba(255,255,255,0.08);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 
 .md-typeset h3 {
@@ -57,11 +57,11 @@
 
 /* --- Header Bar --- */
 .md-header {
-  box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
 }
 
 [data-md-color-scheme="slate"] .md-header {
-  box-shadow: 0 1px 0 rgba(255,255,255,0.06);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 /* --- Navigation Sidebar --- */
@@ -82,13 +82,13 @@
 /* --- Tables --- */
 .md-typeset table:not([class]) {
   font-size: 0.8rem;
-  border: 1px solid rgba(0,0,0,0.08);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 6px;
   overflow: hidden;
 }
 
 [data-md-color-scheme="slate"] .md-typeset table:not([class]) {
-  border-color: rgba(255,255,255,0.08);
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 .md-typeset table:not([class]) th {
@@ -96,19 +96,19 @@
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  background: rgba(0,0,0,0.03);
+  background: rgba(0, 0, 0, 0.03);
 }
 
 [data-md-color-scheme="slate"] .md-typeset table:not([class]) th {
-  background: rgba(255,255,255,0.04);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .md-typeset table:not([class]) td {
-  border-top: 1px solid rgba(0,0,0,0.05);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 [data-md-color-scheme="slate"] .md-typeset table:not([class]) td {
-  border-top-color: rgba(255,255,255,0.05);
+  border-top-color: rgba(255, 255, 255, 0.05);
 }
 
 /* --- Code --- */
@@ -182,8 +182,8 @@
 
 /* Subgraph labels and borders in dark mode */
 [data-md-color-scheme="slate"] .mermaid .cluster rect {
-  stroke: rgba(255,255,255,0.12) !important;
-  fill: rgba(255,255,255,0.03) !important;
+  stroke: rgba(255, 255, 255, 0.12) !important;
+  fill: rgba(255, 255, 255, 0.03) !important;
 }
 
 [data-md-color-scheme="slate"] .mermaid .cluster span {

@@ -42,7 +42,7 @@ mkdir -p ~/yocto && cd ~/yocto
 
 !!! note "Understanding Yocto Metadata"
     Yocto layers contain *metadata* (recipes `.bb`, appends `.bbappend`, classes `.bbclass`, and configurations `.conf`). Simply cloning these repositories onto your host system does **not** add their data, packages, or configurations to the final build image.
-    
+
     To use these layers in your build, you must:
     1. Explicitly register them in your build configuration file (`build/conf/bblayers.conf`).
     2. Explicitly request the packages you want to install in the final image (e.g., using `IMAGE_INSTALL:append` in `local.conf` or referencing them in your custom image recipe).
@@ -124,9 +124,9 @@ git clone -b kirkstone https://github.com/ros/meta-ros.git
 
 ---
 
-## Workspace Folder Structure Validation
+## Workspace Folder Structure
 
-Once you have cloned the repositories and initialized your environment, your directory layout must match the following structure. Use this in-depth outline to verify your workspace before running `bitbake`:
+After cloning, your project folder should look like the tree below. Take a moment to verify your layout matches — if folders are in the wrong place, later steps will fail:
 
 ```text
 ~/yocto/                          ← Project Workspace Root

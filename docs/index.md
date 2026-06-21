@@ -5,9 +5,9 @@ description: "Building a minimal, radiation-aware Linux system image for the NVI
 
 # Space Operating Linux
 
-A minimal memory foot-print operating system for edge computing devices, operating in radiation prone environment.
+A minimal memory foot-print operating system for edge computing devices, capable of operating in radiation prone environment.
 
-This project adapts research from the [**Space Operating Linux**](https://ieeexplore.ieee.org/document/10115703) paper — E. Miller, C. Heistand and D. Mishra, "Space-operating Linux: An Operating System for Computer Vision on Commercial-Grade Equipment in LEO," *2023 IEEE Aerospace Conference*, Big Sky, MT, USA, 2023, pp. 1-12 — and related radiation-hardening literature to build a flight-viable Linux system image targeting the **NVIDIA Jetson TX2i** system-on-module mounted on the **Connect Tech Elroy Carrier board**.
+This project adapts research from - [**E. Miller, C. Heistand and D. Mishra, "Space-operating Linux: An Operating System for Computer Vision on Commercial-Grade Equipment in LEO," *2023 IEEE Aerospace Conference*, Big Sky, MT, USA, 2023, pp. 1-12**](https://ieeexplore.ieee.org/document/10115703) and related literature on using commercial off the shelf hardware and compute with redundancy to build a flight-viable Linux system image targeting the **NVIDIA Jetson TX2i** system-on-module mounted on the **Connect Tech Elroy Carrier board**.
 
 The build system uses the **Yocto Project** (Kirkstone branch), enabling us to produce a minimal image with a reduced software footprint, ROS core packages, and a PREEMPT_RT patched kernel for deterministic real-time scheduling — engineered for Low Earth Orbit missions.
 Yocto is a Open Source Framework which helps create custom linux distros for embedded devices from the ground up.
@@ -66,7 +66,7 @@ The **Connect Tech Elroy** is a compact, rugged carrier board designed specifica
 
 - [x] Reduced software footprint — target system image < 5 GB on the Jetson TX2i + Devkit.
 - [x] ROS (Robot Operating System) — core packages for robotic payload control
-- [x] Adapted the System Image for the Jetson TX2i + Connect Tech Elroy Carrier Board. 
+- [x] Adapted the System Image for the Jetson TX2i + ConnectTech Elroy Carrier Board. 
 - [x] PREEMPT_RT kernel patch — deterministic real-time scheduling
 - [ ] A/B partition redundancy — graceful recovery from boot failures
 - [ ] RAM-based filesystem — protection against flash corruption under radiation
@@ -74,7 +74,7 @@ The **Connect Tech Elroy** is a compact, rugged carrier board designed specifica
 
 ---
 
-## Project Milestones
+## Project Milestones   
 
 ### Milestone 1 — Minimal Yocto Build ✓
 

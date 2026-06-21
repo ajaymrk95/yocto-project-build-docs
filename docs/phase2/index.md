@@ -19,7 +19,7 @@ description: "Adapting the Yocto build for the Jetson TX2i on the Connect Tech E
 
 - NVIDIA by default provides active support and troubleshooting for their Development Kit Boards. A DevKit board serves as a reference board/template to other carrier board manufacturers to design their own custom boards. 
 
-- Devkits are primarily used for development or evaluation purpose. They include various debugging interfaces like serial debug ports, extra USB ports, HDMI ports etc. which are not necessary for the final deployment of the board. 
+- In a real deployment (especially in space or robotics), you need a board that is smaller, lighter, and uses less power. Custom carrier boards like the Connect Tech Elroy remove all the ports you do not need and keep only what is essential.
 
 - Custom carrier boards considerably reduce the overall form factor (size) and modify the power consumption. The Board and System on Module (TX2i in our case) allow better integration for harsh/rugged field conditions, multi-sensor perception stacks, tight enclosures, and I/O-heavy autonomous systems, all of which make them better suited for Space Based Deployments.
 

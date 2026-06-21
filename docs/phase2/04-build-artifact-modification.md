@@ -15,10 +15,10 @@ description: "Detailed step-by-step instructions for mounting the Yocto-built ex
 
 ---
 
-## 1. Combining Yocto Images with NVIDIA's flash.sh utility
+## 1. The Hybrid Approach: Modify Instead of Rebuild
 
-- Yocto allows us to produces several types of files, on completion of the build process. These include System Image files which contain the entire software and packages,i.e the Root File System. 
-- This is usually generated in a .ext4 format which is a raw system image:
+- Yocto produces a `.ext4` file — this is the complete operating system image (root filesystem) that gets written to the device's internal storage.
+- Instead of rebuilding everything for the Elroy, we take this file, make a small but critical edit to the boot configuration, and then convert it into a format that NVIDIA's flashing tools expect:
 
 ```text
 +-------------------+      +-----------------------+         +--------------------------+
@@ -52,9 +52,9 @@ For using the a fully generated image for the flashing process, the artifact to 
 
 ---
 
-## 3. Mounting the ext4 Filesystem (Step-by-Step)
+## 3. Opening the Image File (Mounting the ext4)
 
-The Yocto-generated `.ext4` file is a sector-by-sector image of the root partition. To modify files inside it, we must mount it using a loop device on the host system.
+The `.ext4` file is a complete disk image. To edit files inside it, we need to "mount" it — this makes it appear as a regular folder on your computer so you can browse and edit its contents.
 
 ### Step 1: Create a Mount Point Directory
 On your host terminal, create a directory where the filesystem will be attached:
@@ -92,9 +92,9 @@ drwxr-xr-x   8 root root  4096 Jun 17 22:30 lib
 
 ---
 
-## 4. Modifying `extlinux.conf` to set the Mount Partitions Correctly
+## 4. Fixing the Boot Configuration (`extlinux.conf`)
 
-The bootloader (CBoot/U-Boot) reads `/boot/extlinux/extlinux.conf` from the root file system during early boot to locate the kernel and define boot-time arguments. Hence we need to specify the correct partition on our permanent storage - EMMC, which is /dev/mmcblk0p1.
+The bootloader reads a file called `extlinux.conf` to know where to find the kernel and how to start the system. The default version from Yocto points to a partition that does not exist on the Elroy, so we need to fix it.
 
 ### Step 4: Open `extlinux.conf` for Editing
 Open the configuration file in a terminal editor:
@@ -195,9 +195,9 @@ A **Sparse Image** replaces blocks of empty space (zeros) with small metadata fl
 
 ### Step 7: Convert raw ext4 to Sparse Image
 
-- Assuming the steps above are followed correctly, we will have a corrected and unmounted core-image-sato,ext4 inside the rootfs directory.
+- After unmounting, you should have a corrected `.ext4` image.
 
-- Now we need to create a sparse image using one of the utilities - mksparse which is also generated inside the Yocto Build Artifacts.
+- Now we convert it to a sparse image using the `mksparse` utility, which was generated during the Yocto build.
 
 - The underlying similarity between Yocto's approach to a flashing directory and setting up a Flashing Directory for an NVIDIA device is nearly the same. NVIDIA's scripts look for a sample root file system which is a dedicated folder in the directory, this is mounted and then converted to a sparse image during the traditional flashing process. Yocto likely does something similar and mounts the ext4 and converts it into a system.img file for flashing, using the underlying utility mksparse, which is common to both setups. NVIDIA's flash.sh script also allows us to reuse a system.img which we have created using a -r command line argument as explained fully in the next page. Hence, we create the sparse system.img inside the Yocto directory to transfer our minimal image and reuse it, avoiding rebuilding from NVIDIA's heavy and bloated sample rootfs.
 
@@ -209,7 +209,7 @@ A **Sparse Image** replaces blocks of empty space (zeros) with small metadata fl
 
 ```
 
-Now we have a successfully modified system.img which we can use in the next page, and move to the flashing directory setup for NVIDIA.
+Now you have a `system.img` file ready to be copied into NVIDIA's flashing directory, which is covered in the next page.
 
 ---
 

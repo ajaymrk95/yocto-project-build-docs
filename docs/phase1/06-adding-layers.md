@@ -8,8 +8,8 @@ description: "A detailed walkthrough of every Yocto layer used in this build, ho
 <span class="phase-label">Phase 1 · Page 6 of 9</span>
 
 !!! abstract "Page Goal"
-    - The main files to be edited are the local.conf and bblayers.conf which are located in the conf folder inside the build directory.
-    - Here we understand what each layer provides, add them to your build one by one, validate the layer stack, and configure `bblayers.conf` for the Jetson TX2i build.
+    - Now that we have cloned all the necessary repositories, we need to tell Yocto's build engine (BitBake) about them. This is done by editing a configuration file called `bblayers.conf`.
+    - This page explains what each layer provides, how to register them, and how to verify your layer setup is correct.
 
 ---
 
@@ -26,7 +26,7 @@ flowchart LR
 ---
 ## What Is a Yocto Layer?
 
-A Yocto layer is a directory structured to store metadata configuration files, classes, and recipes. The generic directory layout of a layer looks like this:
+A layer is simply a folder with a specific structure that contains recipes (build instructions) and configuration files. Every layer follows the same basic layout:
 
 ```text
 meta-example/
@@ -42,20 +42,20 @@ meta-example/
 └── README                  ← Layer documentation
 ```
 
-### Key Layer Concepts:
-- **`layer.conf`**: Located in `conf/`, it declares the layer's name, priority, and compatibility.
-- **Layer Dependencies**: A layer can declare dependencies on other layers; BitBake will parse and verify these dependencies during initialization.
-- **Layer Priority (`BBFILE_PRIORITY`)**: Controls which recipe takes precedence if multiple layers define the same recipe.
+### Key Concepts:
+- **`layer.conf`**: Every layer has this file in its `conf/` folder. It declares the layer's name, its priority (which layer "wins" if two layers define the same recipe), and which Yocto releases it is compatible with.
+- **Layer Dependencies**: A layer can require other layers to be present. BitBake checks these dependencies automatically and will warn you if something is missing.
+- **Priority (`BBFILE_PRIORITY`)**: If two layers provide a recipe with the same name, the one with the higher priority number takes precedence.
 
 ---
 
 ## Sourcing the Build Environment
 
-Before you can query or modify layers, you must source the Yocto Project initialization script from the terminal. 
+Before you can add or check layers, you need to activate the Yocto build environment. This is done by "sourcing" (running) a setup script that configures your terminal session:
 
 ```bash
-cd ~/yocto
-source poky/oe-init-build-env poky/build
+cd ~/yocto/poky
+source oe-init-build-env 
 ```
 
 !!! note "The Build Directory Location"
@@ -115,9 +115,9 @@ BBLAYERS ?= " \
 
 ---
 
-## Cloning the optional `meta-qt5` Layer
+## Cloning the Optional `meta-qt5` Layer
 
-To extend package options in our build configuration and support graphical utilities, we can clone the `meta-qt5` layer. This is useful if you plan to compile custom Qt5-based user interfaces or run GUI-based data plotting applications directly on target hardware.
+If you plan to build graphical applications (GUIs) that run directly on the target device, you can add the Qt5 layer. Qt5 is a popular framework for building user interfaces.
 
 !!! info "Status Note"
     Although `meta-qt5` packages are available in the recipe configuration, GUI components and real-time GUI plots are not actively tested in the core flight build image. 
@@ -151,7 +151,7 @@ git clone -b kirkstone https://github.com/meta-qt5/meta-qt5.git
 
 ---
 
-## Step-by-Step CLI Commands to Add All Layers
+## Adding All Layers (Step-by-Step Commands)
 
 Run these relative-path commands sequentially from the build directory (`~/yocto/poky/build`) to add the required layers in the correct dependency order:
 
@@ -178,9 +178,9 @@ bitbake-layers add-layer ../../meta-qt5
 
 ---
 
-## Final Output: `bblayers.conf`
+## Final `bblayers.conf`
 
-Once all layers are added, the final contents of `poky/build/conf/bblayers.conf` will look like this:
+After adding all layers, your `bblayers.conf` file should list every layer path. Here are two ways it might look:
 
 ### Option A: Using Absolute Workspace Paths
 This configuration maps to a static folder layout on the target build machine (using `/home/raigyocto` as an example):
@@ -251,7 +251,7 @@ bitbake-layers show-layers
 ```
 
 ### Expected Output
-The command prints out each registered layer, its location path, and its parsing priority:
+This command prints each registered layer, its file path, and its priority number. Higher priority layers override lower ones when recipes conflict:
 
 ```text
 layer                 path                                                 priority
@@ -259,16 +259,16 @@ layer                 path                                                 prior
 meta                  /home/raigyocto/yocto/poky/meta                      5
 meta-poky             /home/raigyocto/yocto/poky/meta-poky                 5
 meta-yocto-bsp        /home/raigyocto/yocto/poky/meta-yocto-bsp             5
-meta-oe               /home/raigyocto/yocto/meta-openembedded/meta-oe      6
-meta-python           /home/raigyocto/yocto/meta-openembedded/meta-python  7
+meta-oe               /home/raigyocto/yocto/meta-openembedded/meta-oe      5
+meta-python           /home/raigyocto/yocto/meta-openembedded/meta-python  5
 meta-networking       /home/raigyocto/yocto/meta-openembedded/meta-net...  5
 meta-multimedia       /home/raigyocto/yocto/meta-openembedded/meta-mul...  5
 meta-gnome            /home/raigyocto/yocto/meta-openembedded/meta-gnome   5
-meta-xfce             /home/raigyocto/yocto/meta-openembedded/meta-xfce    7
+meta-xfce             /home/raigyocto/yocto/meta-openembedded/meta-xfce    6
 meta-ros-common       /home/raigyocto/yocto/meta-ros/meta-ros-common       10
 meta-ros2             /home/raigyocto/yocto/meta-ros/meta-ros2            11
 meta-ros2-humble      /home/raigyocto/yocto/meta-ros/meta-ros2-humble      12
-meta-qt5              /home/raigyocto/yocto/meta-qt5                       7
+meta-qt5              /home/raigyocto/yocto/meta-qt5                       5
 meta-tegra            /home/raigyocto/yocto/meta-tegra                     5
 ```
 

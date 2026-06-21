@@ -8,7 +8,7 @@ description: "Find your build artifacts, understand the tegraflash bundle, prepa
 <span class="phase-label">Phase 1 · Page 9 of 9</span>
 
 !!! abstract "Page Goal"
-    Navigate the build output directory, identify key artifacts, prepare the flash workspace, and flash the Jetson TX2i on the DevKit carrier board.
+    The build is complete. Now we need to take the output files and write ("flash") them onto the actual Jetson TX2i device. This page shows you where to find the build output, how to prepare it, and how to flash the device.
 
 ---
 
@@ -27,7 +27,7 @@ flowchart LR
 
 ## Build Output Directory
 
-After a successful build, all artifacts are placed in the machine-specific deploy directory:
+After a successful build, all the files you need are placed in a folder named after your target machine:
 
 ```
 build/tmp/deploy/images/<MACHINE>/
@@ -47,7 +47,7 @@ build/tmp/deploy/images/jetson-tx2-devkit-tx2i/
 jetson-tx2-devkit-tx2i/
 ├── Image                                                      ← Linux kernel image
 ├── tegra210-jetson-tx2i-*.dtb                                 ← Device tree blob(s)
-├── core-image-sato-jetson-tx2-devkit-tx2i.ext4                ← Root filesystem image
+├── core-image-sato.ext4                ← Root filesystem image
 ├── core-image-sato-jetson-tx2-devkit-tx2i.manifest            ← Package manifest
 ├── core-image-sato-jetson-tx2-devkit-tx2i.tegraflash.tar.gz   ← Flash bundle
 ├── bootfiles/                                                 ← Bootloader binaries
@@ -60,13 +60,13 @@ jetson-tx2-devkit-tx2i/
 ### Artifacts for `core-image-full-cmdline`
 
 !!! note "Difference from `core-image-sato`"
-    `core-image-sato` includes the X11 graphics compositor by default. With `core-image-full-cmdline`, you can bake in a compositor of your choice, but the GUI service must be explicitly started on boot.
+    `core-image-sato` comes with a graphical desktop built in. `core-image-full-cmdline` gives you only a command-line interface — you can add a desktop later, but it will not start automatically unless you configure it.
 
 ```text
 jetson-tx2-devkit-tx2i/
 ├── Image                                                              ← Linux kernel image
 ├── tegra210-jetson-tx2i-*.dtb                                         ← Device tree blob(s)
-├── core-image-full-cmdline-jetson-tx2-devkit-tx2i.ext4                ← Root filesystem image
+├── core-image-full-cmdline.ext4                ← Root filesystem image
 ├── core-image-full-cmdline-jetson-tx2-devkit-tx2i.manifest            ← Package manifest
 ├── core-image-full-cmdline-jetson-tx2-devkit-tx2i.tegraflash.tar.gz   ← Flash bundle
 ├── bootfiles/                                                         ← Bootloader binaries
@@ -93,9 +93,12 @@ jetson-tx2-devkit-tx2i/
 
 ## The tegraflash Bundle
 
-`meta-tegra` generates a self-contained flash bundle: `*.tegraflash.tar.gz`
+!!! tip "In Simple Terms"
+    The tegraflash bundle is a single compressed file that contains *everything* needed to write your custom OS onto the device — the operating system, the bootloader, the kernel, and a script that does the flashing for you. You just extract it and run one command.
 
-This archive contains everything required to flash the built Yocto image onto the target hardware:
+`meta-tegra` generates this self-contained flash bundle: `*.tegraflash.tar.gz`
+
+Inside the bundle you will find:
 
 - Root filesystem image (`.ext4`)
 - Kernel and device tree binaries
@@ -107,8 +110,8 @@ This archive contains everything required to flash the built Yocto image onto th
 
 ## Preparing the Flash Workspace
 
-!!! warning "Always Use the Command Line"
-    Copying Yocto build artifacts using a graphical file manager can corrupt binary files. Always use command-line utilities (`cp`, `tar`) to copy and extract flash bundles.
+!!! warning "Do Not Use a Graphical File Manager"
+    Copying build files by dragging and dropping in a file browser can corrupt binary files. Always use the terminal commands shown below.
 
 ```bash
 # Create a dedicated flash workspace
@@ -130,12 +133,14 @@ After extraction, verify that the `doflash.sh` script and the supporting binarie
 
 ## Putting the DevKit in Recovery Mode
 
-### Prerequisites
+Before you can flash the device, you need to put it into a special "recovery" mode. This lets your host computer communicate with the device over USB to write the new software.
+
+### What You Need
 
 - A USB cable connected from the host machine to the DevKit's **recovery USB port**
 - The DevKit connected to a power supply
 
-### Recovery Mode Procedure (TX2 DevKit)
+### How to Enter Recovery Mode
 
 1. Power **off** the DevKit.
 2. Hold the **RECOVERY** button (sometimes labelled `REC` or `FORCE RECOVERY`).
@@ -145,7 +150,7 @@ After extraction, verify that the `doflash.sh` script and the supporting binarie
 
 ```bash
 lsusb | grep -i nvidia
-# Expected output: Bus XXX Device XXX: ID 0955:XXXX NVIDIA Corp.
+# Expected output: Bus XXX Device XXX: ID 0955:7018 NVIDIA Corp.
 ```
 
 !!! warning "Verification Required"
@@ -155,7 +160,7 @@ lsusb | grep -i nvidia
 
 ## Flashing the Device
 
-From the flash workspace, run the flash script with root privileges:
+With the device in recovery mode, run the flash script from your flash workspace. You need `sudo` (administrator) privileges because the script communicates directly with USB hardware:
 
 ```bash
 cd ~/yocto/flash
@@ -164,11 +169,11 @@ sudo ./doflash.sh
 
 ### What to Expect
 
-- The script communicates with the device over USB.
-- It writes the bootloader, kernel, DTB, and root filesystem to the on-board eMMC.
-- Progress is displayed in the terminal.
-- Typical flash time: **5–15 minutes**.
-- A successful flash ends with a message similar to:
+- The script sends data to the device over USB.
+- It writes the bootloader, kernel, device tree, and root filesystem to the device's internal storage (eMMC).
+- You will see progress in the terminal.
+- The whole process takes about **5–15 minutes**.
+- When it finishes successfully, you will see:
 
 ```
 Flashing completed successfully, cold booting the device
@@ -178,9 +183,9 @@ Flashing completed successfully, cold booting the device
 
 ## First Boot & Verification
 
-### Serial Console Connection
+### Connecting to the Serial Console
 
-Connect to the DevKit's serial console to observe boot output and log in:
+To see what the device is doing during boot, connect your host computer to the device's serial debug port. This gives you a text-based terminal where you can type commands:
 
 ```bash
 # Identify the serial device
@@ -193,9 +198,9 @@ sudo minicom -D /dev/ttyUSB0 -b 115200
 sudo screen /dev/ttyUSB0 115200
 ```
 
-### First Boot Checklist
+### Verifying the System
 
-After the device reboots following a successful flash, verify the system:
+Once the device boots, check that everything is working:
 
 1. **Login** — Username: `root` (no password if `debug-tweaks` is enabled in `local.conf`)
 

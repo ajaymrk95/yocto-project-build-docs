@@ -8,13 +8,13 @@ description: "A complete guide to local.conf — the single most important confi
 <span class="phase-label">Phase 1 · Page 7 of 9</span>
 
 !!! abstract "Page Goal"
-    Understand  `local.conf` configuration, how to add packages and what does a full fledged local.conf look like.
+    Understand `local.conf` — the single most important configuration file in your Yocto build. This is where you tell Yocto what hardware to target, what software to include, and how to optimise the build. By the end of this page, you will have a complete, ready-to-use `local.conf` file.
 
 ---
 
 ## Where Is `local.conf`?
 
-The `local.conf` file is the primary configuration file for your individual Yocto Project build environment. It is located inside the build directory:
+The `local.conf` file lives inside your build directory. It is the main file you edit to control what your custom OS looks like:
 
 ```text
 ~/yocto/poky/build/conf/local.conf
@@ -22,9 +22,9 @@ The `local.conf` file is the primary configuration file for your individual Yoct
 
 ---
 
-## Setting the Target MACHINE
+## Setting the Target Machine
 
-The `MACHINE` variable tells BitBake which hardware configuration to build for. Valid machine targets correspond to `.conf` configuration files inside your BSP layers.
+The `MACHINE` variable tells BitBake which board you are building for. Each supported board has a matching `.conf` file inside the BSP layer.
 
 ### Finding Valid Machines
 You can list the machine configurations supported by `meta-tegra` by browsing the layer:
@@ -57,45 +57,45 @@ Editing list variables in Yocto requires understanding BitBake assignment operat
 
 ---
 
-## Variable Explanations
+## What Each Variable Does
 
-Here is a breakdown of the critical variables defined in `local.conf` (we are building for core-image-sato here):
+Here is a plain-English breakdown of every important variable in `local.conf`. We are building for the `core-image-sato` image (a basic Linux image with a graphical desktop):
 
 ### 1. Machine & Core Settings
-- `MACHINE`: Sets the target machine (`jetson-tx2-devkit-tx2i`).
-- `DISTRO`: Sets the target base distribution configuration (`poky`).
-- `PACKAGE_CLASSES`: Selects the packaging format. We use `package_deb` to generate Debian packages, enabling `apt` package manager updates on the target.
-- `SDKMACHINE`: Sets the host architecture configuration for SDK installers (`x86_64`).
+- `MACHINE`: Which board to build for (`jetson-tx2-devkit-tx2i` — our NVIDIA Jetson TX2i).
+- `DISTRO`: The base distribution template. We use `poky` (the Yocto default).
+- `PACKAGE_CLASSES`: How to package software. We use `package_deb` (Debian `.deb` packages), which lets us use the `apt` package manager on the device later.
+- `SDKMACHINE`: Architecture of your build computer. Almost always `x86_64` for modern desktops.
 
-### 2. Build Performance & Space Saving
-- `BB_NUMBER_THREADS`: The maximum number of tasks BitBake can run concurrently. Set this to match your host machine's physical CPU cores.
-- `PARALLEL_MAKE`: The `-j` compiler job flag passed to `make`.
-- `rm_work` (optional): Inheriting this class via `INHERIT += "rm_work"` deletes intermediate build files (like unpacked source directories and object files) after each recipe finishes building, saving hundreds of gigabytes of disk space.
+### 2. Build Performance & Disk Space
+- `BB_NUMBER_THREADS`: How many build tasks to run at the same time. Set this to match your CPU core count (e.g., 20 for a 20-core processor).
+- `PARALLEL_MAKE`: How many compiler jobs to run in parallel within each task. Similar to `BB_NUMBER_THREADS` but controls the `make -j` flag.
+- `rm_work` (optional): If you are low on disk space, enabling this class (`INHERIT += "rm_work"`) tells Yocto to delete temporary build files after each package finishes. This can save hundreds of gigabytes.
 
 ### 3. Image & Storage Configuration
-- `IMAGE_CLASSES`: Adds helper classes for flashing. `image_types_tegra` enables NVIDIA Tegra-specific flashing image formats.
-- `IMAGE_FSTYPES`: The formats of the root filesystem built (`tegraflash` for Tegra flash tool compatible formats, `tar.gz` for archives, and `ext4` for raw filesystem mounting).
-- `ROOTFSPART_SIZE`: The exact size of the target system partition in bytes.
-- `IMAGE_ROOTFS_EXTRA_SPACE`: Extra space buffer (in KB) added to the rootfs partition to ensure write capacity.
+- `IMAGE_CLASSES`: Adds helper classes needed for specific image formats. `image_types_tegra` enables NVIDIA's special flash image format.
+- `IMAGE_FSTYPES`: The output file formats for your OS image. `tegraflash` is needed to flash NVIDIA boards, `tar.gz` for archives, and `ext4` for a standard Linux filesystem.
+- `ROOTFSPART_SIZE`: How big to make the root filesystem partition on the device (in bytes). This must be large enough to hold all your software.
+- `IMAGE_ROOTFS_EXTRA_SPACE`: Extra free space (in KB) added to the root partition as a buffer so the device does not run out of storage.
 
-### 4. System Features & Init Manager
-- `DISTRO_FEATURES`: Global features to include in the OS. We append `systemd`, `opengl`, and `x11` to support hardware graphics and desktop integration, and explicitly remove `wayland` and `connman` to avoid conflicts.
-- `VIRTUAL-RUNTIME_init_manager`: Configures Systemd as the active initialization manager and adds sysvinit as the fallback system manager.
-- `IMAGE_FEATURES`: Specifies high-level package features (switches) to include in the target image. It allows bringing in pre-grouped sets of packages. In `local.conf`, developers typically use `EXTRA_IMAGE_FEATURES` to add features globally without modifying image recipes, but `IMAGE_FEATURES` can also be modified directly.
-  - `debug-tweaks`: Bypasses post-installation check blockers, enables empty root passwords, and configures the system for quick debugging.
-  - `tools-sdk`: Adds development tools (headers, make, compilers) directly to the target system.
-  - `allow-root-login`: Configures the SSH and PAM modules to allow logging in directly as the `root` user.
-  - `dev-pkgs`: Installs development headers (`-dev` packages) for every package compiled into the root filesystem. This is for native compilation on the Jetson.
+### 4. System Features & Startup Manager
+- `DISTRO_FEATURES`: Global features to include in the OS. We add `systemd` (modern startup manager), `opengl` (3D graphics support), and `x11` (windowing system for the desktop). We remove `wayland` and `connman` to avoid conflicts with our chosen alternatives.
+- `VIRTUAL-RUNTIME_init_manager`: Which program manages system startup. We use `systemd` (the modern default on most Linux distributions).
+- `IMAGE_FEATURES`: Pre-grouped sets of packages that can be toggled on or off:
+  - `debug-tweaks`: Makes the device easier to work with during development (empty root password, no lockouts).
+  - `tools-sdk`: Installs compilers and development tools directly on the device, so you can compile code on it.
+  - `allow-root-login`: Lets you log in as the administrator (`root`) user via SSH.
+  - `dev-pkgs`: Installs development header files for every package, useful if you want to compile software directly on the device.
 
-### 5. ROS 2 Humble Integration
-- `ROS_OE_RELEASE_SERIES`: Pins the ROS OpenEmbedded compatibility metadata to `kirkstone`.
-- `ROS_DISTRO`: Selects the ROS distribution (`humble`).
-- `IMAGE_INSTALL:append`: Registers ROS 2 CLI utilities, parameters, node management tools, client libraries (`rclcpp`, `rclpy`), messages, and the CMake build compiler (`ament-cmake`).
+### 5. ROS 2 Humble (Robotics Software)
+- `ROS_OE_RELEASE_SERIES`: Tells the ROS layer which Yocto release we are using (`kirkstone`).
+- `ROS_DISTRO`: Which version of ROS to install. We use `humble` (ROS 2 Humble).
+- `IMAGE_INSTALL:append`: The list of specific ROS packages to include — command-line tools, client libraries for writing robot programs in C++ and Python, message types, and the CMake build tool.
 
-### 6. NVIDIA Accelerated Drivers & CUDA
-- `PREFERRED_PROVIDER`: Configures the build to use NVIDIA Tegra hardware accelerated GL and EGL libraries (`libgles-nvidia-tegra`) instead of generic software equivalents.
-- `LICENSE_FLAGS_ACCEPTED`: Accepting `commercial` is required to allow Yocto to fetch and build packages with restricted licensing terms.
-- `cuda-toolkit` & `tensorrt`: Installs NVIDIA CUDA compiler tools (`nvcc`), system telemetry tools (`tegrastats`), neural network runtimes (`cudnn`), and TensorRT plugins directly to the target system image.
+### 6. NVIDIA GPU Drivers & CUDA
+- `PREFERRED_PROVIDER`: Tells Yocto to use NVIDIA's proprietary (hardware-accelerated) graphics drivers instead of the generic open-source ones. This is required for GPU compute and display output on the Jetson.
+- `LICENSE_FLAGS_ACCEPTED`: Some NVIDIA packages have commercial licenses. This setting tells Yocto it is OK to download and use them.
+- `cuda-toolkit` & `tensorrt`: Installs NVIDIA's GPU computing tools (CUDA compiler, cuDNN deep learning library, TensorRT inference engine) so you can run AI workloads on the device.
 
 ### 7. Localization, QA, & Network Manager Overrides
 - `ERROR_QA:remove` & `WARN_QA:remove`: Suppresses specific Quality Assurance checks performed by BitBake during packaging:
@@ -109,24 +109,24 @@ Here is a breakdown of the critical variables defined in `local.conf` (we are bu
 
 ---
 
-## Adding Individual Packages via OpenEmbedded Layer Index
+## Adding Extra Packages
 
-When customizing the base Linux image, you will inevitably need to add additional third-party software packages or libraries. 
+You will often want to add software packages beyond what is listed above. Here is how to find and add them safely:
 
-### Sourcing Packages Safely
-1. **Visit the OpenEmbedded Layer Index**: Go to [OpenEmbedded Layer Index](https://layers.openembedded.org/) (layers.openembedded.org). This is the official database for Yocto and OpenEmbedded.
-2. **Search for Recipes**: Search for the utility or library you need. The index will show you which layer provides the recipe (e.g., `meta-oe`, `meta-python`, or `meta-networking`) and its availability across Yocto branches (like `kirkstone`).
-3. **Verify Dependencies**: Make sure you have already cloned and registered the layer that provides the recipe (e.g. in your `bblayers.conf`) before adding the package name to `IMAGE_INSTALL:append` in `local.conf`.
+### Finding Available Packages
+1. **Go to the OpenEmbedded Layer Index**: Visit [layers.openembedded.org](https://layers.openembedded.org/). This is the official search engine for all available Yocto recipes.
+2. **Search for what you need**: Type the name of the tool or library. The results will show you which layer provides it and whether it is available for the `kirkstone` branch.
+3. **Check that you have the layer**: Before adding a package name to `IMAGE_INSTALL:append`, make sure the layer that provides it is already registered in your `bblayers.conf`.
 
-### Using AI Helpers
-- You can use AI to speed up this process by generating package sections or recommendations.
-- **Important**: You must cross-reference and validate all AI-suggested package names against the OpenEmbedded Layer Index or the actual recipe files (`.bb`). Package names can differ slightly between Yocto branches (e.g., Python packages prefixed with `python3-` vs `python-`), and incorrect entries will trigger compile-time parse errors or build-time dependency conflicts that must be resolved during compilation.
+### Using AI Tools to Help
+- AI assistants can suggest package names and configuration snippets, which can speed up your work.
+- **Always double-check** AI suggestions against the OpenEmbedded Layer Index or the actual recipe files (`.bb` files in your layers). Package names sometimes differ between Yocto branches (e.g., `python3-numpy` vs `python-numpy`), and a wrong name will cause the build to fail.
 
 ---
 
-## Copy-Pasteable `local.conf`
+## Complete `local.conf` (Ready to Copy)
 
-Replace the contents of `poky/build/conf/local.conf` with this verified configuration:
+Below is the full `local.conf` file. Copy and paste it into `poky/build/conf/local.conf`, replacing the existing contents:
 
 ```bash
 # 1. Machine & Core Settings

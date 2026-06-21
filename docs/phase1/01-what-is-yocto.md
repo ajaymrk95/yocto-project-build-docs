@@ -26,53 +26,56 @@ flowchart LR
 
 ## What Is Yocto?
 
-- Yocto Project is an open source framework that helps developers create custom Linux-based systems regardless of the hardware architecture.
-- The project provides a flexible set of tools and a space where embedded developers worldwide can share technologies, software stacks, configurations, and best practices that can be used to create tailored Linux images for embedded and IOT devices, or anywhere a customized Linux OS is needed.
-- It is the de facto industry tool-kit used for custom Linux development, widely used in System-on-chip(SoC) development, Automotive Applications and so on.
+- The Yocto Project is a free, open-source toolkit that lets you build your own custom Linux operating system for any hardware — from a small sensor board to a powerful industrial computer.
+- Think of it like a recipe book for operating systems: instead of installing a pre-made OS like Ubuntu or Windows, Yocto lets you choose exactly what goes into your OS, piece by piece — nothing more, nothing less.
+- It is the industry standard for building custom Linux systems. Companies in automotive, aerospace, robotics, and IoT (Internet of Things) all use Yocto when they need full control over what software runs on their hardware.
 
+## Core Components and Terms of Yocto 
 
-
-## Core Components and Terms of Yocto 
-
-
+!!! tip "In Simple Terms"
+    If you think of building an OS like cooking a meal: **Recipes** are the cooking instructions, **Layers** are cookbooks that group related recipes, **Configuration Files** are your preferences (e.g. oven temperature), **BitBake** is the chef that reads everything and does the actual cooking, and **Poky** is the starter kit that comes with basic recipes to get you going.
 
 | Component | What It Is |
 |-----------|-----------|
-| **Configuration Files** | Files which hold global definitions of variables, user defined variables and hardware configuration information. They tell the build system what to build and put into the image to support a particular platform. |
-| **Metadata** | A key element of the Yocto Project is the meta-data which is used to construct a Linux distribution, contained in the files that the build system parses when building an image. In general, Metadata includes recipes, configuration files and other information referring to the build instructions themselves, as well as the data used to control what things get built and to affect how they are built. The meta-data also includes commands and data used to indicate what versions of software are used, and where they are obtained from, as well as changes or additions to the software itself (patches or auxiliary files) which are used to fix bugs or customize the software for use in a particular situation. OpenEmbedded Core is an important set of validated metadata. |
-| **Recipe** | The most common form of metadata. A recipe will contain a list of settings and tasks (instructions) for building packages which are then used to build the binary image. A recipe describes where you get source code and which patches to apply. Recipes describe dependencies for libraries or for other recipes, as well as configuration and compilation options. They are stored in layers. |
-| **Layer** | A collection of related recipes. Layers allow you to consolidate related metadata to customize your build, and isolate information for multiple architecture builds. Layers are hierarchical in their ability to override previous specifications. You can include any number of available layers from the Yocto Project and customize the build by adding your layers after them. The Layer Index is searchable for layers within Yocto Project. |          
-| **OpenEmbedded-Core**| OE-core is meta-data composed of foundation recipes, classes and associated files that are meant to be common among many different OpenEmbedded-derived systems, including the Yocto Project. It is a curated subset of an original repository developed by the OpenEmbedded community which has been pared down into a smaller, core set of continuously validated recipes resulting in a tightly controlled and a quality-assured core set of recipes. |
-| **Poky** |A reference embedded distribution and a reference test configuration created to 1) provide a base level functional distro which can be used to illustrate how to customize a distribution, 2) to test the Yocto Project components, Poky is used to validate Yocto Project, and 3) as a vehicle for users to download Yocto Project. Poky is not a product level distro, but a good starting point for customization. Poky is an integration layer on top of oe-core.|
-| **Build System – “Bitbake”** | a scheduler and execution engine which parses instructions (recipes) and configuration data. It then creates a dependency tree to order the compilation, schedules the compilation of the included code, and finally, executes the building of the specified, custom Linux image (distribution). BitBake is a make-like build tool. BitBake recipes specify how a particular package is built. They include all the package dependencies, source code locations, configuration, compilation, build, install and remove instructions. Recipes also store the metadata for the package in standard variables. Related recipes are consolidated into a layer. During the build process dependencies are tracked and native or cross-compilation of the package is performed. As a first step in a cross-build setup, the framework will attempt to create a cross-compiler toolchain (Extensible SDK) suited for the target platform.|
-| **Packages** | The output of the build system used to create your final image.|
+| **Configuration Files** | Settings files that tell the build system what hardware you are targeting and what software to include. Think of them as a checklist of preferences for your custom OS. |
+| **Metadata** | All the information the build system needs to construct your OS — this includes recipes, configuration files, version numbers, download locations, and any patches (small fixes) applied to the software. OpenEmbedded Core (OE-Core) is an important, well-tested collection of this metadata. |
+| **Recipe** | A set of instructions for building one piece of software. Each recipe says: where to download the source code, what dependencies it needs, how to compile it, and how to package it for your OS image. Recipes are the most common type of metadata. |
+| **Layer** | A folder of related recipes grouped together. For example, one layer might contain all the recipes for NVIDIA hardware support, while another contains networking tools. You stack layers on top of each other, and later layers can override earlier ones — this is how you customize without modifying the originals. |
+| **OpenEmbedded-Core (OE-Core)** | The foundation layer — a carefully tested and maintained set of core recipes that most Yocto builds start with. Think of it as the standard library that provides essential OS components like the C compiler, basic utilities, and the Linux kernel recipe. |
+| **Poky** | The official Yocto starter kit. It bundles OE-Core with BitBake and a reference configuration so you can start building immediately. Poky is not meant to be shipped as a final product — it is a starting point that you customize for your own hardware and needs. |
+| **Build System — BitBake** | The engine that actually builds your OS. BitBake reads all your recipes and configuration files, figures out the correct order to build everything (resolving dependencies automatically), downloads source code, compiles it, and assembles the final OS image. It works similarly to `make` in C/C++ projects, but is designed for building entire operating systems. |
+| **Packages** | The individual compiled software outputs that BitBake produces. These packages are then combined together to create your final OS image file. |l image.|
 
 
 ---
 
 ## The Layer Model (Conceptual)
 
-- Yocto Project has a development model for embedded Linux creation which distinguishes it from other simple build systems. It is called the Layer Model.
+!!! tip "In Simple Terms"
+    Think of layers like transparent sheets stacked on top of each other. The bottom sheet has the basics. Each sheet you add on top can add new features or change what is underneath — without erasing the original. This makes it easy to share, reuse, and customize.
 
-- The Layer Model is designed to support both collaboration and customization at the same time. Layers are repositories containing related sets of instructions which tell the build system what to do. Users can collaborate, share, and reuse layers. Layers can contain changes to previous instructions or settings at any time.
- 
-- This powerful override capability is what allows you to customize previous collaborative or community supplied layers to suit your product requirements.
+- Yocto uses a "Layer Model" that sets it apart from simpler build systems. Layers are folders (usually Git repositories) that contain related recipes and configuration.
 
-- Use different layers to logically separate information in your build. As an example, you could have a BSP layer, a GUI layer, a distro configuration, middleware, or an application. Putting your entire build into one layer limits and complicates future customization and reuse. Isolating information into layers, on the other hand, helps simplify future customizations and reuse. Use BSP layers from silicon vendors when possible.
+- Multiple people and organizations can contribute different layers, and you simply stack them together. If you need to change something from a community layer, you add your own layer on top that overrides just the parts you need — you never have to modify the original.
 
-- Familiarize yourself with the curated (tested) [YOCTO PROJECT COMPATIBLE LAYER INDEX](https://www.yoctoproject.org/software-overview/layers/){:target="_blank"}. There is also the [OpenEmbedded Layer Index](https://layers.openembedded.org/){:target="_blank"} which contains more layers but the content is less universally validated.
+- It is good practice to keep different concerns in separate layers. For example:
+    - A **BSP layer** (Board Support Package — the hardware-specific software from the chip manufacturer) for your specific board
+    - A **GUI layer** for graphical interface packages
+    - An **application layer** for your own custom software
+
+- The official [Yocto Compatible Layer Index](https://www.yoctoproject.org/software-overview/layers/){:target="_blank"} lists tested, community-approved layers. The [OpenEmbedded Layer Index](https://layers.openembedded.org/){:target="_blank"} has even more layers, though they may not all be as thoroughly tested.
 
 
 The Layer Model for this Phase is as follows:
 
 ![Layer Model for Phase 1](../assets/layers-phase1.png)
 
-## Why Yocto here
+## Why Yocto for This Project?
 
--  Since we are aiming to build a minimal footprint (reduced system size image) and add multiple redundancies from the OS side , Yocto provides the exact control and customization needed to do this.
+- **We need a tiny OS.** Our goal is to create the smallest possible operating system that still does everything we need. Yocto lets us pick exactly which software packages go in — nothing extra, nothing wasted. A standard Linux distribution like Ubuntu includes thousands of packages you would never use on a space computer.
 
-- Yocto follows the principle of adding every necessary package to the build during the build itself, ensuring finite and strict package/software footprint control.
+- **We need full control.** Yocto builds everything from source code, including the Linux kernel (the core of the OS) and the bootloader (the small program that starts the OS). This means we can modify any part of the system to add safety features like redundancy (backup copies that take over if something fails).
 
-- Yocto compiles every part of the system image from binaries, allowing us to modify the core system components like the kernel and bootloader, allowing for extreme customization that helps create a system that can have high levels of redundancy.
+- **We need to add custom safety layers.** Because Yocto gives us control over every component, we can add features like A/B partition switching (keeping a backup copy of the OS), Triple Modular Redundancy (having three copies vote on the correct answer), and other protections needed for hardware operating in space.
 
 [Next: Important Links →](02-prerequisite-reading.md){ .md-button .md-button--primary }

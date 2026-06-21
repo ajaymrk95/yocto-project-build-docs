@@ -38,7 +38,7 @@ flowchart TD
 
 ## 1. Preparing the Warrior Workspace & Repositories
 
-Because the custom `meta-cti` layer was originally written and tested against the older Yocto **Warrior** release, we must align our entire build environment with it to build the custom machine directly. 
+The community `meta-cti` layer was written for the older Yocto **Warrior** release, so we need to match all our layers to that same release to avoid version conflicts.
 
 ### Branch Alignment Strategy
 - All standard layer repositories (like `meta-openembedded`, `meta-ros`, and `meta-qt5`) must be checked out to the **`warrior`** branch.
@@ -77,7 +77,7 @@ git clone -b warrior https://github.com/meta-qt5/meta-qt5.git
 
 ---
 
-## 2. Cross-Platform Host Setup (The Poky Container)
+## 2. Using Docker for the Old Build Environment
 
 Yocto Warrior was released in 2019 and requires legacy host dependencies (specifically **Python 2.7** and **GCC 8 or older**). Modern host operating systems (like Ubuntu 20.04 or 22.04 LTS) no longer ship these older packages, and their modern compiler toolchains will cause build-time host validation failures.
 
@@ -90,7 +90,7 @@ Execute the following command on your host terminal from the `~/yocto-warrior` f
 docker run --rm -it --privileged -u root -v $(pwd):/workdir -w /workdir crops/poky:ubuntu-18.04
 ```
 
-#### Understanding the Docker Flags:
+#### What Each Docker Flag Does:
 - `--rm`: Automatically destroys the container instance upon exit, keeping the host system clean.
 - `-it`: Runs the container interactively, forwarding standard input and output to your shell terminal.
 - `--privileged`: Grants the container access to host loopback devices. This is **strictly required** for Yocto's root filesystem packaging and partition image layout generation (`tegraflash`).
@@ -237,16 +237,18 @@ bitbake core-image-sato
 
 ---
 
-## 6. Issues and Problems with the build
+## 6. Problems with the Warrior Build
 
-- While the Docker container resolves the problem of building on a legacy host environment and 
+- The Docker container solved the old-software problem, but the Warrior branch itself has many issues:
 provides a full fledged environment for Yocto to run, modern features also pose counter intuitive problems:
-- Several Packages are out of support, especially python3-packages (like python-crypto for example) and need heavy custom bbappend and missing dependency resolution during the do:fetch() task of the build process itself.
-- Missing packages are due to the old github references and links provided to the SRC_URI (Source URI) variables in the recipes themselves. The build process, being a automated task, cannot resolve these missing references and fails (or halts) the build process. This happens for several packages and manual resolution is a challenging and time consuming task in itself, including the need to create a folder structure, custom layer and adding in updated SRC_URIs.
-- This still can raise issues during the compile phase and dorootfs phase due to missing recursive dependencies and further de-stablises the build.
-- The issues were resolved and QA (Quality Assurance) warnings thrown by Yocto were heavily supressed and complete the build.
-- This posed further issues during the flashing process, with several build artifacts missing and a usb flashing error was generated due to the above issue, caused by a missing detect tegra-usb script. 
+- Many Python packages (like `python-crypto`) are no longer maintained, and their download links are broken. BitBake fails when it cannot download the source code.
+- Fixing these broken links requires creating custom `.bbappend` files with updated URLs — a tedious and error-prone process.
+- Even after fixing the download issues, compile errors and missing dependencies caused further failures.
+- Quality Assurance (QA) warnings were heavily suppressed to force the build to finish, but this resulted in incomplete build artifacts.
+- The final flash attempt failed because critical files were missing from the output, including a USB detection script required by the flashing tool.
 
+!!! danger "Conclusion"
+    The Warrior branch approach was abandoned. Instead, we use the stable Kirkstone build from Phase 1 and modify its output files to work with the Elroy carrier board (covered in the next page).
 [← Custom Machine Setup](02-custom-machine-setup.md){ .md-button }
 [Next: Build Artifact Modification →](04-build-artifact-modification.md){ .md-button .md-button--primary }
 

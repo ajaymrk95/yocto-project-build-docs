@@ -43,14 +43,13 @@ This is representative, a screenshot will be attached here again for reference.
 ```
 ---
 
-## Rebuilds
-- Subsequent builds are **much faster** thanks to the sstate cache. Only changed recipes are rebuilt.
+## Rebuilds Are Fast
+- After your first build, subsequent builds are **much faster**. Yocto caches (stores all the completed work in a directory for quick access) for every task (this is called the "sstate cache"), so only changed recipes need to be rebuilt.
 
-## Monitoring the Build
-- BitBake shows real-time task progress in the terminal
-- You can open another terminal and check disk usage: `du -sh ~/yocto/poky/build/tmp`
-- To see what's currently building: the terminal output shows running tasks
-- Logs for each recipe are in `tmp/work/<ARCH>/<RECIPE>/<VERSION>/temp/log.do_<task>`
+## Watching the Build
+- BitBake shows live progress in your terminal — you can see which tasks are running and how many are left.
+- To check how much disk space the build is using, open a second terminal and run: `du -sh ~/yocto/poky/build/tmp`
+- If a task fails, BitBake tells you exactly which recipe and task failed, and where the log file is.
 
 ---
 
@@ -70,7 +69,9 @@ The diagram below shows the high-level workflow of the Yocto Project build proce
 ![Yocto Project Flow Diagram](../assets/yp-flow-diagram.svg)
 
 
-### Task-by-Task Breakdown
+### What Each Task Does
+
+Every recipe goes through these steps in order:
 
 | Task | What It Does | Example |
 |------|-------------|---------|
@@ -91,10 +92,9 @@ The diagram below shows the high-level workflow of the Yocto Project build proce
 
 ---
 
-## Build Directory Anatomy
+## Build Directory Layout
 
-
-After a build, the `build/` directory looks like this:
+After a build completes, your `build/` folder will contain these key directories:
 
 ```
 build/
@@ -121,20 +121,20 @@ build/
 └── cache/                  ← BitBake parser cache
 ```
 
-Key directories:
-- `tmp/deploy/images/<MACHINE>/` — your final build artifacts (next page)
-- `tmp/work/<ARCH>/<recipe>/<version>/temp/` — logs for debugging failed tasks
+The most important directories to know:
+- **`tmp/deploy/images/<MACHINE>/`** — your final OS image files (this is what you flash to the device)
+- **`tmp/work/<ARCH>/<recipe>/<version>/temp/`** — log files for each recipe (go here when debugging build failures)
 
 ---
 
-## Debugging a Failed Build
+## Fixing a Failed Build
 
-### Finding the Error
-1. BitBake prints the failed recipe and task: `ERROR: Task (...) failed`
-2. It tells you the log file: `ERROR: Logfile of failure stored in: /path/to/log.do_compile`
-3. Read the log: `cat <log-path> | tail -50`
+### How to Find What Went Wrong
+1. BitBake prints the failed recipe and task name: `ERROR: Task (...) failed`
+2. It also tells you exactly where the log file is: `ERROR: Logfile of failure stored in: /path/to/log.do_compile`
+3. Open the log and read the last 50 lines to find the actual error: `cat <log-path> | tail -50`
 
-### Re-Running a Single Task
+### Re-Running a Single Recipe
 ```bash
 bitbake -c compile <recipe-name>     # Re-run do_compile for one recipe
 bitbake -c cleansstate <recipe-name> # Wipe sstate for one recipe and rebuild

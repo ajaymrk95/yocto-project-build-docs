@@ -8,8 +8,8 @@ description: "Run the official Yocto Quick Build Guide to validate your host set
 <span class="phase-label">Phase 1 · Page 4 of 9</span>
 
 !!! abstract "Page Goal"
-    - Build a `core-image-minimal` to test if the image works, this page also serves as a guide on the basic directory structure and commands of Yocto. 
-    - This also provides an overview of the build directory and switching and a explanation of default local conf and bblayers .conf files.
+    - Before building for our actual hardware (the Jetson TX2i), we first do a "test run" to make sure everything on your computer is set up correctly. This test build creates a tiny Linux image that runs inside a virtual machine (QEMU) on your computer.
+    - This page also walks through the key files and folders that Yocto creates, so you understand the project layout before moving on.
 ---
 
 ## Page Process Overview
@@ -29,10 +29,9 @@ flowchart TD
 
 ## Why Do a Quick Build First?
 
-- Validates that all host dependencies are correctly installed
-- Catches locale, disk space, and permission issues early
-- Familiarizes you with the oe-init-build-env → bitbake workflow
-- The Quick Build targets QEMU (a virtual machine), which is the default test environment provided by Yocto with options for the x86 and ARM architecture. 
+- **Validates your setup** — catches missing packages, locale issues, or disk space problems before you invest hours in a full hardware build.
+- **Teaches the workflow** — you will use the same `source oe-init-build-env` → `bitbake` steps for every build going forward.
+- **No hardware needed** — the default target is QEMU (a virtual machine that runs on your computer), so you can verify everything works without connecting a Jetson board.
 
 
 ---
@@ -41,12 +40,12 @@ flowchart TD
 
 !!! note "Prerequisite"
 
-    - Familiarity with git, and version control. Git is used throughout the Yocto Project. Understanding basic commands like git pull, git clone and concepts like branching helps with selecting the correct version for the build and maintaing correct branch compatibility across the cloned layers. 
+    - You should be comfortable with basic Git commands (like `git clone`, `git checkout`, `git pull`). Git is used throughout Yocto to download and manage code.
 
-    - Layer Versions have their naming for a specific release and layers have to be cloned for the same release to avoid mismatching, incompatible or conflicting packages during the build process.
+    - All Yocto layers must be on the **same release branch** (e.g., `kirkstone`). Mixing branches causes build errors.
 ---
 
-Once you complete the setup instructions for your machine, you need to get a copy of the Poky repository on your build host. Use the following commands to clone the Poky repository.
+Now download a copy of Poky (the Yocto starter kit) onto your build machine:
 
 ```bash
 $ git clone https://git.yoctoproject.org/poky
@@ -102,19 +101,19 @@ source oe-init-build-env
 ```
 
 What this does:
-- Creates the `build/` directory (if it doesn't exist)
-- Generates `build/conf/local.conf` and `build/conf/bblayers.conf` with defaults
-- Sets up environment variables and adds `bitbake` to your PATH
-- Changes your working directory to `build/`
+- Creates the `build/` directory if it does not exist yet
+- Generates two default configuration files: `build/conf/local.conf` and `build/conf/bblayers.conf`
+- Adds the `bitbake` command to your terminal so you can use it
+- Moves you into the `build/` directory automatically
 
-You must run this in **every new terminal session** before running bitbake.
+You must run this command **every time you open a new terminal** before using `bitbake`.
 
 ---
 
 ## Build `core-image-minimal`
 
-- Use the following steps to build your image. The build process creates an entire Linux distribution, including the toolchain, from source.
-- Initialize the Build Environment: From within the poky directory, run the oe-init-build-env environment setup script to define Yocto Project’s build environment on your build host.
+- This step builds a complete (but tiny) Linux operating system from source code. The process takes several hours on the first run.
+- First, make sure you are in the `poky` directory and have sourced the environment:
 
 ```bash
 $cd poky
@@ -158,8 +157,8 @@ Other commonly useful commands are:
  - 'oe-pkgdata-util' handles common target package tasks
 ```
 
-## Image Types 
-- Explaining each of the image targets which are available to build in the quick build, bullet point images were actually built and tested
+## Available Image Types
+- Yocto comes with several pre-defined image targets. Here are the most common ones (the ones marked with a bullet were actually built and tested in this project):
 
 ```bash
 
@@ -196,7 +195,9 @@ core-image-testmaster-initramfs: A RAM-based Initial Root Filesystem (Initramfs)
 - core-image-x11: A very basic X11 image with a terminal.
 ```
 
-## Representation of the file tree 
+## Poky Directory Structure
+
+Here is what the `poky/` folder looks like after cloning. Understanding this layout helps you find recipes, configurations, and build outputs:
 
 ```
 poky/
@@ -237,9 +238,9 @@ poky/
 
 ---
 
-## Navigating through the build directory - bblayers.conf
+## Understanding `bblayers.conf`
 
-This is the initial `bblayers.conf` file generated when you first source `oe-init-build-env`. It tells BitBake which layers to include in the build:
+This is the initial `bblayers.conf` file. It is a simple list that tells BitBake which layers to use. By default, only the three core Poky layers are listed:
 
 ```bash
 # POKY_BBLAYERS_CONF_VERSION is increased each time build/conf/bblayers.conf
@@ -310,9 +311,9 @@ bitbake-layers add-layer ../../meta-openembedded/meta-oe
 
 ---
 
-## Configuring the machine : local.conf
+## Understanding `local.conf`
 
-This is the default `local.conf` file generated inside `build/conf/` when you first source `oe-init-build-env`. It is the primary configuration file where you control **what** to build and **how** to build it. Each section is explained below.
+The `local.conf` file is where you control what to build and how to build it. Below is the full default file that Yocto generates, followed by a section-by-section explanation.
 
 ---
 
@@ -608,7 +609,7 @@ CONF_VERSION = "2"
 - The `??=` operator means "set only if no other configuration has already set this variable" — it is the weakest form of assignment.
 - QEMU machine options (`qemuarm`, `qemuarm64`, `qemumips`, etc.) let you test builds without physical hardware.
 - Hardware board targets like `beaglebone-yocto`, `genericx86-64`, and `edgerouter` are included for demonstration.
-- In later stages of this build, we will change this to the Jetson TX2i machine provided by `meta-tegra`.
+- In later pages, we will change this to the Jetson TX2i machine name provided by the `meta-tegra` layer.
 
 #### 2. Download Directory (`DL_DIR`)
 
@@ -705,9 +706,9 @@ CONF_VERSION = "2"
 
 
 
-## Starting the build
+## Starting the Build
 
-Start the build by running `bitbake` with the target image name from inside the `build/` directory:
+Run this command from inside the `build/` directory to start the build:
 
 ```bash
 $ bitbake core-image-minimal
@@ -721,7 +722,7 @@ You can also build other image targets, for example `core-image-sato` which incl
 $ bitbake core-image-sato
 ```
 
-For information on using the `bitbake` command, see the [BitBake section in the Yocto Project Overview and Concepts Manual](https://docs.yoctoproject.org/kirkstone/overview-manual/concepts.html#bitbake){:target="_blank"}, or see [The BitBake Command in the BitBake User Manual](https://docs.yoctoproject.org/bitbake/2.0/bitbake-user-manual/bitbake-user-manual-intro.html#the-bitbake-command){:target="_blank"}.
+For more details on BitBake commands, see the [BitBake section in the Yocto Overview](https://docs.yoctoproject.org/kirkstone/overview-manual/concepts.html#bitbake){:target="_blank"} or the [BitBake User Manual](https://docs.yoctoproject.org/bitbake/2.0/bitbake-user-manual/bitbake-user-manual-intro.html#the-bitbake-command){:target="_blank"}.
 
 !!! warning "Common Error: Linux Inotify Watches"
 
@@ -770,9 +771,9 @@ For information on using the `bitbake` command, see the [BitBake section in the 
 
 ---
 
-## (Optional) Simulate Your Image Using QEMU
+## (Optional) Test Your Image in QEMU
 
-Once the image is built, you can start QEMU (Quick EMUlator) which ships with the Yocto Project to test it without physical hardware:
+After the build finishes, you can boot the image inside a virtual machine on your computer to verify it works:
 
 ```bash
 $ runqemu qemux86-64

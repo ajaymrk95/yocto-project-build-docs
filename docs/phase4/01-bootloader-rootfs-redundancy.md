@@ -110,8 +110,8 @@ The configuration section in the slot metadata configuration file defines unifie
 As documented in [Connect Tech Flash Scripts (Phase 2 Page 5)](../phase2/05-connecttech-flash-scripts.md), the flashing script is executed using our custom flashing wrapper. To flash a target board with RootFS A/B redundancy enabled, we modified the flashing script [cti-flash.sh](file:///c:/Users/LENOVO/OneDrive/Desktop/MKDocs/docs/assets/cti-flash.sh) to accept the environment flag `ROOTFS_AB=1`:
 
 ```bash
-# Execute flash command on the host machine targeting Connect Tech Elroy carrier board
-ROOTFS_AB=1 ./cti-flash.sh jetson-tx2i mmcblk0p1
+# Change the flash command on the host machine targeting Connect Tech Elroy carrier board - inside cti-flash.sh edit the line to
+ROOTFS_AB=1 ./flash.sh cti/$2/$BOARD_TYPE/$1 mmcblk0p1
 ```
 This forces L4T to layout the eMMC partitions with both `APP` (Slot A) and `APP_b` (Slot B) root filesystem slots.
 

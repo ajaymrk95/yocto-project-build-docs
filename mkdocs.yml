@@ -96,6 +96,9 @@ nav:
   - Overview: index.md
   - Roadmap: roadmap.md
   - Latest Trends: latest-trends.md
+  - Phase 0 — Literature Review:
+    - Overview: phase0/index.md
+    - Research Papers Overview: phase0/papers.md
   - Phase 1 — Minimal Build:
     - Overview: phase1/index.md
     - What Is Yocto?: phase1/01-what-is-yocto.md

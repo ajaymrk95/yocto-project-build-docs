@@ -1,28 +1,22 @@
 ---
-title: "Host Environment Setup"
+title: "Build System and Requirements Setup"
 description: "Setting up your Linux host machine with all the dependencies, disk space, and directory structure needed for a Yocto build."
 ---
 
-# Host Environment Setup
+# Build Computer Setup
 
 <span class="phase-label">Phase 1 · Page 3 of 9</span>
 
 !!! abstract "Page Goal"
-    This short document steps you through the process for setting up your machine to configure and build a Yocto Image. This is almost exactly adapted as per Yocto's official setup guide.
+    This page walks you through preparing your computer (the "build host") so it has all the software tools, disk space, and settings needed to run a Yocto build. These steps closely follow the official Yocto setup guide.
 ---
 
 
 !!! note 
-    - Yocto Builds take several hours for the first time. Correctly identify the branch/release of yocto to work with, since that will need different host setup and requirements.
-    - Docker based Approach can be used for older build systems, but they are phased out of long term support on Yocto.
+    - The very first Yocto build can take **several hours** (sometimes 4–8 hours depending on your hardware). Subsequent builds are much faster because Yocto caches previous work.
+    - Make sure you pick the correct Yocto release branch before starting — different branches may need different host tools.
+    - Docker-based builds exist for Yocto versions, allowing us to use one Computer for builds based on releases from different branches.
 
-!!! note "Native Linux System"
-
-    - The examples in this paper assume you are using a native Linux system running a recent Ubuntu Linux distribution. If the machine you want to use Yocto Project on to build an image (Build Host) is not a native Linux system, you can still perform these steps by using CROss PlatformS (CROPS) and setting up a Poky container. Click on the link for the [Docker setup](https://docs.yoctoproject.org/kirkstone/dev-manual/start.html#setting-up-to-use-cross-platforms-crops){:target="_blank"}.
-
-    - You may use version 2 of Windows Subsystem For Linux (WSL 2) to set up a build host using Windows 10 or later, Windows Server 2019 or later. Click on the link for the [WSL Setup](https://docs.yoctoproject.org/kirkstone/dev-manual/start.html#setting-up-to-use-windows-subsystem-for-linux-wsl-2){:target="_blank"}.
-
----
 
 !!! note "Important Terms"
 
@@ -31,17 +25,24 @@ description: "Setting up your Linux host machine with all the dependencies, disk
     | Build Host or Development Host | The Linux based machine where you setup the necessary configuration, write the bitbake code and then build the image. |
     | Target Device or Target Board | The actual hardware device for which you are building the image (e.g., NVIDIA Jetson TX2i, Raspberry Pi, Beaglebone, etc). |
 
+!!! note "Native Linux System"
+
+    - This guide assumes you are using a computer running **Ubuntu Linux**. If your computer runs Windows or macOS instead, you have two options:
+        - **Docker container**: Run a Linux environment inside a container. See the [Docker setup guide](https://docs.yoctoproject.org/kirkstone/dev-manual/start.html#setting-up-to-use-cross-platforms-crops){:target="_blank"}.
+        - **WSL 2 (Windows only)**: Windows 10 and later can run Linux directly inside Windows using WSL 2 (Windows Subsystem for Linux). See the [WSL setup guide](https://docs.yoctoproject.org/kirkstone/dev-manual/start.html#setting-up-to-use-windows-subsystem-for-linux-wsl-2){:target="_blank"}.
+
+---
 
 
 ## Hardware Requirements and Tested Setup
 
-Make sure your Build Host meets the following requirements:
+Make sure your computer (Build Host) meets these minimum requirements:
 
-- At least 90 Gbytes of free disk space, though much more will help to run multiple builds and increase performance by reusing build artifacts. Recommended 500GB + storage space to run large builds.
+- **Disk space**: At least 90 GB free. Yocto downloads a lot of source code and generates large temporary files during the build. 500 GB+ is recommended if you plan to do multiple builds.
 
-- At least 8 Gbytes of RAM, though a modern build host with as much RAM and as many CPU cores as possible is strongly recommended to maximize build performance.
+- **RAM**: At least 8 GB. More RAM and more CPU cores means faster builds — the build process runs many compilation tasks in parallel.
 
-- Runs a supported Linux distribution (i.e. recent releases of Fedora, openSUSE, CentOS, Debian, or Ubuntu). For a list of Linux distributions that support the Yocto Project, see the Supported Linux Distributions section in the Yocto Project Reference Manual. For detailed information on preparing your build host, see the Preparing the Build Host section in the Yocto Project Development Tasks Manual. The testing setup was a 22.04 Ubuntu LTS.
+- **Operating system**: A recent Linux distribution (Ubuntu, Fedora, Debian, CentOS, or openSUSE). We tested with **Ubuntu 22.04 LTS**, which is the recommended choice.
 
 - Ensure that the following utilities have these minimum version numbers:
 
@@ -57,12 +58,14 @@ Make sure your Build Host meets the following requirements:
 
 - The Tested Setup was a x86 based machine running Ubuntu 22.04 LTS, with a Core i7-13700K, 64GB of RAM and 1TB HDD. Having a high performance desktop machine as such is very helpful in speeding up the build process and having an SSD can further reduce the build time.
 
-- Using VSCode with the Yocto Extension is helpful and helps understand the folder structure of the build more efficiently. 
+- Using VSCode with the Yocto Extension is helpful and helps in understanding the folder structure of the building process. 
 
 
 ---
 
 ## Installing Build Dependencies
+
+Yocto needs a set of standard Linux development tools installed on your system before it can compile anything. The command below installs all required packages/dependencies in one go:
 
 
 ```bash
@@ -74,7 +77,7 @@ sudo apt install build-essential chrpath cpio debianutils diffstat file gawk gcc
 
 ## Setting the Locale
 
-Yocto requires a UTF-8 locale. 
+A "locale" tells Linux how to handle text encoding (character sets, date formats, etc.). Yocto requires the **UTF-8** locale to be set, otherwise certain build scripts may fail with encoding errors.
 
 ```bash
 sudo locale-gen en_US.UTF-8
@@ -82,15 +85,14 @@ export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 ```
 
-Add to `~/.bashrc` for persistence.
+Add these two `export` lines to your `~/.bashrc` file so they are applied automatically every time you open a new terminal.
 
 ---
 
 
 ## Verify Setup
 
- CONTENT:
-Quick verification commands:
+Before moving on, run these quick checks to confirm everything is installed correctly:
 
 ```bash
 # Check Ubuntu version

@@ -8,7 +8,7 @@ description: "Essential links for the Yocto Project, NVIDIA Tegra BSP, and all r
 <span class="phase-label">Phase 1 · Page 2 of 9</span>
 
 !!! abstract "Page Goal"
-    This is a reference page. Every official doc, repository, and external resource used in this build is linked here. References contain information or subpages which help enable additional functionality and are often referenced throughout the build.
+    This is a reference page listing every official document, code repository, and external resource used in this build. Bookmark this page — you will come back to it frequently.
 
 
 !!! note "Recommended Reading"
@@ -45,13 +45,16 @@ description: "Essential links for the Yocto Project, NVIDIA Tegra BSP, and all r
 | What I wished I know about Yocto - Must Read (Kirkstone) | [What to know](https://docs.yoctoproject.org/kirkstone/brief-yoctoprojectqs/index.html) |
 | Reference Manual (Kirkstone) | [Major Reference Manual](https://docs.yoctoproject.org/kirkstone/ref-manual/index.html) |
 
-### Github Project Repositories - (Links for Cloning - Specific Commands are also provided inline in the stages pages)
-| Repository | Branch | Link |
-|-----------|--------|------|
-| Poky (BitBake + OE-Core) | `kirkstone` | [git.yoctoproject.org/poky]| (https://github.com/yoctoproject/poky/tree/kirkstone) |
-| meta-tegra (OE4T) This is a Board Support Repo for the NVIDIA Jetson Devices, further stages in Phase 1 will explain this branch.| `kirkstone-l4t-32.7.x` | [github.com/OE4T/meta-tegra](https://github.com/OE4T/meta-tegra/tree/kirkstone-l4t-r32.7.x) |
-| meta-openembedded  | `kirkstone` | [git.openembedded.org/meta-openembedded](https://git.openembedded.org/meta-openembedded) |
-| meta-ros | `kirkstone` | [github.com/ros/meta-ros](https://github.com/ros/meta-ros/tree/kirkstone) |
+### GitHub Repositories We Clone
+
+These are the Git repositories (code folders hosted online) that we download to our build machine. Each one is a "layer" that provides a specific set of recipes.
+
+| Repository | What It Provides | Branch | Link |
+|-----------|-----------------|--------|------|
+| **Poky** (BitBake + OE-Core) | The Yocto starter kit — includes the build engine and core OS recipes | `kirkstone` | [github.com/yoctoproject/poky](https://github.com/yoctoproject/poky/tree/kirkstone) |
+| **meta-tegra** (OE4T) | BSP (Board Support Package) for NVIDIA Jetson devices — hardware-specific recipes that tell Yocto how to build for our TX2i board | `kirkstone-l4t-32.7.x` | [github.com/OE4T/meta-tegra](https://github.com/OE4T/meta-tegra/tree/kirkstone-l4t-r32.7.x) |
+| **meta-openembedded** | Extra community recipes for networking, Python, multimedia, and other common software | `kirkstone` | [git.openembedded.org/meta-openembedded](https://git.openembedded.org/meta-openembedded) |
+| **meta-ros** | Recipes for ROS (Robot Operating System) — the robotics middleware we include for payload control | `kirkstone` | [github.com/ros/meta-ros](https://github.com/ros/meta-ros/tree/kirkstone) |
 
 ### NVIDIA & Hardware Resources
 

@@ -34,30 +34,34 @@ flowchart TD
     end
 
     subgraph P1["Phase 1 — Minimal Build"]
-        B0["Set Up Host\nEnvironment"] --> B1["Clone Poky &\nRequired Layers"] --> B2["Configure bblayers.conf\n& local.conf"] --> B3["Build Image\nvia bitbake"] --> B4["Flash TX2i + DevKit"]
+        B0["Set Up Build\n Computer and System Requirements"] --> B1["Clone Needed Building Software &\nRequired Layers from Github"] --> B2["Make Needed Configuration,\n Software and Machine Selections\n to build a minimal Operating System"] --> B3["Build\nOperating System"] --> B4["Flashing the OS into\n TX2i + DevKit"]
     end
 
     subgraph P2["Phase 2 — Custom Hardware"]
-        C0["Compare Elroy\nvs DevKit"] --> C1["Modify Build\nArtifacts"] --> C2["Edit extlinux.conf\n& Partition Table"] --> C3["Generate Sparse\nImage"] -->C4["Setup NVIDIA and Hardware Specific "] --> C4["Flash via\n Modified ConnectTech Scripts"]
+        C0["Compare ConnectTech\n Elroy Carrier Board\nvs DevKit Carrier Board"] --> C1["Modify Build Outputs and \n Files"] --> C2["Confirm if Permanent Storage on TX2i can\n detect the OS to mount it"] --> C3["Generate a Sparse \nImage from build outputs"] -->C4["Flash via\n Modified ConnectTech Scripts"]
     end
 
     subgraph P3["Phase 3 — PREEMPT_RT"]
-        D0["Locate RT Patch"] --> D1["Integrate via\nYocto Recipe"] --> D2["Configure Kernel\nFlags"] --> D3["Build & Flash\nRT Image"] --> D4["Validate with\ncyclictest"]
+        D0["Understand Realtime Kernel\n and Locate the Script\n to add the patch"] --> D1["Integrate patch into\nYocto Build System"] --> D2["Configure Kernel\nFlags using "] --> D3["Build & Flash\n OS Image with Real TIme Kernel"] --> D4["Validate with\n Realtime Testing Software"]
     end
 
     subgraph P4["Phase 4 — A/B Redundancy"]
-        E0["Modify smd_info.cfg"] --> E1["Set ROOTFS_AB=1"] --> E2["Flash target via cti-flash.sh"] --> E3["Trigger Kernel Panic"] --> E4["Verify Fallback"]
+        E0["Use the minimal OS\n to allow for Redundancy"] --> E1["Set Configuration for allowing Redundancy"] --> E2["Flash TX2i device with Redundant Copy of Software"] --> E3["Remove imporant System Software\n to generate a kernel panic simulating\ space radiation caused event"] --> E4["Verify System Fails to Boot into Corrupted Partition\nand Successfully Reboots into Secondary Partition"]
     end
 
-    subgraph CW["Current & Future Work"]
-        F1["Local apt Server"] --> F2["TMR Bootloader"] --> F3["RAM-Based\nFilesystem"] --> F4["Image\nMinimization"]
+    subgraph CW[" "]
+        FH["Current & Future Work"]
+        FH --> F1["Local apt\nServer"]
+        FH --> F2["Further Image\nSize Optimization"]
+        FH --> F3["Triple Modular\nRedundancy\nfor Bootloader"]
+        FH --> F4["RAM-Based\nFile System"]
     end
 
     A2 --> B0
     B4 --> C0
     C4 --> D0
     D4 --> E0
-    E4 --> F1
+    E4 --> FH
 ```
 
 ---
@@ -73,7 +77,7 @@ flowchart TD
 
 A deep dive into the research papers that form the theoretical foundation of this project, and the hardware/software redundancy mechanisms that make Linux viable for Low Earth Orbit (LEO) missions.
 
-**Key Topics:** Radiation effects, SEU/MBU mitigation, ECC memory, watchdog timers, partition redundancy, TMR, boot failure analysis.
+**Key Topics:** Radiation effects in space -  single-event upsets (SEU), partition redundancy concepts, boot failure analysis, Triple Modular Redundancy (TMR).
 
 → [Enter Phase 0](phase0/index.md)
 
@@ -85,7 +89,7 @@ A deep dive into the research papers that form the theoretical foundation of thi
 
 Build a minimal system image using the Yocto Project for the Jetson TX2i, initially targeting the TX2 Development Kit board. This phase covers the complete build pipeline from host setup to flashing.
 
-**Key Topics:** Poky, meta-tegra, meta-ros, bblayers.conf, local.conf, bitbake, Kirkstone branch.
+**Key Topics:** What is Poky (the reference distribution), the Kirkstone branch, adding layers (meta-tegra, meta-ros), configuring bblayers.conf and local.conf, building with bitbake.
 
 → [Enter Phase 1](phase1/index.md)
 
@@ -97,7 +101,7 @@ Build a minimal system image using the Yocto Project for the Jetson TX2i, initia
 
 Transition the build from the NVIDIA DevKit to the Connect Tech Elroy carrier board. This phase navigates device tree differences, flash script modifications, and a dead-end attempt with the Warrior branch.
 
-**Key Topics:** DTB files, CFG files, extlinux.conf, mksparse, ConnectTech BSP scripts, Warrior vs Kirkstone.
+**Key Topics:** Carrier boards vs DevKits, Device Tree Blobs (DTB files), configuration files (CFG, extlinux.conf), generating sparse images with mksparse, ConnectTech BSP flashing scripts, lessons from the Warrior vs Kirkstone branch mismatch.
 
 → [Enter Phase 2](phase2/index.md)
 
@@ -109,7 +113,7 @@ Transition the build from the NVIDIA DevKit to the Connect Tech Elroy carrier bo
 
 Apply the PREEMPT_RT real-time patch to the Linux kernel through the Yocto build system, enabling deterministic scheduling required for time-critical space payload operations.
 
-**Key Topics:** PREEMPT_RT patch series, kernel menuconfig, Yocto kernel recipes, cyclictest, latency profiling.
+**Key Topics:** What real-time scheduling means, the PREEMPT_RT patch, integrating patches via Yocto kernel recipes, configuring kernel flags, validating with cyclictest, latency profiling and interpreting results.
 
 → [Enter Phase 3](phase3/index.md)
 
@@ -121,18 +125,16 @@ Apply the PREEMPT_RT real-time patch to the Linux kernel through the Yocto build
 
 Configure A/B hardware and software redundancy on the Jetson TX2i, including bootloader-level failover parameters (`smd_info.cfg`), RootFS slot allocations (`ROOTFS_AB=1`), and serial boot console recovery validation.
 
-**Key Topics:** Slot Metadata Database (SMD), RootFS partition switching, Connect Tech flashing wrappers, kernel panic fallback loop.
+**Key Topics:** What A/B partitioning is and why it matters, RootFS partition layout, the Slot Metadata Database (SMD) and how it tracks boot slots, configuring failover via Connect Tech flashing wrappers, simulating failure with kernel panics, verifying automatic fallback to the secondary partition.
 
 → [Enter Phase 4](phase4/index.md)
 
 ---
 
-### Current Work
-
-Active development tasks including real-time validation, package management, and partition redundancy implementation.
-
----
-
 ### Future Work
 
-Planned enhancements including TMR bootloader patching, RAM-based filesystem testing, and system image minimization.
+- Add direct updates via a local package management server, and redundancy for bootloader and root file system (A/B) redundancy. 
+- Further add to this by adding:
+    - Triple Modular Redundancy at the bootloader level.
+    - Furtherminimizing the system image size.
+    - Implementing a RAM-based filesystem to protect the EMMC/ Flash storage by minimizing write operations on it.

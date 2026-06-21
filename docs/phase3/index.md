@@ -23,7 +23,7 @@ By default Linux is not a real time operating system. The **`PREEMPT_RT`** patch
 3. Implementing priority inheritance to prevent priority inversion bugs.
 
 
-### Determinism in Space Payloads
+### Why This Matters for Space
 
 - By applying PREEMPT_RT, we guarantee a deterministic upper bound on the worst-case latency time, ensuring critical code executes exactly when required. 
 - This can have several applications in space for example, a precise timed payload movement, internal parts or actuator movements, on-board robotics movements, collision detection, and timed telemetry and logging based on stringent requirements (at the millisecond level).    
@@ -83,8 +83,6 @@ flowchart TD
 | 3. [Real-Time Scheduling Concepts](03-real-time-scheduling.md) | `03-real-time-scheduling.md` | Real-time scheduling theory, process priorities, `SCHED_FIFO` vs. `SCHED_OTHER`, and priority inversion. |
 | 4. [OSADL Latency Validation](04-osadl-latency-testing.md) | `04-osadl-latency-testing.md` | Standardized latency testing using `cyclictest` and `stress-ng` following OSADL benchmarks. |
 | 5. [Hardware Robotics Interfacing](05-hardware-robotics-interfacing.md) | `05-hardware-robotics-interfacing.md` | Implementing a 4ms Ethernet loop to control a Kinova robotic arm, resolving priority inversion, and writing RT C++ code. |
-| 6. [Results, Analysis & Timers](06-results-and-timers.md) | `06-results-and-timers.md` | Analysis of latency graphs and the role of high-resolution timers in the PREEMPT_RT kernel. |
-
 ---
 
 [← Phase 2](../phase2/index.md){ .md-button }
