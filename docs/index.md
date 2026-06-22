@@ -12,35 +12,6 @@ This project adapts research from - [**E. Miller, C. Heistand and D. Mishra, "Sp
 The build system uses the **Yocto Project** (Kirkstone branch), enabling us to produce a minimal image with a reduced software footprint, ROS core packages, and a PREEMPT_RT patched kernel for deterministic real-time scheduling — engineered for Low Earth Orbit missions.
 Yocto is a Open Source Framework which helps create custom linux distros for embedded devices from the ground up.
 
-## Documentation Overview
-
-<div class="grid cards" markdown>
-
--   [:material-map-legend: __Project Roadmap__](roadmap.md)
-    
-    High-level overview and timeline of the project.
-
--   [:material-book-open-page-variant: __Phase 0__ — Literature Review](phase0/index.md)
-    
-    Foundational research & radiation redundancy concepts.
-
--   [:material-rocket-launch: __Phase 1__ — Minimal Build](phase1/index.md)
-    
-    Initial Yocto OS build on the standard TX2 DevKit.
-
--   [:material-memory: __Phase 2__ — Custom Hardware](phase2/index.md)
-    
-    Adapting the build for the Connect Tech Elroy carrier board.
-
--   [:material-clock-fast: __Phase 3__ — PREEMPT_RT](phase3/index.md)
-    
-    Deterministic real-time kernel patching and scheduling.
-
--   [:material-shield-check: __Phase 4__ — A/B Redundancy](phase4/index.md)
-    
-    A/B partition, bootloader fault tolerance & fallback mechanics.
-
-</div>
 
 ---
 
