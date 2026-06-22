@@ -33,12 +33,12 @@ All modifications are performed from the 18.04 Flashing host's Linux for Tegra (
 
 ### Process Steps to Enable Bootloader A/B Redundancy (from RidgeRun docs)
 1. **Configuring the Slot Metadata Database (SMD)**:
-   The configuration file `smd_info.cfg` (located in the L4T `bootloader/` directory) defines slot priority, boot success flags, and retry thresholds.
+   The configuration files `smd_info.cfg` and `smd_info_rootfs.cfg` (located in the L4T `bootloader/` directory) define slot priority, boot success flags, and retry thresholds.
 2. **Running the SMD Generator**:
-   Use the `nv_smd_generator` utility to parse `smd_info.cfg` and generate the binary slot metadata partition package:
+   Use the `nv_smd_generator` utility to parse the config (e.g., `smd_info.cfg` or `smd_info_rootfs.cfg`) and generate the binary slot metadata partition package:
    ```bash
    # Generate slot metadata partition binary
-   ./nv_smd_generator smd_info.cfg slot_metadata.bin
+   ./nv_smd_generator smd_info_rootfs.cfg slot_metadata.bin
    ```
 3. **Flashing the Redundant Layout**:
    Flash the generated slot configuration to the device. Alternatively, pass the `-r` option during flashing to rebuild slot allocations.
@@ -78,7 +78,7 @@ To enable redundancy, uncomment the parameters to activate Slot B (`_b`) and con
 To enable RootFS-level A/B redundancy, we configure slot metadata variables directly or via compiler flags in the L4T configuration files.
 
 ### Configuring RootFS A/B Parameters
-The configuration section in the slot metadata configuration file defines unified boot control parameters:
+The configuration section in the slot metadata configuration file (specifically `smd_info_rootfs.cfg`) defines unified boot control parameters:
 
 ```ini
 # Set the maximum boot slot retry count

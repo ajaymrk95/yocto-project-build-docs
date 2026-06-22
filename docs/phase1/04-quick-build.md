@@ -786,5 +786,5 @@ $ runqemu qemux86-64
 This step is optional — the primary goal of the Quick Build is to validate that your host setup and build toolchain are working correctly, since we will be building an image for a custom hardware.
 
 
-[← Host Setup](03-host-setup.md){ .md-button }
+[← Build Computer Setup](03-host-setup.md){ .md-button }
 [Next: Cloning & Branching →](05-cloning-and-branching.md){ .md-button .md-button--primary }

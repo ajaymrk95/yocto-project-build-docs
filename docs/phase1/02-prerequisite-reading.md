@@ -64,4 +64,4 @@ These are the Git repositories (code folders hosted online) that we download to 
 
 
 [← What Is Yocto?](01-what-is-yocto.md){ .md-button }
-[Next: Host Setup →](03-host-setup.md){ .md-button .md-button--primary }
+[Next: Build Computer Setup →](03-host-setup.md){ .md-button .md-button--primary }

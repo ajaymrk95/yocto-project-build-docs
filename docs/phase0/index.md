@@ -48,7 +48,13 @@ Below are the citations for the three foundational papers as per the IEEE Plain 
 
 For an in-depth breakdown of each paper's system architecture, hardware watchdog schematics, Triple Modular Redundancy (TMR) boot loaders, and the boot-phase vulnerabilities discovered under radiation, please refer to the primary summary subpage:
 
-*   [Research Papers - Detailed Summary](papers.md)
+<div class="grid cards" markdown>
+
+-   [__Research Papers — Detailed Summary__](papers.md)
+    
+    Explore the complete breakdown of system architectures, watchdog schematics, and TMR boot loaders.
+
+</div>
 
 ---
 

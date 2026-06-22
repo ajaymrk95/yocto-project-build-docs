@@ -10,7 +10,7 @@ copyright: "&copy; 2026 Space Linux Build Documentation"
 theme:
   name: material
   font:
-    text: Inter
+    text: Plus Jakarta Sans 
     code: JetBrains Mono
   icon:
     repo: fontawesome/brands/github
@@ -103,7 +103,7 @@ nav:
     - Overview: phase1/index.md
     - What Is Yocto?: phase1/01-what-is-yocto.md
     - Important Links: phase1/02-prerequisite-reading.md
-    - Host Setup: phase1/03-host-setup.md
+    - Build Computer Setup: phase1/03-host-setup.md
     - Quick Build: phase1/04-quick-build.md
     - Cloning & Branching: phase1/05-cloning-and-branching.md
     - Adding Layers & bblayers.conf: phase1/06-adding-layers.md

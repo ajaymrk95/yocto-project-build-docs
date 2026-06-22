@@ -1,75 +1,331 @@
 /* ==========================================================================
-   Space Linux Documentation — Clean Professional Theme
-   Inspired by Apple Developer Docs & Yocto Project
+   Space Linux Documentation — Clean Aesthetic Theme
    ========================================================================== */
 
-/* --- Light Theme --- */
+/* --- Light Theme Variables --- */
 :root {
-  --md-primary-fg-color: #1d1d1f;
-  --md-primary-bg-color: #ffffff;
-  --md-typeset-color: #1d1d1f;
-}
-
-[data-md-color-scheme="default"] {
+  /* Canvas Background */
   --md-default-bg-color: #ffffff;
-  --md-default-fg-color--light: #6e6e73;
-  --md-typeset-a-color: #0066cc;
-  --md-accent-fg-color: #0066cc;
+  --md-primary-fg-color: #ffffff; 
+  --md-primary-bg-color: #171717; 
+  
+  /* Text & Accents */
+  --md-default-fg-color: #2b2b2b;
+  --md-default-fg-color--light: #707070;
+  --md-default-fg-color--transparent: #eaeaea;
+
+  --supabase-green: #24b47e;
+  --supabase-green-hover: #1e9a6a;
+  
+  --md-typeset-a-color: var(--supabase-green);
+  --md-accent-fg-color: var(--supabase-green);
+  
+  /* Code Blocks */
+  --md-code-bg-color: #f8f9fa;
+  --md-code-fg-color: #24292e;
+
+  /* Font */
+  --md-text-font: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --md-code-font: "Roboto Mono", SFMono-Regular, Consolas, Menlo, monospace;
 }
 
-/* --- Dark Theme --- */
+/* --- Dark Theme Variables --- */
 [data-md-color-scheme="slate"] {
-  --md-default-bg-color: #111111;
-  --md-default-fg-color: #f5f5f7;
-  --md-default-fg-color--light: #a1a1a6;
-  --md-typeset-a-color: #4da3ff;
-  --md-accent-fg-color: #4da3ff;
-  --md-code-bg-color: #1c1c1e;
+  /* Canvas Background */
+  --md-default-bg-color: #1c1c1c;
+  --md-primary-fg-color: #1c1c1c; 
+  --md-primary-bg-color: #ffffff; 
+  
+  /* Text & Accents */
+  --md-default-fg-color: #ededed;
+  --md-default-fg-color--light: #8b8b8b;
+  --md-default-fg-color--transparent: #2e2e2e;
+
+  --supabase-green: #3ecf8e;
+  --supabase-green-hover: #24b47e;
+
+  --md-typeset-a-color: var(--supabase-green);
+  --md-accent-fg-color: var(--supabase-green);
+  
+  /* Code Blocks */
+  --md-code-bg-color: #161616;
+  --md-code-fg-color: #e2e8f0;
 }
 
-/* --- Typography --- */
-.md-typeset {
-  font-size: 0.82rem;
-  line-height: 1.72;
-  letter-spacing: -0.003em;
-}
+/* ==========================================================================
+   LAYOUT
+   ========================================================================== */
 
-.md-typeset h1 {
-  font-weight: 700;
-  letter-spacing: -0.022em;
-  margin-top: 0;
-}
-
-.md-typeset h2 {
-  font-weight: 600;
-  letter-spacing: -0.012em;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  padding-bottom: 0.4rem;
-}
-
-[data-md-color-scheme="slate"] .md-typeset h2 {
-  border-bottom-color: rgba(255, 255, 255, 0.08);
-}
-
-.md-typeset h3 {
-  font-weight: 600;
-}
-
-/* --- Header Bar --- */
+/* Header Bar - Apple Liquid Glass */
 .md-header {
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+  box-shadow: none;
+  border-bottom: 1px solid var(--md-default-fg-color--transparent);
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  color: var(--md-primary-bg-color) !important;
 }
 
 [data-md-color-scheme="slate"] .md-header {
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06);
+  background-color: rgba(28, 28, 28, 0.85) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* --- Navigation Sidebar --- */
+.md-header__button, .md-header__title {
+  color: var(--md-primary-bg-color) !important;
+}
+
+/* Sidebar Navigation */
+.md-sidebar--primary {
+  border-right: 1px solid var(--md-default-fg-color--transparent);
+}
+
 .md-nav__link {
-  font-size: 0.78rem;
+  font-size: 0.8125rem; /* 13px */
+  line-height: 1.5;
+  padding: 0.4rem 0;
+  transition: color 0.15s ease;
 }
 
-/* --- Admonitions --- */
+.md-nav__link--active {
+  font-weight: 500;
+  color: var(--md-accent-fg-color);
+}
+
+/* Constrain width for perfect reading length */
+.md-content {
+  max-width: 52rem;
+}
+
+/* ==========================================================================
+   TYPOGRAPHY
+   ========================================================================== */
+
+.md-typeset {
+  font-size: 0.875rem; /* 14px base size */
+  line-height: 1.7;
+  color: var(--md-default-fg-color);
+  font-family: var(--md-text-font);
+}
+
+/* Headings */
+.md-typeset h1 {
+  font-size: 1.75rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: var(--md-default-fg-color);
+}
+
+.md-typeset h2 {
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  border-bottom: 1px solid var(--md-default-fg-color--transparent);
+  padding-bottom: 0.5rem;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--md-default-fg-color);
+}
+
+.md-typeset h3 {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-top: 2rem;
+}
+
+.md-typeset h4 {
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+/* Links */
+.md-typeset a {
+  color: var(--md-typeset-a-color);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.md-typeset a:hover {
+  color: var(--supabase-green-hover);
+}
+
+/* ==========================================================================
+   COMPONENTS
+   ========================================================================== */
+
+/* Code Blocks (Scale down JetBrains Mono) */
+.md-typeset code {
+  font-size: 0.725rem !important;
+}
+
+.md-typeset pre > code {
+  font-size: 0.725rem !important;
+}
+
+/* Fix "Copied to clipboard" Toast & Tooltips */
+.md-tooltip, .md-toast {
+  background-color: var(--md-default-fg-color) !important;
+  color: var(--md-default-bg-color) !important;
+  border-radius: 6px;
+}
+
+[data-md-color-scheme="slate"] .md-tooltip,
+[data-md-color-scheme="slate"] .md-toast {
+  background-color: #333333 !important;
+  color: #ffffff !important;
+}
+
+/* Buttons */
+.md-typeset .md-button {
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  background-color: var(--supabase-green);
+  color: white;
+  border: 1px solid var(--supabase-green);
+  transition: all 0.2s ease;
+}
+
+.md-typeset .md-button:hover {
+  background-color: var(--supabase-green-hover);
+  border-color: var(--supabase-green-hover);
+  color: white;
+}
+
+.md-typeset .md-button--primary {
+  background-color: transparent;
+  color: var(--md-default-fg-color);
+  border: 1px solid var(--md-default-fg-color--transparent);
+}
+
+.md-typeset .md-button--primary:hover {
+  background-color: var(--md-default-fg-color--transparent);
+  color: var(--md-default-fg-color);
+}
+
+/* Tables */
+.md-typeset table:not([class]) {
+  font-size: 0.8125rem;
+  border: 1px solid var(--md-default-fg-color--transparent);
+  border-radius: 8px;
+  overflow: hidden;
+  display: block; 
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.md-typeset table:not([class]) th {
+  font-weight: 500;
+  text-align: left;
+  background: var(--md-code-bg-color);
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--md-default-fg-color--transparent);
+}
+
+.md-typeset table:not([class]) td {
+  border-top: 1px solid var(--md-default-fg-color--transparent);
+  padding: 0.75rem 1rem;
+}
+
+/* ==========================================================================
+   GRID CARDS (Clickable Boxes for Pages)
+   ========================================================================== */
+
+.md-typeset .grid.cards > ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.md-typeset .grid.cards > ul > li {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 1.25rem;
+  border: 1px solid var(--md-default-fg-color--transparent);
+  border-radius: 8px;
+  background-color: transparent;
+  transition: all 0.2s ease;
+}
+
+/* When the whole card is wrapped in a link OR has hover */
+.md-typeset .grid.cards > ul > li:hover {
+  border-color: var(--supabase-green);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+  cursor: pointer;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .grid.cards > ul > li:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.md-typeset .grid.cards > ul > li hr {
+  margin: 1rem 0;
+  border-bottom: 1px solid var(--md-default-fg-color--transparent);
+}
+
+.md-typeset .grid.cards > ul > li strong, 
+.md-typeset .grid.cards > ul > li b {
+  font-size: 0.95rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--md-default-fg-color);
+}
+
+/* Card titles that are links */
+.md-typeset .grid.cards > ul > li a {
+  color: inherit;
+}
+.md-typeset .grid.cards > ul > li a:hover {
+  color: var(--md-typeset-a-color);
+}
+
+.md-typeset .grid.cards > ul > li p {
+  font-size: 0.8125rem;
+  color: var(--md-default-fg-color--light);
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+  flex-grow: 1;
+}
+
+/* ==========================================================================
+   MOBILE OPTIMIZATION
+   ========================================================================== */
+
+@media screen and (max-width: 76.1875em) {
+  .md-nav__link {
+    padding: 0.8rem 0; /* Huge tap targets */
+    font-size: 0.9rem;
+  }
+  
+  .md-typeset {
+    font-size: 0.9rem;
+  }
+  
+  .md-typeset h1 { font-size: 1.5rem; }
+  
+  .md-typeset .grid.cards > ul {
+    grid-template-columns: 1fr; /* Stack cards */
+  }
+  
+  .md-sidebar--primary {
+    border-right: none;
+  }
+}
+
+/* ==========================================================================
+   PRESERVED: ADMONITIONS & MERMAID 
+   ========================================================================== */
+
 .md-typeset .admonition,
 .md-typeset details {
   border-radius: 6px;
@@ -79,134 +335,27 @@
   font-size: 0.8rem;
 }
 
-/* --- Tables --- */
-.md-typeset table:not([class]) {
-  font-size: 0.8rem;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 6px;
-  overflow: hidden;
+/* Mermaid Diagrams (Larger & Visible) & Dark Mode Fix */
+.md-typeset .mermaid { 
+  margin: 2.5rem 0; 
+  font-size: 1.05rem !important; 
+  overflow-x: auto; /* Enables scrolling instead of cutting off */
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 0.5rem;
 }
-
-[data-md-color-scheme="slate"] .md-typeset table:not([class]) {
-  border-color: rgba(255, 255, 255, 0.08);
+.md-typeset .mermaid svg {
+  width: 100%; 
+  min-width: 600px; /* Prevents chart from shrinking too small on mobile, allows scrolling */
+  height: auto;
 }
-
-.md-typeset table:not([class]) th {
-  font-weight: 600;
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  background: rgba(0, 0, 0, 0.03);
-}
-
-[data-md-color-scheme="slate"] .md-typeset table:not([class]) th {
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.md-typeset table:not([class]) td {
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-[data-md-color-scheme="slate"] .md-typeset table:not([class]) td {
-  border-top-color: rgba(255, 255, 255, 0.05);
-}
-
-/* --- Code --- */
-.md-typeset code {
-  border-radius: 4px;
-  font-size: 0.78em;
-  padding: 0.15em 0.4em;
-}
-
-/* --- Content Max Width --- */
-.md-content {
-  max-width: 52rem;
-}
-
-/* --- Links — cleaner underline --- */
-.md-typeset a {
-  text-decoration: none;
-}
-
-.md-typeset a:hover {
-  text-decoration: underline;
-}
-
-/* --- Buttons --- */
-.md-typeset .md-button {
-  border-radius: 6px;
-  font-size: 0.78rem;
-  font-weight: 500;
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-/* --- Mermaid Diagrams — Dark Mode Fix --- */
-/* Force mermaid to use the correct theme based on color scheme */
-.mermaid {
-  margin: 1.5rem 0;
-}
-
-/* Ensure text in diagrams is readable in dark mode */
-[data-md-color-scheme="slate"] .mermaid text {
-  fill: #f5f5f7 !important;
-}
-
-[data-md-color-scheme="slate"] .mermaid .nodeLabel {
-  color: #f5f5f7 !important;
-}
-
-[data-md-color-scheme="slate"] .mermaid .edgeLabel {
-  background-color: #1c1c1e !important;
-  color: #f5f5f7 !important;
-}
-
-[data-md-color-scheme="slate"] .mermaid .label {
-  color: #f5f5f7 !important;
-}
-
-/* Light neutral node colors that work in both themes */
+[data-md-color-scheme="slate"] .mermaid text { fill: #f5f5f7 !important; }
+[data-md-color-scheme="slate"] .mermaid .nodeLabel { color: #f5f5f7 !important; }
+[data-md-color-scheme="slate"] .mermaid .edgeLabel { background-color: #1c1c1e !important; color: #f5f5f7 !important; }
+[data-md-color-scheme="slate"] .mermaid .label { color: #f5f5f7 !important; }
 [data-md-color-scheme="slate"] .mermaid .node rect,
 [data-md-color-scheme="slate"] .mermaid .node circle,
-[data-md-color-scheme="slate"] .mermaid .node polygon {
-  stroke: #4da3ff !important;
-}
-
-[data-md-color-scheme="slate"] .mermaid .edgePath .path {
-  stroke: #6e6e73 !important;
-}
-
-[data-md-color-scheme="slate"] .mermaid marker {
-  fill: #6e6e73 !important;
-}
-
-/* Subgraph labels and borders in dark mode */
-[data-md-color-scheme="slate"] .mermaid .cluster rect {
-  stroke: rgba(255, 255, 255, 0.12) !important;
-  fill: rgba(255, 255, 255, 0.03) !important;
-}
-
-[data-md-color-scheme="slate"] .mermaid .cluster span {
-  color: #a1a1a6 !important;
-}
-
-/* --- Smooth Scrolling --- */
-html {
-  scroll-behavior: smooth;
-}
-
-/* --- Footer --- */
-.md-footer {
-  margin-top: 3rem;
-}
-
-/* --- Phase label (subtle text, no badge) --- */
-.phase-label {
-  display: block;
-  font-size: 0.72rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--md-default-fg-color--light);
-  margin-bottom: 0.5rem;
-}
+[data-md-color-scheme="slate"] .mermaid .node polygon { stroke: #4da3ff !important; }
+[data-md-color-scheme="slate"] .mermaid .edgePath .path { stroke: #6e6e73 !important; }
+[data-md-color-scheme="slate"] .mermaid marker { fill: #6e6e73 !important; }
+[data-md-color-scheme="slate"] .mermaid .cluster rect { stroke: rgba(255, 255, 255, 0.12) !important; fill: rgba(255, 255, 255, 0.03) !important; }
+[data-md-color-scheme="slate"] .mermaid .cluster span { color: #a1a1a6 !important; }

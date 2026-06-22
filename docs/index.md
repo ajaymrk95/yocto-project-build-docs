@@ -12,8 +12,35 @@ This project adapts research from - [**E. Miller, C. Heistand and D. Mishra, "Sp
 The build system uses the **Yocto Project** (Kirkstone branch), enabling us to produce a minimal image with a reduced software footprint, ROS core packages, and a PREEMPT_RT patched kernel for deterministic real-time scheduling — engineered for Low Earth Orbit missions.
 Yocto is a Open Source Framework which helps create custom linux distros for embedded devices from the ground up.
 
-[Start with the Roadmap](roadmap.md){ .md-button .md-button--primary }
-[Phase 0 — Literature Review](phase0/index.md){ .md-button }
+## Documentation Overview
+
+<div class="grid cards" markdown>
+
+-   [:material-map-legend: __Project Roadmap__](roadmap.md)
+    
+    High-level overview and timeline of the project.
+
+-   [:material-book-open-page-variant: __Phase 0__ — Literature Review](phase0/index.md)
+    
+    Foundational research & radiation redundancy concepts.
+
+-   [:material-rocket-launch: __Phase 1__ — Minimal Build](phase1/index.md)
+    
+    Initial Yocto OS build on the standard TX2 DevKit.
+
+-   [:material-memory: __Phase 2__ — Custom Hardware](phase2/index.md)
+    
+    Adapting the build for the Connect Tech Elroy carrier board.
+
+-   [:material-clock-fast: __Phase 3__ — PREEMPT_RT](phase3/index.md)
+    
+    Deterministic real-time kernel patching and scheduling.
+
+-   [:material-shield-check: __Phase 4__ — A/B Redundancy](phase4/index.md)
+    
+    A/B partition, bootloader fault tolerance & fallback mechanics.
+
+</div>
 
 ---
 
@@ -76,41 +103,61 @@ The **Connect Tech Elroy** is a compact, rugged carrier board designed specifica
 
 ## Project Milestones   
 
-### Milestone 1 — Minimal Yocto Build ✓
+<div class="grid cards" markdown>
 
-Adapted a minimal system image via Yocto for the Jetson TX2i on the TX2 Development Kit board. Established the base layer configuration, package selection, and initial flash workflow.
+-   __Milestone 1 — Minimal Yocto Build ✓__
 
-→ [Phase 1 Details](phase1/index.md)
+    Adapted a minimal system image via Yocto for the Jetson TX2i on the TX2 Development Kit board. Established the base layer configuration, package selection, and initial flash workflow.
 
-### Milestone 2 — Custom Hardware ✓
+    [→ Phase 1 Details](phase1/index.md)
 
-Improved the build to run on minimal form-factor hardware — Jetson TX2i + Connect Tech Elroy Carrier Board. Resolved device tree, configuration, and flash script differences.
+-   __Milestone 2 — Custom Hardware ✓__
 
-→ [Phase 2 Details](phase2/index.md)
+    Improved the build to run on minimal form-factor hardware — Jetson TX2i + Connect Tech Elroy Carrier Board. Resolved device tree, configuration, and flash script differences.
 
-### Milestone 3 — PREEMPT_RT Kernel ✓
+    [→ Phase 2 Details](phase2/index.md)
 
-Added the PREEMPT_RT patch to the Linux kernel via the Yocto build system, enabling deterministic real-time capabilities required for time-critical space payloads.
+-   __Milestone 3 — PREEMPT_RT Kernel ✓__
 
-→ [Phase 3 Details](phase3/index.md)
+    Added the PREEMPT_RT patch to the Linux kernel via the Yocto build system, enabling deterministic real-time capabilities required for time-critical space payloads.
+
+    [→ Phase 3 Details](phase3/index.md)
+
+</div>
 
 ---
 
 ## Current Work in Progress
 
-| Task | Status | Details |
-|---|---|---|
-| Enabling A/B partition redundancy | In Progress | Graceful boot fallback on corruption |
+<div class="grid cards" markdown>
+
+-   __Phase 4: Enabling A/B Partition Redundancy__
+    
+    *Status: In Progress*
+    
+    Configuring bootloader and rootfs fallback for graceful recovery from boot failures and corruption. [→ Read Details](phase4/index.md)
+
+</div>
 
 ---
 
 ## Future Work
 
-| Task | Description |
-|---|---|
-| Minimizing the system image | Further reducing packages and footprint |
-| Patching the bootloader for TMR | Triple Modular Redundancy at the bootloader level |
-| Testing RAM-based filesystem | tmpfs / initramfs for radiation-safe operation |
+<div class="grid cards" markdown>
+
+-   __Minimizing the system image__
+    
+    Further reducing packages and footprint.
+
+-   __Patching the bootloader for TMR__
+    
+    Triple Modular Redundancy at the bootloader level.
+
+-   __Testing RAM-based filesystem__
+    
+    tmpfs / initramfs for radiation-safe operation.
+
+</div>
 
 ---
 
