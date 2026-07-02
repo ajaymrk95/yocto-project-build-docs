@@ -1,0 +1,93 @@
+I found two good examples:
+
+Using the sites in parallel will produce the following salient steps as they are delineated below:
+
+To install the latest L4T 32.4.3 on Jetson TX2 with real-time patches, you can follow this instructions:
+Install required packages
+
+sudo apt-get update
+sudo apt-get install libncurses5-dev
+sudo apt-get install build-essential
+sudo apt-get install bc
+sudo apt-get install lbzip2
+sudo apt-get install qemu-user-static
+sudo apt-get install python
+
+Create folder
+
+mkdir $HOME/jetson_tx2
+cd $HOME/jetson_tx2
+
+Download required files
+
+L4T Jetson Driver Package:
+
+wget https://developer.nvidia.com/embedded/L4T/r32_Release_v4.3/t186ref_release_aarch64/Tegra186_Linux_R32.4.3_aarch64.tbz2
+
+L4T Sample Root File System:
+
+wget https://developer.nvidia.com/embedded/L4T/r32_Release_v4.3/t186ref_release_aarch64/Tegra_Linux_Sample-Root-Filesystem_R32.4.3_aarch64.tbz2
+
+L4T Sources:
+
+wget https://developer.nvidia.com/embedded/L4T/r32_Release_v4.3/sources/T186/public_sources.tbz2
+
+GCC Tool Chain for 64-bit BSP:
+
+wget http://releases.linaro.org/components/toolchain/binaries/7.3-2018.05/aarch64-linux-gnu/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
+
+Extract files
+
+sudo tar xpf Tegra186_Linux_R32.4.3_aarch64.tbz2
+cd Linux_for_Tegra/rootfs/
+sudo tar xpf ../../Tegra_Linux_Sample-Root-Filesystem_R32.4.3_aarch64.tbz2
+cd ../../
+tar -xvf gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
+sudo tar -xjf public_sources.tbz2
+tar -xjf Linux_for_Tegra/source/public/kernel_src.tbz2
+
+Apply real-time patches
+
+cd kernel/kernel-4.9/
+./scripts/rt-patch.sh apply-patches
+
+Configure and compile the kernel
+
+TEGRA_KERNEL_OUT=jetson_tx2_kernel
+mkdir $TEGRA_KERNEL_OUT
+export CROSS_COMPILE=$HOME/jetson_tx2/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
+make ARCH=arm64 O=$TEGRA_KERNEL_OUT tegra_defconfig
+make ARCH=arm64 O=$TEGRA_KERNEL_OUT menuconfig
+
+Configure the next options:
+
+General setup → Timer subsystem → Timer tick handling → Full dynticks system (tickless)
+Kernel Features → Preemption Model: Fully Preemptible Kernel (RT)
+Kernel Features → Timer frequency: 1000 HZ
+
+The script that applies the real-time patches disables the CPU idle driver, however, jetson_clocks also tries to disable this feature and you can see an error when running jetson_clocks. To avoid that, you can enable it again:
+
+CPU Power Management → CPU idle → ARM CPU Idle Drivers → CPU Idle Driver for NVIDIA Tegra 18x SoCs
+
+make ARCH=arm64 O=$TEGRA_KERNEL_OUT -j4
+
+sudo cp jetson_tx2_kernel/arch/arm64/boot/Image $HOME/jetson_tx2/Linux_for_Tegra/kernel/Image
+sudo cp -r jetson_tx2_kernel/arch/arm64/boot/dts/* $HOME/jetson_tx2/Linux_for_Tegra/kernel/dtb/
+sudo make ARCH=arm64 O=$TEGRA_KERNEL_OUT modules_install INSTALL_MOD_PATH=$HOME/jetson_tx2/Linux_for_Tegra/rootfs/
+
+cd $HOME/jetson_tx2/Linux_for_Tegra/rootfs/
+sudo tar --owner root --group root -cjf kernel_supplements.tbz2 lib/modules
+sudo mv kernel_supplements.tbz2  ../kernel/
+
+cd ..
+sudo ./apply_binaries.sh
+
+Flash the Jetson TX2
+
+Put Jetson TX2 in recovery mode and then flash it:
+
+sudo ./flash.sh jetson-tx2 mmcblk0p1
+
+To finish, install Jetson SDK components using NVIDIA SDK Manager
+
+Best regards!

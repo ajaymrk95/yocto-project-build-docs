@@ -1,0 +1,2848 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="How to run standardized real-time latency benchmarks using cyclictest and stress-ng according to OSADL testing specifications on the Jetson TX2i.">
+      
+      
+      
+        <link rel="canonical" href="https://ajaymrk95.github.io/yocto-project-build-docs/phase3/04-osadl-latency-testing/">
+      
+      
+        <link rel="prev" href="../03-real-time-scheduling/">
+      
+      
+        <link rel="next" href="../05-hardware-robotics-interfacing/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>OSADL Latency Validation - Space Linux — Yocto Build Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Plus+Jakarta+Sans:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Plus Jakarta Sans";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#osadl-latency-validation" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Space Linux — Yocto Build Documentation" class="md-header__button md-logo" aria-label="Space Linux — Yocto Build Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Space Linux — Yocto Build Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              OSADL Latency Validation
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ajaymrk95/yocto-project-build-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ajaymrk95/yocto-project-build-docs
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Overview
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../roadmap/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Roadmap
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../latest-trends/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Latest Trends
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../phase0/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Phase 0
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../phase1/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Phase 1
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../phase2/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Phase 2
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Phase 3
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../phase4/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Phase 4
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Space Linux — Yocto Build Documentation" class="md-nav__button md-logo" aria-label="Space Linux — Yocto Build Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Space Linux — Yocto Build Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ajaymrk95/yocto-project-build-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ajaymrk95/yocto-project-build-docs
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../latest-trends/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Latest Trends
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../phase0/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 0
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Phase 0
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase0/papers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Research Papers Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../phase1/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 1
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Phase 1
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/01-what-is-yocto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What Is Yocto?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/02-prerequisite-reading/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Important Links
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/03-host-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build Computer Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/04-quick-build/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Build
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/05-cloning-and-branching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloning & Branching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/06-adding-layers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Adding Layers & bblayers.conf
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/07-local-conf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deep Dive: local.conf
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/08-build-process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build Process Explained
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/09-navigating-output-and-flashing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build Output & Flashing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../phase2/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 2
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Phase 2
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase2/01-device-trees-and-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Device Trees, DTBs & Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase2/02-custom-machine-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom Machine Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase2/03-executing-the-build/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Executing the Build & Build Problems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase2/04-build-artifact-modification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build Artifact Modification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase2/05-connecttech-flash-scripts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Setting up NVIDIA Flashing Directory, ConnectTech Utilities, Machine Confs & Flashing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 3
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Phase 3
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-native-rt-patching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Native RT Patching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-yocto-rt-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Yocto RT Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-real-time-scheduling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Real-Time Scheduling Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OSADL Latency Testing
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OSADL Latency Testing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-the-osadl-benchmarking-standard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. The OSADL Benchmarking Standard
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-setting-up-the-testing-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Setting Up the Testing Tools
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Setting Up the Testing Tools">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-a-running-on-the-yocto-image-this-was-tested-in-this-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option A: Running on the Yocto Image (This was Tested in this project)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-b-running-on-the-native-l4t-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option B: Running on the Native L4T Image
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-simulating-load-with-stress-ng" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Simulating Load with stress-ng
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-running-the-latency-benchmark-cyclictest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Running the Latency Benchmark (cyclictest)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Running the Latency Benchmark (cyclictest)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-cyclictest-measures-latency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Cyclictest Measures Latency
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-visualizing-latency-creating-an-osadl-latency-plot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Visualizing Latency: Creating an OSADL Latency Plot
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Visualizing Latency: Creating an OSADL Latency Plot">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-plotting-script-mklatencyplotbash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Plotting Script (mklatencyplot.bash)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#script-execution-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Script Execution &amp; Workflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#results-observations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Results &amp; Observations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparative-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparative Summary
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Comparative Summary">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#maximum-latency-comparison-s" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Maximum Latency Comparison (µs)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#average-latency-comparison-s" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Average Latency Comparison (µs)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#histogram-overflow-comparison-events-exceeding-1000-s" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Histogram Overflow Comparison (events exceeding 1000 µs)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#analysis-of-arm-cortex-a57-vs-denver-2-cores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Analysis of ARM Cortex-A57 vs. Denver 2 Cores
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Analysis of ARM Cortex-A57 vs. Denver 2 Cores">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arm-cortex-a57-cores-cpu0-cpu3cpu5-steady-and-predictable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ARM Cortex-A57 Cores (CPU0, CPU3–CPU5): Steady and Predictable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#denver-2-cores-cpu1-cpu2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Denver 2 Cores (CPU1, CPU2):
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-hardware-robotics-interfacing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hardware Interfacing & Results
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../phase4/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 4
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Phase 4
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase4/01-bootloader-rootfs-redundancy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bootloader & RootFS Redundancy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase4/02-yocto-integration-outline/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Yocto Integration Outline & Phase Conclusion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-the-osadl-benchmarking-standard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. The OSADL Benchmarking Standard
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-setting-up-the-testing-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Setting Up the Testing Tools
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Setting Up the Testing Tools">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-a-running-on-the-yocto-image-this-was-tested-in-this-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option A: Running on the Yocto Image (This was Tested in this project)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-b-running-on-the-native-l4t-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option B: Running on the Native L4T Image
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-simulating-load-with-stress-ng" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Simulating Load with stress-ng
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-running-the-latency-benchmark-cyclictest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Running the Latency Benchmark (cyclictest)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Running the Latency Benchmark (cyclictest)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-cyclictest-measures-latency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Cyclictest Measures Latency
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-visualizing-latency-creating-an-osadl-latency-plot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Visualizing Latency: Creating an OSADL Latency Plot
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Visualizing Latency: Creating an OSADL Latency Plot">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-plotting-script-mklatencyplotbash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Plotting Script (mklatencyplot.bash)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#script-execution-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Script Execution &amp; Workflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#results-observations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Results &amp; Observations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparative-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparative Summary
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Comparative Summary">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#maximum-latency-comparison-s" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Maximum Latency Comparison (µs)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#average-latency-comparison-s" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Average Latency Comparison (µs)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#histogram-overflow-comparison-events-exceeding-1000-s" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Histogram Overflow Comparison (events exceeding 1000 µs)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#analysis-of-arm-cortex-a57-vs-denver-2-cores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Analysis of ARM Cortex-A57 vs. Denver 2 Cores
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Analysis of ARM Cortex-A57 vs. Denver 2 Cores">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arm-cortex-a57-cores-cpu0-cpu3cpu5-steady-and-predictable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ARM Cortex-A57 Cores (CPU0, CPU3–CPU5): Steady and Predictable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#denver-2-cores-cpu1-cpu2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Denver 2 Cores (CPU1, CPU2):
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="osadl-latency-validation">OSADL Latency Validation<a class="headerlink" href="#osadl-latency-validation" title="Permanent link">&para;</a></h1>
+<p><span class="phase-label">Phase 3 · Page 4 of 5</span></p>
+<div class="admonition abstract">
+<p class="admonition-title">Page Goal</p>
+<ul>
+<li>Introduce the Open Source Automation Development Lab (OSADL) real-time benchmarking standards.</li>
+<li>Walk through executing <code>cyclictest</code> and <code>stress-ng</code> on the Yocto image to measure worst-case latency under extreme load.</li>
+<li>Detail the process of parsing histogram outputs and creating a graphical latency plot using <code>gnuplot</code> after getting the results back on the host machine.</li>
+<li>Compare latency metrics between the standard and real-time kernels.</li>
+</ul>
+</div>
+<hr />
+<div class="admonition info">
+<p class="admonition-title">References &amp; Further Reading</p>
+<ul>
+<li><strong>Cyclictest Overview</strong>: Read more about <a href="https://wiki.linuxfoundation.org/realtime/documentation/howto/tools/cyclictest/start" target="_blank">Cyclictest</a>.</li>
+<li><strong>stress-ng Reference</strong>: Ubuntu Kernel reference for <a href="https://wiki.ubuntu.com/Kernel/Reference/stress-ng" target="_blank">stress-ng</a>.</li>
+<li><strong>OSADL Latency Script Guide</strong>: Refer to the official OSADL guide on <a href="https://www.osadl.org/Create-a-latency-plot-from-cyclictest-hi.bash-script-for-latency-plot.0.html" target="_blank">Creating a latency plot from cyclictest histogram data</a> for detailed configuration options.</li>
+<li><strong>Performance Testing Guide</strong>: Review the Industrial Monitor Direct <a href="https://industrialmonitordirect.com/blogs/knowledgebase/rt-preempt-linux-real-time-performance-testing-guide" target="_blank">RT-Preempt Linux Real-Time Performance Testing Guide</a> for insights on testing methods under heavy loads.</li>
+</ul>
+</div>
+<hr />
+<h2 id="1-the-osadl-benchmarking-standard">1. The OSADL Benchmarking Standard<a class="headerlink" href="#1-the-osadl-benchmarking-standard" title="Permanent link">&para;</a></h2>
+<p>The <strong>Open Source Automation Development Lab (OSADL)</strong> is the leading industry cooperative promoting real-time Linux in industrial automation and safety systems. OSADL maintains strict benchmarks to qualify real-time kernels.</p>
+<p>A valid real-time test cannot measure latency on an idle system. Events like CPU spikes, flash write cycles, and telemetry processing occur concurrently. Therefore, the OSADL benchmark standard requires running latency checks (<strong><code>cyclictest</code></strong>) for a long duration while simulating severe system stress (<strong><code>stress-ng</code></strong>).</p>
+<hr />
+<h2 id="2-setting-up-the-testing-tools">2. Setting Up the Testing Tools<a class="headerlink" href="#2-setting-up-the-testing-tools" title="Permanent link">&para;</a></h2>
+<h3 id="option-a-running-on-the-yocto-image-this-was-tested-in-this-project">Option A: Running on the Yocto Image (This was Tested in this project)<a class="headerlink" href="#option-a-running-on-the-yocto-image-this-was-tested-in-this-project" title="Permanent link">&para;</a></h3>
+<p>Since we appended the real-time test suite (<code>rt-tests</code>, <code>stress-ng</code>, <code>trace-cmd</code>, <code>numactl</code>) directly to <code>IMAGE_INSTALL:append</code> in <code>local.conf</code> (detailed in <a href="../02-yocto-rt-integration/">Yocto PREEMPT_RT Integration</a>), the target Yocto image has all benchmarking binaries pre-compiled. 
+- <strong>Benefit</strong>: No internet connection, package installation, or external feeds are required on the board. You can immediately run benchmarks offline.</p>
+<h3 id="option-b-running-on-the-native-l4t-image">Option B: Running on the Native L4T Image<a class="headerlink" href="#option-b-running-on-the-native-l4t-image" title="Permanent link">&para;</a></h3>
+<p>If you are validating the native host compilation on a standard Ubuntu based Jetson Linux, install the utilities manually:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sudo<span class="w"> </span>apt-get<span class="w"> </span>update
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>rt-tests<span class="w"> </span>stress-ng<span class="w"> </span>gnuplot
+</span></code></pre></div></p>
+<hr />
+<h2 id="3-simulating-load-with-stress-ng">3. Simulating Load with <code>stress-ng</code><a class="headerlink" href="#3-simulating-load-with-stress-ng" title="Permanent link">&para;</a></h2>
+<p><a href="https://wiki.ubuntu.com/Kernel/Reference/stress-ng">stress-ng</a> is a versatile tool used to stress test a computer system in various selectable ways. In a parallel terminal, we simulate severe background system stress to evaluate real-time scheduler determinism, while the other terminal runs the latency test. 
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Run heavy parallel stress test on all 6 cores for 10 minutes</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>stress-ng<span class="w"> </span>--cpu<span class="w"> </span><span class="m">6</span><span class="w"> </span>--vm<span class="w"> </span><span class="m">4</span><span class="w"> </span>--vm-bytes<span class="w"> </span>256M<span class="w"> </span>--hdd<span class="w"> </span><span class="m">1</span><span class="w"> </span>--sock<span class="w"> </span><span class="m">1</span><span class="w"> </span>--switch<span class="w"> </span><span class="m">2</span><span class="w"> </span>--timeout<span class="w"> </span>10m
+</span></code></pre></div></p>
+<h4 id="what-the-flags-mean">What the Flags Mean:<a class="headerlink" href="#what-the-flags-mean" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>--cpu 6</code>: Spawns 6 CPU stressor processes (matching the Jetson TX2i's total core count) executing math operations.</li>
+<li><code>--vm 4 --vm-bytes 256M</code>: Spawns 4 virtual memory stressors, each allocating and releasing 256MB of RAM.</li>
+<li><code>--hdd 1</code>: Spawns 1 HDD worker performing sequential writes/reads to test disk memory and I/O.</li>
+<li><code>--sock 1</code>: Spawns 1 socket stressor executing loopback communication.</li>
+<li><code>--switch 2</code>: Spawns 2 workers forcing frequent context switching.</li>
+<li><code>--timeout 10m</code>: Bounds the test run duration to 10 minutes.</li>
+</ul>
+<hr />
+<h2 id="4-running-the-latency-benchmark-cyclictest">4. Running the Latency Benchmark (<code>cyclictest</code>)<a class="headerlink" href="#4-running-the-latency-benchmark-cyclictest" title="Permanent link">&para;</a></h2>
+<p><a href="https://wiki.linuxfoundation.org/realtime/documentation/howto/tools/cyclictest/start">Cyclictest</a> accurately and repeatedly measures the difference between a thread's intended wake-up time and the time at which it actually wakes up from <code>clock_nanosleep</code> in order to provide statistics about the system's latencies. It can measure latencies in real-time systems caused by the hardware, the firmware, and the operating system.</p>
+<p>The original test was written by Thomas Gleixner (tglx), but several people have subsequently contributed modifications. Cyclictest is currently maintained by Clark Williams and John Kacur and is part of the test suite <code>rt-tests</code>.</p>
+<h3 id="how-cyclictest-measures-latency">How Cyclictest Measures Latency<a class="headerlink" href="#how-cyclictest-measures-latency" title="Permanent link">&para;</a></h3>
+<p>Cyclictest measures the difference between the <strong>actual execution time</strong> and the <strong>scheduled or interval time</strong> (the expected wake-up time we set). 
+The <strong>Max Latency</strong> metric captures the worst-case measure of this difference, proving the maximum possible delay a real-time task could experience before execution. </p>
+<p>When comparing a standard kernel (non-RT) against an RT kernel under severe stress:
+- <strong>Non-RT Kernel</strong>: You will observe massive, unpredictable spikes in maximum latency, as standard scheduling cannot guarantee bounded execution delays.
+- <strong>RT Kernel (<code>PREEMPT_RT</code>)</strong>: The maximum latency spikes are strictly bounded and significantly lower, demonstrating determinism regardless of system load.</p>
+<p>While the target is under max stress, we run <code>cyclictest</code> to measure scheduling delays. To match the specific verification tests run on the Jetson TX2i, use the following configuration:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Execute cyclictest specifically configured for the Jetson TX2i</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sudo<span class="w"> </span>cyclictest<span class="w"> </span>-l<span class="w"> </span><span class="m">2000000</span><span class="w"> </span>-m<span class="w"> </span>-Sp<span class="w"> </span><span class="m">90</span><span class="w"> </span>-i<span class="w"> </span><span class="m">200</span><span class="w"> </span>-h<span class="w"> </span><span class="m">1000</span><span class="w"> </span>-q<span class="w"> </span>&gt;<span class="w"> </span>output
+</span></code></pre></div>
+<h4 id="detailed-flag-explanations">Detailed Flag Explanations:<a class="headerlink" href="#detailed-flag-explanations" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong><code>-l 2000000</code></strong>: Loop count. Runs the real-time measurement loop 2,000,000 times (takes approximately 6.6 minutes at a 200us interval).</li>
+<li><strong><code>-m</code></strong>: Memory locking. Calls <code>mlockall</code> to lock the test process's memory pages into RAM, preventing them from being swapped out to disk.</li>
+<li><strong><code>-Sp 90</code></strong>: Real-time configuration. Sets threads in SMP mode (spawning one thread per core with strict CPU affinity) running under <code>SCHED_FIFO</code> real-time scheduling policy at priority <code>90</code>.</li>
+<li><strong><code>-i 200</code></strong>: Interval. Sets the cycle wake-up interval to 200 microseconds (0.2 milliseconds) to simulate hard-bounded real-time task frequencies.</li>
+<li><strong><code>-h 1000</code></strong>: Histogram. Captures and categorizes latency results into 1000 buckets (1us resolution per bucket up to 1ms total overflow).</li>
+<li><strong><code>-q</code></strong>: Quiet mode. Suppresses standard output update lines during run-time, minimizing logging overhead and avoiding console print latency impacts.</li>
+<li><strong><code>&gt; output</code></strong>: Redirects the output statistics data and histogram table to a file named <code>output</code>.</li>
+</ul>
+<hr />
+<h2 id="5-visualizing-latency-creating-an-osadl-latency-plot">5. Visualizing Latency: Creating an OSADL Latency Plot<a class="headerlink" href="#5-visualizing-latency-creating-an-osadl-latency-plot" title="Permanent link">&para;</a></h2>
+<p>To convert the raw text histogram data into a line graph showing the latency distribution of all 6 CPU cores under stress and their max latency spikes, we use the <code>mklatencyplot.bash</code> given by OSADL, and modify it slightly to suit the Jetson TX2i. </p>
+<div class="admonition note">
+<p class="admonition-title">OSADL Script</p>
+<p>The original script from OSADL can be downloaded <a href="https://www.osadl.org/uploads/media/mklatencyplot.bash">here</a>, and the accompanying OSADL documentation is available <a href="https://www.osadl.org/Create-a-latency-plot-from-cyclictest-hi.bash-script-for-latency-plot.0.html">here</a>.</p>
+</div>
+<h3 id="the-plotting-script-mklatencyplotbash">The Plotting Script (<code>mklatencyplot.bash</code>)<a class="headerlink" href="#the-plotting-script-mklatencyplotbash" title="Permanent link">&para;</a></h3>
+<p>Create a file named <code>mklatencyplot.bash</code> on the target (or on your host workstation by copying the <code>output</code> file over):</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="ch">#!/bin/bash</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="c1">#stress via sudo stress-ng --cpu 6 --vm 4 --vm-bytes 256M --hdd 2 --sock 2 --switch 4 --timeout 10m </span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># 1. Run cyclictest</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>cyclictest<span class="w"> </span>-l2000000<span class="w"> </span>-m<span class="w"> </span>-Sp90<span class="w"> </span>-i200<span class="w"> </span>-h1000<span class="w"> </span>-q<span class="w"> </span>&gt;output<span class="w"> </span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1">#original was 100 million iterations, which was very heavy and would run for hours, a jetson may not be able to handle a stress test of that level. original script lists histogram upto 400 us only, extended to 1000 us to check if any major spikes </span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># 2. Get maximum latency</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="nv">max</span><span class="o">=</span><span class="sb">`</span>grep<span class="w"> </span><span class="s2">&quot;Max Latencies&quot;</span><span class="w"> </span>output<span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span><span class="s2">&quot; &quot;</span><span class="w"> </span><span class="s2">&quot;\n&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-n<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-1<span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span>s/^0*//<span class="sb">`</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1"># 3. Grep data lines, remove empty lines and create a common field separator</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>grep<span class="w"> </span>-v<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;^#&quot;</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;^</span>$<span class="s2">&quot;</span><span class="w"> </span>output<span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span><span class="s2">&quot; &quot;</span><span class="w"> </span><span class="s2">&quot;\t&quot;</span><span class="w"> </span>&gt;histogram<span class="w"> </span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="c1"># 4. Set the number of cores, TX2i has 6 cores, 4 ARM A57 Cortex Cores and 2 Denver Cores</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="nv">cores</span><span class="o">=</span><span class="m">6</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="c1"># 5. Create two-column data sets with latency classes and frequency values for each core, for example</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="sb">`</span>seq<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="nv">$cores</span><span class="sb">`</span>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="k">do</span>
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="w">  </span><span class="nv">column</span><span class="o">=</span><span class="sb">`</span>expr<span class="w"> </span><span class="nv">$i</span><span class="w"> </span>+<span class="w"> </span><span class="m">1</span><span class="sb">`</span>
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="w">  </span>cut<span class="w"> </span>-f1,<span class="nv">$column</span><span class="w"> </span>histogram<span class="w"> </span>&gt;histogram<span class="nv">$i</span>
+</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a><span class="k">done</span>
+</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a>
+</span><span id="__span-3-22"><a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a><span class="c1"># 6. Create plot command header</span>
+</span><span id="__span-3-23"><a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a><span class="nb">echo</span><span class="w"> </span>-n<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;set title \&quot;Latency plot\&quot;\n\</span>
+</span><span id="__span-3-24"><a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a><span class="s2">set terminal png\n\</span>
+</span><span id="__span-3-25"><a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a><span class="s2">set xlabel \&quot;Latency (us), max </span><span class="nv">$max</span><span class="s2"> us\&quot;\n\</span>
+</span><span id="__span-3-26"><a id="__codelineno-3-26" name="__codelineno-3-26" href="#__codelineno-3-26"></a><span class="s2">set logscale y\n\</span>
+</span><span id="__span-3-27"><a id="__codelineno-3-27" name="__codelineno-3-27" href="#__codelineno-3-27"></a><span class="s2">set xrange [0:1000]\n\</span>
+</span><span id="__span-3-28"><a id="__codelineno-3-28" name="__codelineno-3-28" href="#__codelineno-3-28"></a><span class="s2">set yrange [0.8:*]\n\</span>
+</span><span id="__span-3-29"><a id="__codelineno-3-29" name="__codelineno-3-29" href="#__codelineno-3-29"></a><span class="s2">set ylabel \&quot;Number of latency samples\&quot;\n\</span>
+</span><span id="__span-3-30"><a id="__codelineno-3-30" name="__codelineno-3-30" href="#__codelineno-3-30"></a><span class="s2">set output \&quot;plot.png\&quot;\n\</span>
+</span><span id="__span-3-31"><a id="__codelineno-3-31" name="__codelineno-3-31" href="#__codelineno-3-31"></a><span class="s2">plot &quot;</span><span class="w"> </span>&gt;plotcmd
+</span><span id="__span-3-32"><a id="__codelineno-3-32" name="__codelineno-3-32" href="#__codelineno-3-32"></a>
+</span><span id="__span-3-33"><a id="__codelineno-3-33" name="__codelineno-3-33" href="#__codelineno-3-33"></a><span class="c1"># 7. Append plot command data references</span>
+</span><span id="__span-3-34"><a id="__codelineno-3-34" name="__codelineno-3-34" href="#__codelineno-3-34"></a><span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="sb">`</span>seq<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="nv">$cores</span><span class="sb">`</span>
+</span><span id="__span-3-35"><a id="__codelineno-3-35" name="__codelineno-3-35" href="#__codelineno-3-35"></a><span class="k">do</span>
+</span><span id="__span-3-36"><a id="__codelineno-3-36" name="__codelineno-3-36" href="#__codelineno-3-36"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="nv">$i</span><span class="w"> </span>!<span class="o">=</span><span class="w"> </span><span class="m">1</span>
+</span><span id="__span-3-37"><a id="__codelineno-3-37" name="__codelineno-3-37" href="#__codelineno-3-37"></a><span class="w">  </span><span class="k">then</span>
+</span><span id="__span-3-38"><a id="__codelineno-3-38" name="__codelineno-3-38" href="#__codelineno-3-38"></a><span class="w">    </span><span class="nb">echo</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;, &quot;</span><span class="w"> </span>&gt;&gt;plotcmd
+</span><span id="__span-3-39"><a id="__codelineno-3-39" name="__codelineno-3-39" href="#__codelineno-3-39"></a><span class="w">  </span><span class="k">fi</span>
+</span><span id="__span-3-40"><a id="__codelineno-3-40" name="__codelineno-3-40" href="#__codelineno-3-40"></a><span class="w">  </span><span class="nv">cpuno</span><span class="o">=</span><span class="sb">`</span>expr<span class="w"> </span><span class="nv">$i</span><span class="w"> </span>-<span class="w"> </span><span class="m">1</span><span class="sb">`</span>
+</span><span id="__span-3-41"><a id="__codelineno-3-41" name="__codelineno-3-41" href="#__codelineno-3-41"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="nv">$cpuno</span><span class="w"> </span>-lt<span class="w"> </span><span class="m">10</span>
+</span><span id="__span-3-42"><a id="__codelineno-3-42" name="__codelineno-3-42" href="#__codelineno-3-42"></a><span class="w">  </span><span class="k">then</span>
+</span><span id="__span-3-43"><a id="__codelineno-3-43" name="__codelineno-3-43" href="#__codelineno-3-43"></a><span class="w">    </span><span class="nv">title</span><span class="o">=</span><span class="s2">&quot; CPU</span><span class="nv">$cpuno</span><span class="s2">&quot;</span>
+</span><span id="__span-3-44"><a id="__codelineno-3-44" name="__codelineno-3-44" href="#__codelineno-3-44"></a><span class="w">   </span><span class="k">else</span>
+</span><span id="__span-3-45"><a id="__codelineno-3-45" name="__codelineno-3-45" href="#__codelineno-3-45"></a><span class="w">    </span><span class="nv">title</span><span class="o">=</span><span class="s2">&quot;CPU</span><span class="nv">$cpuno</span><span class="s2">&quot;</span>
+</span><span id="__span-3-46"><a id="__codelineno-3-46" name="__codelineno-3-46" href="#__codelineno-3-46"></a><span class="w">  </span><span class="k">fi</span>
+</span><span id="__span-3-47"><a id="__codelineno-3-47" name="__codelineno-3-47" href="#__codelineno-3-47"></a><span class="w">  </span><span class="nb">echo</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;\&quot;histogram</span><span class="nv">$i</span><span class="s2">\&quot; using 1:2 title \&quot;</span><span class="nv">$title</span><span class="s2">\&quot; with histeps&quot;</span><span class="w"> </span>&gt;&gt;plotcmd
+</span><span id="__span-3-48"><a id="__codelineno-3-48" name="__codelineno-3-48" href="#__codelineno-3-48"></a><span class="k">done</span>
+</span><span id="__span-3-49"><a id="__codelineno-3-49" name="__codelineno-3-49" href="#__codelineno-3-49"></a>
+</span><span id="__span-3-50"><a id="__codelineno-3-50" name="__codelineno-3-50" href="#__codelineno-3-50"></a><span class="c1"># 8. Execute plot command</span>
+</span><span id="__span-3-51"><a id="__codelineno-3-51" name="__codelineno-3-51" href="#__codelineno-3-51"></a><span class="c1">#gnuplot -persist &lt;plotcmd</span>
+</span></code></pre></div>
+<h3 id="script-execution-workflow">Script Execution &amp; Workflow<a class="headerlink" href="#script-execution-workflow" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>The target device had the GUI turned off, and did not have gnuplot, the results were copied back to the host via USB and, gnuplot was run on the 22.04 LTS Yocto Build host. Hence the plotting is commented out.</p>
+</li>
+<li>
+<p>Ensure the script is executable and run it on the target device, ensuring that stress-ng test is running in a parallel terminal just before running the script :
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>chmod<span class="w"> </span>+x<span class="w"> </span>mklatencyplot.bash
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>./mklatencyplot.bash
+</span></code></pre></div></p>
+</li>
+</ol>
+<h3 id="results-observations">Results &amp; Observations<a class="headerlink" href="#results-observations" title="Permanent link">&para;</a></h3>
+<h4 id="test-1-native-l4t-normal-non-rt-kernel">Test 1: Native L4T — Normal (Non-RT) Kernel<a class="headerlink" href="#test-1-native-l4t-normal-non-rt-kernel" title="Permanent link">&para;</a></h4>
+<p><img alt="Native L4T Normal Kernel Plot" src="../../assets/nativel4t.png" /></p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>CPU0 (ARM)</th>
+<th>CPU1 (Denver)</th>
+<th>CPU2 (Denver)</th>
+<th>CPU3 (ARM)</th>
+<th>CPU4 (ARM)</th>
+<th>CPU5 (ARM)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Min Latency (µs)</strong></td>
+<td>4</td>
+<td>6</td>
+<td>7</td>
+<td>4</td>
+<td>4</td>
+<td>4</td>
+</tr>
+<tr>
+<td><strong>Avg Latency (µs)</strong></td>
+<td>17</td>
+<td>17</td>
+<td>17</td>
+<td>11</td>
+<td>13</td>
+<td>12</td>
+</tr>
+<tr>
+<td><strong>Max Latency (µs)</strong></td>
+<td>1,047</td>
+<td><strong>3,531</strong></td>
+<td>1,601</td>
+<td>1,042</td>
+<td>1,073</td>
+<td>1,059</td>
+</tr>
+<tr>
+<td><strong>Histogram Overflows</strong></td>
+<td>3</td>
+<td><strong>112</strong></td>
+<td>82</td>
+<td>1</td>
+<td>1</td>
+<td>5</td>
+</tr>
+<tr>
+<td><strong>Total Samples</strong></td>
+<td>1,964,252</td>
+<td>1,997,306</td>
+<td>1,997,088</td>
+<td>1,999,999</td>
+<td>1,995,294</td>
+<td>1,997,214</td>
+</tr>
+</tbody>
+</table>
+<p><strong>baseline</strong> test — NVIDIA's stock L4T with no real-time kernel changes.</p>
+<ul>
+<li>The <strong>Denver cores (CPU1, CPU2)</strong> do not show acceptable performance levels. CPU1 reaches a maximum latency of <strong>3,531 µs (3.5 ms)</strong>, which is far too high for any real-time applications. CPU2 also reached 1,601 µs. Both Denver cores had many histogram overflows (112 and 82 events above 1000 µs).</li>
+<li>The <strong>ARM cores (CPU0, CPU3–CPU5)</strong> did better, with average latencies of 11–17 µs. CPU0 (ARM) had a higher average (17 µs) likely because of extra system tasks running on it, but the ARM cores generally had far fewer overflows (1–5 events).</li>
+</ul>
+<h4 id="test-2-native-l4t-rt-preempt_rt-kernel">Test 2: Native L4T — RT (PREEMPT_RT) Kernel<a class="headerlink" href="#test-2-native-l4t-rt-preempt_rt-kernel" title="Permanent link">&para;</a></h4>
+<p><img alt="Native L4T RT Kernel Plot" src="../../assets/nativeRT.png" /></p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>CPU0 (ARM)</th>
+<th>CPU1 (Denver)</th>
+<th>CPU2 (Denver)</th>
+<th>CPU3 (ARM)</th>
+<th>CPU4 (ARM)</th>
+<th>CPU5 (ARM)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Min Latency (µs)</strong></td>
+<td>4</td>
+<td>5</td>
+<td>7</td>
+<td>4</td>
+<td>3</td>
+<td>4</td>
+</tr>
+<tr>
+<td><strong>Avg Latency (µs)</strong></td>
+<td>9</td>
+<td>15</td>
+<td>16</td>
+<td>10</td>
+<td>9</td>
+<td>10</td>
+</tr>
+<tr>
+<td><strong>Max Latency (µs)</strong></td>
+<td>931</td>
+<td><strong>1,088</strong></td>
+<td>1,067</td>
+<td><strong>819</strong></td>
+<td>983</td>
+<td>966</td>
+</tr>
+<tr>
+<td><strong>Histogram Overflows</strong></td>
+<td>0</td>
+<td><strong>5</strong></td>
+<td>8</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td><strong>Total Samples</strong></td>
+<td>2,000,000</td>
+<td>1,996,016</td>
+<td>1,998,928</td>
+<td>1,999,488</td>
+<td>1,999,249</td>
+<td>1,999,030</td>
+</tr>
+</tbody>
+</table>
+<p>Adding the <strong>PREEMPT_RT patch</strong> to the L4T kernel made a big difference:</p>
+<ul>
+<li>Average latencies dropped across the board. The ARM cores now average <strong>9–10 µs</strong>, and even the Denver cores improved (CPU0 went from 17 µs to 9 µs).</li>
+<li>Maximum latencies came down significantly. CPU1 (Denver) dropped from 3,531 µs to <strong>1,088 µs</strong> — about a <strong>3× improvement</strong>. CPU3 (ARM) achieved the best max of <strong>819 µs</strong>.</li>
+<li>Histogram overflows(spikes exceeding 1000 µs) were almost gone: ARM cores had <strong>zero</strong> overflows, and the Denver cores had only <strong>5 and 8</strong>.</li>
+<li>The plot shows a <strong>much tighter distribution</strong> — most samples are below 20 µs with a steep drop-off.</li>
+</ul>
+<h4 id="test-3-yocto-non-rt-kernel">Test 3: Yocto — Non-RT Kernel<a class="headerlink" href="#test-3-yocto-non-rt-kernel" title="Permanent link">&para;</a></h4>
+<p><img alt="Yocto Non-RT Kernel Plot" src="../../assets/yoctononrt.png" /></p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>CPU0 (ARM)</th>
+<th>CPU1 (Denver)</th>
+<th>CPU2 (Denver)</th>
+<th>CPU3 (ARM)</th>
+<th>CPU4 (ARM)</th>
+<th>CPU5 (ARM)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Min Latency (µs)</strong></td>
+<td>5</td>
+<td>7</td>
+<td>7</td>
+<td>5</td>
+<td>5</td>
+<td>5</td>
+</tr>
+<tr>
+<td><strong>Avg Latency (µs)</strong></td>
+<td>16</td>
+<td>15</td>
+<td>15</td>
+<td>12</td>
+<td>12</td>
+<td>12</td>
+</tr>
+<tr>
+<td><strong>Max Latency (µs)</strong></td>
+<td><strong>6,410</strong></td>
+<td>1,367</td>
+<td>1,362</td>
+<td>1,020</td>
+<td>931</td>
+<td>903</td>
+</tr>
+<tr>
+<td><strong>Histogram Overflows</strong></td>
+<td><strong>5</strong></td>
+<td>50</td>
+<td>45</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td><strong>Total Samples</strong></td>
+<td>1,984,341</td>
+<td>1,999,737</td>
+<td>1,999,955</td>
+<td>1,997,897</td>
+<td>1,995,238</td>
+<td>1,998,754</td>
+</tr>
+</tbody>
+</table>
+<p>This test used a custom Yocto-built Linux with a non-RT kernel. The results are mixed:</p>
+<ul>
+<li><strong>CPU0 (ARM)</strong> recorded the worst single latency in the entire study: <strong>6,410 µs (6.4 ms)</strong>.</li>
+<li>The <strong>Denver cores (CPU1, CPU2)</strong> had max latencies around <strong>1,365 µs</strong> with many overflows (50 and 45 events). Their average latencies were 15 µs.</li>
+<li>The other <strong>ARM cores (CPU3–CPU5)</strong> performed the best in this test, with max latencies between <strong>903–1,020 µs</strong> and averages of 12 µs. CPU4 and CPU5 had <strong>zero overflows</strong>.</li>
+</ul>
+<h4 id="test-4-yocto-rt-preempt_rt-kernel">Test 4: Yocto — RT (PREEMPT_RT) Kernel<a class="headerlink" href="#test-4-yocto-rt-preempt_rt-kernel" title="Permanent link">&para;</a></h4>
+<p><img alt="Yocto RT Kernel Plot" src="../../assets/yoctort.png" /></p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>CPU0 (ARM)</th>
+<th>CPU1 (Denver)</th>
+<th>CPU2 (Denver)</th>
+<th>CPU3 (ARM)</th>
+<th>CPU4 (ARM)</th>
+<th>CPU5 (ARM)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Min Latency (µs)</strong></td>
+<td>5</td>
+<td>7</td>
+<td>7</td>
+<td>5</td>
+<td>5</td>
+<td>5</td>
+</tr>
+<tr>
+<td><strong>Avg Latency (µs)</strong></td>
+<td><strong>9</strong></td>
+<td>14</td>
+<td>13</td>
+<td>11</td>
+<td>11</td>
+<td>12</td>
+</tr>
+<tr>
+<td><strong>Max Latency (µs)</strong></td>
+<td><strong>544</strong></td>
+<td>1,108</td>
+<td>1,145</td>
+<td>986</td>
+<td><strong>568</strong></td>
+<td><strong>587</strong></td>
+</tr>
+<tr>
+<td><strong>Histogram Overflows</strong></td>
+<td>0</td>
+<td><strong>15</strong></td>
+<td>14</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td><strong>Total Samples</strong></td>
+<td>2,000,000</td>
+<td>1,999,085</td>
+<td>1,999,013</td>
+<td>1,999,699</td>
+<td>1,999,500</td>
+<td>1,999,420</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>CPU0 (ARM)</strong> now achieves <strong>544 µs</strong> max latency — a massive improvement from 6,410 µs on the non-RT Yocto kernel. </li>
+<li><strong>CPU4 and CPU5 (ARM)</strong> achieved max latencies of  <strong>568 µs and 587 µs</strong> — below the 1 ms mark.</li>
+<li><strong>CPU3 (ARM)</strong> had a slightly higher max of <strong>986 µs</strong>.</li>
+<li>The <strong>Denver cores (CPU1, CPU2)</strong> still had the highest max latencies: <strong>1,108 µs and 1,145 µs</strong>, and were the only cores with histogram overflows (15 and 14).</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Unexpected Denver Core Latency Spikes</p>
+<p>While the ARM Cores performed as normal with consistently bounded real-time latencies, the Denver Cores exhibited unexpected latency spikes. More studying, understanding, and core isolation-based testing are needed to determine if the Denver cores are not suited for strict real-time (RT) tasks or if simulated load using stress-ng was much heavier by Jetson Device standards.</p>
+</div>
+<hr />
+<h2 id="comparative-summary">Comparative Summary<a class="headerlink" href="#comparative-summary" title="Permanent link">&para;</a></h2>
+<h3 id="maximum-latency-comparison-s">Maximum Latency Comparison (µs)<a class="headerlink" href="#maximum-latency-comparison-s" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Core</th>
+<th>L4T Non-RT</th>
+<th>L4T RT</th>
+<th>Yocto Non-RT</th>
+<th>Yocto RT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>CPU0 (ARM)</strong></td>
+<td>1,047</td>
+<td>931</td>
+<td><strong>6,410</strong></td>
+<td><strong>544</strong></td>
+</tr>
+<tr>
+<td><strong>CPU1 (Denver)</strong></td>
+<td><strong>3,531</strong></td>
+<td>1,088</td>
+<td>1,367</td>
+<td>1,108</td>
+</tr>
+<tr>
+<td><strong>CPU2 (Denver)</strong></td>
+<td>1,601</td>
+<td>1,067</td>
+<td>1,362</td>
+<td>1,145</td>
+</tr>
+<tr>
+<td><strong>CPU3 (ARM)</strong></td>
+<td>1,042</td>
+<td><strong>819</strong></td>
+<td>1,020</td>
+<td>986</td>
+</tr>
+<tr>
+<td><strong>CPU4 (ARM)</strong></td>
+<td>1,073</td>
+<td>983</td>
+<td>931</td>
+<td><strong>568</strong></td>
+</tr>
+<tr>
+<td><strong>CPU5 (ARM)</strong></td>
+<td>1,059</td>
+<td>966</td>
+<td>903</td>
+<td><strong>587</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="average-latency-comparison-s">Average Latency Comparison (µs)<a class="headerlink" href="#average-latency-comparison-s" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Core</th>
+<th>L4T Non-RT</th>
+<th>L4T RT</th>
+<th>Yocto Non-RT</th>
+<th>Yocto RT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>CPU0 (ARM)</strong></td>
+<td>17</td>
+<td><strong>9</strong></td>
+<td>16</td>
+<td><strong>9</strong></td>
+</tr>
+<tr>
+<td><strong>CPU1 (Denver)</strong></td>
+<td>17</td>
+<td>15</td>
+<td>15</td>
+<td>14</td>
+</tr>
+<tr>
+<td><strong>CPU2 (Denver)</strong></td>
+<td>17</td>
+<td>16</td>
+<td>15</td>
+<td>13</td>
+</tr>
+<tr>
+<td><strong>CPU3 (ARM)</strong></td>
+<td>11</td>
+<td>10</td>
+<td>12</td>
+<td>11</td>
+</tr>
+<tr>
+<td><strong>CPU4 (ARM)</strong></td>
+<td>13</td>
+<td><strong>9</strong></td>
+<td>12</td>
+<td>11</td>
+</tr>
+<tr>
+<td><strong>CPU5 (ARM)</strong></td>
+<td>12</td>
+<td>10</td>
+<td>12</td>
+<td>12</td>
+</tr>
+</tbody>
+</table>
+<h3 id="histogram-overflow-comparison-events-exceeding-1000-s">Histogram Overflow Comparison (events exceeding 1000 µs)<a class="headerlink" href="#histogram-overflow-comparison-events-exceeding-1000-s" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Core</th>
+<th>L4T Non-RT</th>
+<th>L4T RT</th>
+<th>Yocto Non-RT</th>
+<th>Yocto RT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>CPU0 (ARM)</strong></td>
+<td>3</td>
+<td><strong>0</strong></td>
+<td>5</td>
+<td><strong>0</strong></td>
+</tr>
+<tr>
+<td><strong>CPU1 (Denver)</strong></td>
+<td><strong>112</strong></td>
+<td>5</td>
+<td>50</td>
+<td>15</td>
+</tr>
+<tr>
+<td><strong>CPU2 (Denver)</strong></td>
+<td>82</td>
+<td>8</td>
+<td>45</td>
+<td>14</td>
+</tr>
+<tr>
+<td><strong>CPU3 (ARM)</strong></td>
+<td>1</td>
+<td><strong>0</strong></td>
+<td>1</td>
+<td><strong>0</strong></td>
+</tr>
+<tr>
+<td><strong>CPU4 (ARM)</strong></td>
+<td>1</td>
+<td><strong>0</strong></td>
+<td><strong>0</strong></td>
+<td><strong>0</strong></td>
+</tr>
+<tr>
+<td><strong>CPU5 (ARM)</strong></td>
+<td>5</td>
+<td><strong>0</strong></td>
+<td><strong>0</strong></td>
+<td><strong>0</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="analysis-of-arm-cortex-a57-vs-denver-2-cores">Analysis of ARM Cortex-A57 vs. Denver 2 Cores<a class="headerlink" href="#analysis-of-arm-cortex-a57-vs-denver-2-cores" title="Permanent link">&para;</a></h2>
+<p>One of the clearest findings from these tests is that the <strong>ARM and Denver cores behave very differently</strong> when it comes to real-time performance.</p>
+<h3 id="arm-cortex-a57-cores-cpu0-cpu3cpu5-steady-and-predictable">ARM Cortex-A57 Cores (CPU0, CPU3–CPU5): Steady and Predictable<a class="headerlink" href="#arm-cortex-a57-cores-cpu0-cpu3cpu5-steady-and-predictable" title="Permanent link">&para;</a></h3>
+<p>The ARM cores give <strong>consistently low and predictable latencies</strong> across all four tests:</p>
+<ul>
+<li>Average latencies stay between 9–17 µs — a narrow range.</li>
+<li>Maximum latencies are mostly below 1 ms on RT kernels (best: 544 µs on Yocto RT).</li>
+<li>Histogram overflows are rare (0–5 events) and <strong>zero on both RT kernel configurations</strong>.</li>
+</ul>
+<h3 id="denver-2-cores-cpu1-cpu2">Denver 2 Cores (CPU1, CPU2):<a class="headerlink" href="#denver-2-cores-cpu1-cpu2" title="Permanent link">&para;</a></h3>
+<p>The NVIDIA Denver cores (specifically Denver 2 on the Jetson TX2/TX2i) are poorly suited for real-time (RT) tasks because their underlying microarchitecture relies on Dynamic Code Optimization (DCO), a software-based dynamic binary translation mechanism. While DCO provides excellent average throughput and power efficiency, it introduces massive, unpredictable variations in execution time (jitter). </p>
+<p>In real-time systems, predictability and guaranteed worst-case execution times are far more important than raw peak performance. Here is a technical breakdown of why Denver cores conflict with real-time requirements:</p>
+<ol>
+<li>
+<p><strong>Dynamic Binary Translation Creates Jitter</strong>: Under the hood, Denver is not a native ARM processor. It is a highly parallel Very Long Instruction Word (VLIW) processor. It runs a hidden software layer (firmware) that intercepts standard ARMv8 instructions and translates them on the fly into its internal VLIW format. </p>
+<ul>
+<li><strong>The First Run</strong>: When a block of code is executed for the first time, it is interpreted slowly while the DCO routine analyzes and optimizes it.</li>
+<li><strong>Subsequent Runs</strong>: The optimized microcode is stored in a hidden 128 MB cache. If the code runs again, the processor hits this cache and executes it incredibly fast.</li>
+<li><strong>The RT Problem</strong>: This mechanism means the execution time of the exact same function can vary wildly depending on whether the optimized microcode is currently in the cache or if it was evicted and needs to be re-translated.  </li>
+</ul>
+</li>
+<li>
+<p><strong>DCO Cache Pollution</strong>: If a high-priority RT task preempts a running process, the Denver core's DCO cache might get polluted or flushed. When the RT task resumes, it may suffer a severe latency spike as the core stops to re-translate the instructions.</p>
+</li>
+</ol>
+<hr />
+<p><a class="md-button" href="../03-real-time-scheduling/">← Real-Time Scheduling Concepts</a>
+<a class="md-button md-button--primary" href="../05-hardware-robotics-interfacing/">Next: Hardware Interfacing &amp; Results →</a></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../03-real-time-scheduling/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Real-Time Scheduling Concepts">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Real-Time Scheduling Concepts
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../05-hardware-robotics-interfacing/" class="md-footer__link md-footer__link--next" aria-label="Next: Hardware Interfacing &amp; Results">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Hardware Interfacing & Results
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 Space Linux Build Documentation
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/ajaymrk95/yocto-project-build-docs" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.footer", "navigation.indexes", "toc.follow", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

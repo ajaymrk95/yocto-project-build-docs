@@ -1,0 +1,2235 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Understanding Device Tree file formats (DTS, DTSI, DTB), how they describe hardware to the Linux kernel, and how ConnectTech's Elroy carrier board changes the device tree and configuration files used in the build.">
+      
+      
+      
+        <link rel="canonical" href="https://ajaymrk95.github.io/yocto-project-build-docs/phase2/01-device-trees-and-configuration/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../02-custom-machine-setup/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Device Trees, DTBs & Configuration Files - Space Linux — Yocto Build Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Plus+Jakarta+Sans:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Plus Jakarta Sans";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#device-trees-dtbs-configuration-files" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Space Linux — Yocto Build Documentation" class="md-header__button md-logo" aria-label="Space Linux — Yocto Build Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Space Linux — Yocto Build Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Device Trees, DTBs & Configuration Files
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ajaymrk95/yocto-project-build-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ajaymrk95/yocto-project-build-docs
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Overview
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../roadmap/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Roadmap
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../latest-trends/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Latest Trends
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../phase0/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Phase 0
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../phase1/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Phase 1
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Phase 2
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../phase3/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Phase 3
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../phase4/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Phase 4
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Space Linux — Yocto Build Documentation" class="md-nav__button md-logo" aria-label="Space Linux — Yocto Build Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Space Linux — Yocto Build Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ajaymrk95/yocto-project-build-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ajaymrk95/yocto-project-build-docs
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../latest-trends/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Latest Trends
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../phase0/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 0
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Phase 0
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase0/papers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Research Papers Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../phase1/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 1
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Phase 1
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/01-what-is-yocto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What Is Yocto?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/02-prerequisite-reading/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Important Links
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/03-host-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build Computer Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/04-quick-build/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Build
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/05-cloning-and-branching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloning & Branching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/06-adding-layers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Adding Layers & bblayers.conf
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/07-local-conf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deep Dive: local.conf
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/08-build-process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build Process Explained
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/09-navigating-output-and-flashing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build Output & Flashing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 2
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Phase 2
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Device Trees, DTBs & Configuration
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Device Trees, DTBs & Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#device-tree-file-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Device Tree File Formats
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Device Tree File Formats">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#source-dts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source (*.dts)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#includes-dtsi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Includes (*.dtsi)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#binary-blob-dtb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Binary Blob (*.dtb)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-device-tree-files-live" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where Device Tree Files Live
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#p3489-tx2i-development-kit-device-tree-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        P3489 — TX2i Development Kit Device Tree Files
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#connecttech-elroy-asg002-and-board-versions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ConnectTech Elroy — ASG002 and Board Versions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ConnectTech Elroy — ASG002 and Board Versions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#finding-the-specific-board-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Finding the Specific Board Version
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cfg-bct-files-in-the-nvidia-flash-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CFG &amp; BCT Files in the NVIDIA Flash Process
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CFG &amp; BCT Files in the NVIDIA Flash Process">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#device-tree-blobs-dtbs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Device Tree Blobs (DTBs)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#boot-configuration-table-bct-cfg-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Boot Configuration Table (BCT) &amp; CFG Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-role-of-pinmux-and-power-configurations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Role of Pinmux and Power Configurations
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-custom-machine-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom Machine Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-executing-the-build/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Executing the Build & Build Problems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-build-artifact-modification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build Artifact Modification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-connecttech-flash-scripts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Setting up NVIDIA Flashing Directory, ConnectTech Utilities, Machine Confs & Flashing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../phase3/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 3
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Phase 3
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase3/01-native-rt-patching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Native RT Patching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase3/02-yocto-rt-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Yocto RT Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase3/03-real-time-scheduling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Real-Time Scheduling Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase3/04-osadl-latency-testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OSADL Latency Testing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase3/05-hardware-robotics-interfacing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hardware Interfacing & Results
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../phase4/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 4
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Phase 4
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase4/01-bootloader-rootfs-redundancy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bootloader & RootFS Redundancy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase4/02-yocto-integration-outline/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Yocto Integration Outline & Phase Conclusion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#device-tree-file-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Device Tree File Formats
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Device Tree File Formats">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#source-dts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source (*.dts)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#includes-dtsi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Includes (*.dtsi)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#binary-blob-dtb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Binary Blob (*.dtb)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-device-tree-files-live" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where Device Tree Files Live
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#p3489-tx2i-development-kit-device-tree-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        P3489 — TX2i Development Kit Device Tree Files
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#connecttech-elroy-asg002-and-board-versions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ConnectTech Elroy — ASG002 and Board Versions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ConnectTech Elroy — ASG002 and Board Versions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#finding-the-specific-board-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Finding the Specific Board Version
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cfg-bct-files-in-the-nvidia-flash-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CFG &amp; BCT Files in the NVIDIA Flash Process
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CFG &amp; BCT Files in the NVIDIA Flash Process">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#device-tree-blobs-dtbs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Device Tree Blobs (DTBs)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#boot-configuration-table-bct-cfg-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Boot Configuration Table (BCT) &amp; CFG Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-role-of-pinmux-and-power-configurations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Role of Pinmux and Power Configurations
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="device-trees-dtbs-configuration-files">Device Trees, DTBs &amp; Configuration Files<a class="headerlink" href="#device-trees-dtbs-configuration-files" title="Permanent link">&para;</a></h1>
+<p><span class="phase-label">Phase 2 · Page 1 of 5</span></p>
+<div class="admonition abstract">
+<p class="admonition-title">Page Goal</p>
+<p>Understand the three Device Tree file formats (DTS, DTSI, DTB), how they describe hardware to the Linux kernel, how they are compiled and deployed, and which files change when adapting the Yocto build from the NVIDIA DevKit to the ConnectTech Elroy carrier board.</p>
+</div>
+<hr />
+<h2 id="device-tree-file-formats">Device Tree File Formats<a class="headerlink" href="#device-tree-file-formats" title="Permanent link">&para;</a></h2>
+<p>Before delving into specific hardware platforms, we must first understand the files that constitute a Device Tree. There are three key file types in the Device Tree ecosystem:</p>
+<h3 id="source-dts">Source (<code>*.dts</code>)<a class="headerlink" href="#source-dts" title="Permanent link">&para;</a></h3>
+<p>The device tree structure is defined using a specialized language called Device Tree Source (DTS). The file containing structures in this format has the <code>.dts</code> extension. These files define reusable hardware components or configurations that can be included in other device tree source files using the <code>#include</code> directive. Human-readable and editable, these files act as the master layout for a specific board or platform.</p>
+<h3 id="includes-dtsi">Includes (<code>*.dtsi</code>)<a class="headerlink" href="#includes-dtsi" title="Permanent link">&para;</a></h3>
+<p>By using <code>.dtsi</code> (Device Tree Source Include) files, developers can organize and modularize their device tree code in a flexible and scalable way, making it easier to maintain and reuse common configurations across different device tree files. A <code>.dtsi</code> file typically describes a shared chip-level configuration (such as the Tegra 186 SoC itself) that multiple individual board-level <code>.dts</code> files can include and extend.</p>
+<h3 id="binary-blob-dtb">Binary Blob (<code>*.dtb</code>)<a class="headerlink" href="#binary-blob-dtb" title="Permanent link">&para;</a></h3>
+<p>The DTS file is compiled into a binary format called Device Tree Blob (DTB) that is loaded by the bootloader. The file containing this binary has the <code>.dtb</code> extension. The Linux kernel needs device tree binaries (<code>*.dtb</code>) to recongnise any external hardware/peripherals on bootup. These binaries are generated by the device tree compiler (<code>dtc</code>) from the device tree source files. The compiler is part of the Linux sources and is automatically built if needed. The kernel build system provides the <code>dtbs</code> target which compiles all device trees which are compatible with the current kernel configuration.</p>
+<table>
+<thead>
+<tr>
+<th>File Type</th>
+<th>Extension</th>
+<th>Format</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Device Tree Source</td>
+<td><code>.dts</code></td>
+<td>Human-readable text</td>
+<td>Top-level board/platform hardware description — editable</td>
+</tr>
+<tr>
+<td>Device Tree Include</td>
+<td><code>.dtsi</code></td>
+<td>Human-readable text</td>
+<td>Reusable hardware fragments — shared across boards via <code>#include</code></td>
+</tr>
+<tr>
+<td>Device Tree Blob</td>
+<td><code>.dtb</code></td>
+<td>Compiled binary</td>
+<td>Kernel-readable binary — loaded by bootloader at boot time</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="where-device-tree-files-live">Where Device Tree Files Live<a class="headerlink" href="#where-device-tree-files-live" title="Permanent link">&para;</a></h2>
+<p>On ARM architectures, all Device Tree Source files and includes are located in <code>arch/arm/boot/dts</code> on the Linux kernel source code. A tool, with source code located in <code>scripts/dtc</code>, called the Device Tree Compiler compiles the source into a binary form. The Device Tree Blob is produced by the compiler, and is the binary that gets loaded by the bootloader and parsed by the kernel at boot time. The <code>arch/arm/boot/dts/Makefile</code> lists which DTBs should be generated at build time.</p>
+<div class="admonition note">
+<p class="admonition-title">64-bit ARM Platforms (ARM64)</p>
+<p>For 64-bit ARM platforms like the Jetson TX2i (which uses the Tegra 186 SoC), the device tree sources and includes are located in <code>arch/arm64/boot/dts/</code> and specifically the NVIDIA Tegra subfolder <code>arch/arm64/boot/dts/nvidia/</code>. The compilation mechanism, DTC tool path (<code>scripts/dtc/</code>), and Makefile-driven build process remain identical.</p>
+</div>
+<hr />
+<h2 id="p3489-tx2i-development-kit-device-tree-files">P3489 — TX2i Development Kit Device Tree Files<a class="headerlink" href="#p3489-tx2i-development-kit-device-tree-files" title="Permanent link">&para;</a></h2>
+<p>The <strong>P3489</strong> is NVIDIA's board number for the Jetson TX2i Development Kit carrier board (used in Phase 1).</p>
+<p>When building with <code>MACHINE = "jetson-tx2-devkit-tx2i"</code> in Yocto, the build system pulls the default NVIDIA DevKit device tree source. The primary device tree blob generated for this platform is:
+- <strong><code>tegra186-quill-p3489-1000-a00-00-ucm1.dtb</code></strong> (or <code>tegra186-quill-p3489-1000-a00-00.dtb</code> depending on L4T release).</p>
+<p>This DTB contains descriptions of the DevKit's large array of physical ports, including the HDMI connector, multi-lane PCIe slots, M.2 interfaces, debug serial ports, and standard 40-pin expansion headers. It is the baseline from which we start our adaptation.</p>
+<hr />
+<h2 id="connecttech-elroy-asg002-and-board-versions">ConnectTech Elroy — ASG002 and Board Versions<a class="headerlink" href="#connecttech-elroy-asg002-and-board-versions" title="Permanent link">&para;</a></h2>
+<p>The <strong>Connect Tech Elroy</strong> is identified by the part number <strong>ASG002</strong>. When moving from the P3489 DevKit to the Elroy carrier board, the device tree files must be changed because the physical carrier board layout is completely different.</p>
+<h3 id="finding-the-specific-board-version">Finding the Specific Board Version<a class="headerlink" href="#finding-the-specific-board-version" title="Permanent link">&para;</a></h3>
+<p>ConnectTech carriers have different hardware revisions and options. To find the specific Board Version, look for the hardware markings on the PCB or check the shipping manifest.
+- <strong>Revision F+</strong> is the most general and widely deployed revision. The standard device tree binary for the TX2i on Elroy Revision F+ is <strong><code>tegra186-quill-p3489-1000-a00-00-cti-ASG002-revF+.dtb</code></strong>.
+- There are also specific variants based on the expansion slots and I/O routing:
+    - <strong>MPCIE Variant</strong>: Configured specifically to support a Mini PCIe card. Its device tree is <strong><code>tegra186-quill-p3489-1000-a00-00-cti-ASG002-mPCIE.dtb</code></strong>.
+    - <strong>USB+ Variant</strong>: Configured for additional USB interfaces or USB 3.0 routing. Its device tree is <strong><code>tegra186-quill-p3489-1000-a00-00-cti-ASG002-USB3.dtb</code></strong>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Selecting the Correct Variant</p>
+<p>Using a DTB that does not match your specific Elroy board variant can lead to non-functioning ports (e.g. USB ports not power-cycling or Mini-PCIe cards not being detected) or GPIO pin collisions. Verify the board version and variant before flashing.</p>
+</div>
+<h2 id="cfg-bct-files-in-the-nvidia-flash-process">CFG &amp; BCT Files in the NVIDIA Flash Process<a class="headerlink" href="#cfg-bct-files-in-the-nvidia-flash-process" title="Permanent link">&para;</a></h2>
+<p>While Device Trees describe hardware to the kernel at <strong>boot time</strong>, CFG (Configuration) and BCT (Boot Configuration Table) files describe the board configuration to the bootloader and flash tool at <strong>flash/boot time</strong>.</p>
+<h3 id="device-tree-blobs-dtbs">Device Tree Blobs (DTBs)<a class="headerlink" href="#device-tree-blobs-dtbs" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Platform Config</th>
+<th>Property</th>
+<th>DTB Filename</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>NVIDIA Jetson TX2i DevKit</strong></td>
+<td><code>DTB_FILE</code> &amp; <code>TBCDTB_FILE</code></td>
+<td><code>tegra186-quill-p3489-1000-a00-00-ucm1.dtb</code></td>
+<td>Default device tree blob for the TX2i on the standard P3489 DevKit carrier.</td>
+</tr>
+<tr>
+<td><strong>NVIDIA Jetson TX2i DevKit</strong></td>
+<td><code>BPFDTB_FILE</code></td>
+<td><code>tegra186-a02-bpmp-storm-p3489-a00-00-ta795sa-ucm1.dtb</code></td>
+<td>BPMP (Boot and Power Management Processor) DTB configuration.</td>
+</tr>
+<tr>
+<td><strong>CTI Elroy Rev F+</strong></td>
+<td><code>DTB_FILE</code> &amp; <code>TBCDTB_FILE</code></td>
+<td><code>tegra186-tx2i-cti-ASG002-revF+.dtb</code></td>
+<td>Connect Tech Elroy Revision F+ carrier board device tree blob.</td>
+</tr>
+<tr>
+<td><strong>CTI Elroy Rev F+</strong></td>
+<td><code>BPFDTB_FILE</code></td>
+<td><code>tegra186-a02-bpmp-storm-p3489-a00-00-ta795sa-ucm1.dtb</code></td>
+<td>Sourced from the common configuration for the BPMP firmware.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="boot-configuration-table-bct-cfg-files">Boot Configuration Table (BCT) &amp; CFG Files<a class="headerlink" href="#boot-configuration-table-bct-cfg-files" title="Permanent link">&para;</a></h3>
+<p>The following configuration files are loaded into the Boot ROM and Early Boot stage:
+- These are mainly specific to the TX2i itself and are slightly modified or left unchaged by most carrier board developers.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Configuration Filename</th>
+<th>Purpose &amp; Target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>EMMC_BCT</code></strong></td>
+<td><code>P3489_A00_8GB_Samsung_8GB_lpddr4_204Mhz_P134_A02_ECC_en_l4t.cfg</code></td>
+<td>Configures early eMMC storage and DRAM timings (LPDDR4 at 204 MHz, ECC enabled) for the TX2i SoM.</td>
+</tr>
+<tr>
+<td><strong><code>PINMUX_CONFIG</code></strong></td>
+<td><code>tegra186-mb1-bct-pinmux-quill-p3489-1000-a00.cfg</code></td>
+<td>Pin Multiplexing — Defines initial state, direction, and pull-up/pull-down values of the SoC pins.</td>
+</tr>
+<tr>
+<td><strong><code>PMIC_CONFIG</code></strong></td>
+<td><code>tegra186-mb1-bct-pmic-quill-p3489-1000-a00.cfg</code></td>
+<td>Power Management IC — Defines output voltage rails, limits, and power-up sequence timings.</td>
+</tr>
+<tr>
+<td><strong><code>PMC_CONFIG</code></strong></td>
+<td><code>tegra186-mb1-bct-pad-quill-p3489-1000-a00.cfg</code></td>
+<td>Pad Power Control — Sets voltage domains (e.g., 1.8V vs 3.3V) for I/O pad groups.</td>
+</tr>
+<tr>
+<td><strong><code>PROD_CONFIG</code></strong></td>
+<td><code>tegra186-mb1-bct-prod-storm-p3489-1000-a00.cfg</code></td>
+<td>Production settings — Registers configuration for chip performance and calibration.</td>
+</tr>
+<tr>
+<td><strong><code>BOOTROM_CONFIG</code></strong></td>
+<td><code>tegra186-mb1-bct-bootrom-quill-p3489-1000-a00.cfg</code></td>
+<td>Configures Boot ROM execution parameters.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="the-role-of-pinmux-and-power-configurations">The Role of Pinmux and Power Configurations<a class="headerlink" href="#the-role-of-pinmux-and-power-configurations" title="Permanent link">&para;</a></h2>
+<p>A crucial aspect of carrier board adaptation is configuring the pinmux and power control files. These configurations directly determine the <strong>power and voltage consumption</strong> of the system:</p>
+<ol>
+<li><strong>Voltage Domain Selection (<code>PMC_CONFIG</code>)</strong>: Different hardware peripherals require different signal voltages. The PMC configuration maps internal SoM voltage domains to match the carrier's hardware rails (e.g., configuring a pad group for 1.8 V or 3.3 V). Driving a pad at the wrong voltage can cause permanent damage to the peripheral or SoM, or result in excessive leakage current.</li>
+<li><strong>Current Leakage Prevention (<code>PINMUX_CONFIG</code>)</strong>: Setting pins in an incorrect electrical state (for instance, leaving unused pins "floating", or driving an active-high output against an external ground pull) can cause high leakage current. Pinmux configuration ensures all unused or non-connected pins are properly tri-stated or driven to pull-down/pull-up states, which minimizes power consumption during normal and low-power sleep cycles.</li>
+<li><strong>Active Power Management (<code>PMIC_CONFIG</code>)</strong>: The PMIC configuration defines voltage rails and power scaling rules. The PMIC manages the module's core voltage dynamically based on thermal limits and clock frequencies to optimize power dissipation.</li>
+</ol>
+<hr />
+<hr />
+<p><a class="md-button" href="../">← Phase 2 Overview</a>
+<a class="md-button md-button--primary" href="../02-custom-machine-setup/">Next: Custom Machine Setup →</a></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Phase 2 — Custom Hardware Adaptation">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Phase 2 — Custom Hardware Adaptation
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../02-custom-machine-setup/" class="md-footer__link md-footer__link--next" aria-label="Next: Custom Machine Setup">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Custom Machine Setup
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 Space Linux Build Documentation
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/ajaymrk95/yocto-project-build-docs" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.footer", "navigation.indexes", "toc.follow", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,2535 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A detailed review of the abandoned Warrior branch path, the specific build and dependency issues encountered, and the ideal architecture for setting up a custom machine in Yocto.">
+      
+      
+      
+        <link rel="canonical" href="https://ajaymrk95.github.io/yocto-project-build-docs/phase2/02-custom-machine-setup/">
+      
+      
+        <link rel="prev" href="../01-device-trees-and-configuration/">
+      
+      
+        <link rel="next" href="../03-executing-the-build/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Custom Machine Setup - Space Linux — Yocto Build Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Plus+Jakarta+Sans:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Plus Jakarta Sans";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#custom-machine-setup" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Space Linux — Yocto Build Documentation" class="md-header__button md-logo" aria-label="Space Linux — Yocto Build Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Space Linux — Yocto Build Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Custom Machine Setup
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ajaymrk95/yocto-project-build-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ajaymrk95/yocto-project-build-docs
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Overview
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../roadmap/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Roadmap
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../latest-trends/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Latest Trends
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../phase0/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Phase 0
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../phase1/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Phase 1
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Phase 2
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../phase3/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Phase 3
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../phase4/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Phase 4
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Space Linux — Yocto Build Documentation" class="md-nav__button md-logo" aria-label="Space Linux — Yocto Build Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Space Linux — Yocto Build Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ajaymrk95/yocto-project-build-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ajaymrk95/yocto-project-build-docs
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../latest-trends/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Latest Trends
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../phase0/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 0
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Phase 0
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase0/papers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Research Papers Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../phase1/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 1
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Phase 1
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/01-what-is-yocto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What Is Yocto?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/02-prerequisite-reading/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Important Links
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/03-host-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build Computer Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/04-quick-build/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Build
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/05-cloning-and-branching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloning & Branching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/06-adding-layers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Adding Layers & bblayers.conf
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/07-local-conf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deep Dive: local.conf
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/08-build-process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build Process Explained
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/09-navigating-output-and-flashing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build Output & Flashing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 2
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Phase 2
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-device-trees-and-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Device Trees, DTBs & Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom Machine Setup
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom Machine Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-a-bbappend-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is a .bbappend file?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#concept-to-adapt-the-yocto-build" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Concept to adapt the Yocto Build
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#theoretical-aspects-and-full-process-as-per-oe4t-open-embedded-for-tegra" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Theoretical Aspects and Full Process as per OE4T - Open Embedded for Tegra
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#jetson-tx2itx2-process-consolidated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Jetson TX2i/TX2 Process - Consolidated
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Jetson TX2i/TX2 Process - Consolidated">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-create-a-new-machine-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Create a New Machine Config
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-create-a-new-flash-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Create a New Flash Config
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-add-pinmux-dtsi-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Add Pinmux DTSI Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-install-the-pinmux-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Install the Pinmux Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-modify-flashvars" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Modify Flashvars
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-optionally-disable-board-eeprom-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. (Optionally) Disable Board EEPROM Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-use-a-custom-device-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Use a Custom Device Tree
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-customizing-the-kernel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Customizing the Kernel
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-2-identify-and-attempt-to-use-existing-work-the-meta-cti-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 2 - Identify and attempt to use existing work - The meta-cti layer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 2 - Identify and attempt to use existing work - The meta-cti layer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#meta-cti-layer-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        meta-cti Layer Structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detailed-explanation-of-the-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Detailed Explanation of the Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-3-adding-the-tx2i-machine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 3 : Adding the TX2i Machine
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 3 : Adding the TX2i Machine">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#2-configure-the-flashvars-for-the-tx2i-elroy-tx2iflashvars" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Configure the Flashvars for the TX2i (elroy-tx2i/flashvars)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-injecting-files-via-bbappend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Injecting Files via .bbappend
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-final-layer-directory-structure-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Final Layer Directory Structure Checklist
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-executing-the-build/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Executing the Build & Build Problems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-build-artifact-modification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build Artifact Modification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-connecttech-flash-scripts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Setting up NVIDIA Flashing Directory, ConnectTech Utilities, Machine Confs & Flashing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../phase3/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 3
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Phase 3
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase3/01-native-rt-patching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Native RT Patching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase3/02-yocto-rt-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Yocto RT Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase3/03-real-time-scheduling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Real-Time Scheduling Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase3/04-osadl-latency-testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OSADL Latency Testing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase3/05-hardware-robotics-interfacing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hardware Interfacing & Results
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../phase4/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 4
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Phase 4
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase4/01-bootloader-rootfs-redundancy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bootloader & RootFS Redundancy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase4/02-yocto-integration-outline/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Yocto Integration Outline & Phase Conclusion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-a-bbappend-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is a .bbappend file?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#concept-to-adapt-the-yocto-build" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Concept to adapt the Yocto Build
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#theoretical-aspects-and-full-process-as-per-oe4t-open-embedded-for-tegra" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Theoretical Aspects and Full Process as per OE4T - Open Embedded for Tegra
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#jetson-tx2itx2-process-consolidated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Jetson TX2i/TX2 Process - Consolidated
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Jetson TX2i/TX2 Process - Consolidated">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-create-a-new-machine-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Create a New Machine Config
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-create-a-new-flash-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Create a New Flash Config
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-add-pinmux-dtsi-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Add Pinmux DTSI Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-install-the-pinmux-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Install the Pinmux Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-modify-flashvars" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Modify Flashvars
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-optionally-disable-board-eeprom-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. (Optionally) Disable Board EEPROM Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-use-a-custom-device-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Use a Custom Device Tree
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-customizing-the-kernel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Customizing the Kernel
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-2-identify-and-attempt-to-use-existing-work-the-meta-cti-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 2 - Identify and attempt to use existing work - The meta-cti layer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 2 - Identify and attempt to use existing work - The meta-cti layer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#meta-cti-layer-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        meta-cti Layer Structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detailed-explanation-of-the-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Detailed Explanation of the Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-3-adding-the-tx2i-machine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 3 : Adding the TX2i Machine
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 3 : Adding the TX2i Machine">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#2-configure-the-flashvars-for-the-tx2i-elroy-tx2iflashvars" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Configure the Flashvars for the TX2i (elroy-tx2i/flashvars)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-injecting-files-via-bbappend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Injecting Files via .bbappend
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-final-layer-directory-structure-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Final Layer Directory Structure Checklist
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="custom-machine-setup">Custom Machine Setup<a class="headerlink" href="#custom-machine-setup" title="Permanent link">&para;</a></h1>
+<p><span class="phase-label">Phase 2 · Page 2 of 5</span></p>
+<div class="admonition abstract">
+<p class="admonition-title">Page Goal</p>
+<p>Document the technical process, failures, and build issues encountered when attempting a build on the Yocto Warrior branch, with a proof of concept on how to build such a machine, based on existing github repositories.</p>
+</div>
+<h3 id="what-is-a-bbappend-file">What is a <code>.bbappend</code> file?<a class="headerlink" href="#what-is-a-bbappend-file" title="Permanent link">&para;</a></h3>
+<p>A <code>.bbappend</code> file is a Yocto recipe append file. In Yocto, it is considered bad practice to directly modify <code>.bb</code> recipes provided by external layers (like <code>meta-tegra</code> or <code>meta-openembedded</code>). Instead, we use <code>.bbappend</code> files in our own custom layer to extend or override the functionality of those existing recipes. </p>
+<p>The build system automatically merges the base <code>.bb</code> file with any <code>.bbappend</code> files of the exact same name. This allows us to inject extra dependencies, add configuration files, or modify tasks without touching the original source. For example, we can specify custom code to run right before or right after an existing task using the <code>:prepend</code> or <code>:append</code> syntax (or <code>_prepend</code>/<code>_append</code> in older Yocto versions):
+- <code>do_install:prepend() { ... }</code> runs our code <em>before</em> the original recipe's install task.
+- <code>do_install:append() { ... }</code> runs our code <em>after</em> the original recipe's install task.</p>
+<h2 id="concept-to-adapt-the-yocto-build">Concept to adapt the Yocto Build<a class="headerlink" href="#concept-to-adapt-the-yocto-build" title="Permanent link">&para;</a></h2>
+<p>When adapting our Yocto build for the Connect Tech Elroy (ASG002) carrier board, the initial plan was to align the Yocto build branch with the existing available patched and updated BSP Layer Additions for a ConnectTech Based Carrier. </p>
+<h2 id="theoretical-aspects-and-full-process-as-per-oe4t-open-embedded-for-tegra">Theoretical Aspects and Full Process as per OE4T - Open Embedded for Tegra<a class="headerlink" href="#theoretical-aspects-and-full-process-as-per-oe4t-open-embedded-for-tegra" title="Permanent link">&para;</a></h2>
+<ul>
+<li>The meta-tegra layer includes MACHINE definitions for NVIDIA’s Jetson development kits. If you are developing a custom device using one of the Jetson modules with, for example, a custom carrier board, or you just want to modify the default boot-time configuration (pinmux, etc.) for an existing development kit as a separate MACHINE in your own metadata layer, you may need to supply a MACHINE-specific file for your builds.</li>
+</ul>
+<h2 id="jetson-tx2itx2-process-consolidated">Jetson TX2i/TX2 Process - Consolidated<a class="headerlink" href="#jetson-tx2itx2-process-consolidated" title="Permanent link">&para;</a></h2>
+<ul>
+<li>
+<p>OE4T -  Open Embedded for Tegra </p>
+</li>
+<li>
+<p>For the Jetson-TX2 family, there are several boot-time configuration files that are machine-specific. Be sure to follow the NVIDIA Platform Adaptation Guide documentation carefully so all of the necessary customizations for the BPMP device tree and the MB1 .cfg files for the pinmux, PMIC, PMC, boot ROM, and other on-module hardware get created properly. The basic steps are filling in the pinmux spreadsheet and generating the dtsi fragments, then converting those fragments to cfg files using the L4T pinmux-dts2cfg.py script.</p>
+</li>
+<li>
+<p>The recipes-bsp/tegra-binaries/tegra-flashvars_<bsp-version>.bb recipe installs a file called flashvars that identifies the boot-time configuration files that need to be processed by the tegra186-flash-helper script for feeding into NVIDIA’s flashing tools. With older OE4T branches, you need to supply a customized copy of the flashvars file in your BSP layer. With the latest branches, the flashvars file gets generated automatically from the variables listed in TEGRA_FLASHVARS. Check the recipe in meta-tegra to confirm which method you need to follow.</p>
+</li>
+<li>
+<p>The files listed in your flashvars file must be installed into ${datadir}/tegraflash in the build sysroot by another recipe. The simplest method is to create an overlay for the recipes-bsp/tegra-binaries/tegra-bootfiles recipe, as it already extracts the files for the Jetson development kits from the L4T BSP package.</p>
+</li>
+</ul>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a># The fetch task is disabled on this recipe, but we need our files included in the task signature.
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>CUSTOM_DTSI_DIR := &quot;${THISDIR}/${BPN}&quot;
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>FILESEXTRAPATHS:prepend := &quot;${CUSTOM_DTSI_DIR}:&quot;
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>SRC_URI:append:${machine} = &quot;\
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    file://tegra19x-${machine}-padvoltage-default.cfg \
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    file://tegra19x-${machine}-pinmux.cfg \
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    &quot;
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a># As the fetch task is disabled for this recipe, we access the files directly out of the layer.
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>do_install:append:${machine}() {
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    install -m 0644 ${CUSTOM_DTSI_DIR}/tegra19x-${machine}-padvoltage-default.cfg ${D}${datadir}/tegraflash/
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    install -m 0644 ${CUSTOM_DTSI_DIR}/tegra19x-${machine}-pinmux.cfg ${D}${datadir}/tegraflash/
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>}
+</span></code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">OE4T Guide for Custom Machine Setup - Orin as an example</p>
+<p>The following is a configuration reference for the Jetson Orin - a newer device released by NVIDIA. The underlying concepts remain the same for other Tegra platforms like the Jetson TX2i, though filenames and architecture paths will differ.</p>
+</div>
+<h3 id="1-create-a-new-machine-config">1. Create a New Machine Config<a class="headerlink" href="#1-create-a-new-machine-config" title="Permanent link">&para;</a></h3>
+<p>Create a new Machine configuration at <code>conf/machine/${machine}.conf</code> in your layer. For guidance on what it should contain, look at any of the machine configurations in <code>meta-tegra</code>.</p>
+<h3 id="2-create-a-new-flash-config">2. Create a New Flash Config<a class="headerlink" href="#2-create-a-new-flash-config" title="Permanent link">&para;</a></h3>
+<p>Create a new flash configuration <code>recipes-bsp/tegra-binaries/tegra-flashvars/${machine}/flashvars</code>. You can start by copying one of the <code>flashvars</code> files in <code>meta-tegra</code>. To use the newly created <code>flashvars</code> file, create the following <code>recipes-bsp/tegra-binaries/tegra-flashvars_35.4.1.bbappend</code>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>FILESEXTRAPATHS:prepend := &quot;${THISDIR}/${BPN}:&quot;
+</span></code></pre></div>
+<h3 id="3-add-pinmux-dtsi-files">3. Add Pinmux DTSI Files<a class="headerlink" href="#3-add-pinmux-dtsi-files" title="Permanent link">&para;</a></h3>
+<p>Generate the pinmux DTSI files with the NVIDIA pinmux Excel sheet (or the one for Orin AGX). Rename the resulting files to start with <code>tegra234-</code> (otherwise <code>meta-tegra</code> has issues handling them) and convert line endings to Unix using <code>dos2unix</code>. Copy the files to <code>recipes-bsp/tegra-binaries/tegra-flashvars</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you manually rename your generated DTSI files, you may need to modify the <code>#include</code> statement on line 35 of your <code>-pinmux.dtsi</code> file, as it has the original filename for the <code>-gpio-default.dtsi</code> file hardcoded.</p>
+</div>
+<h3 id="4-install-the-pinmux-files">4. Install the Pinmux Files<a class="headerlink" href="#4-install-the-pinmux-files" title="Permanent link">&para;</a></h3>
+<p>Install the files with the following <code>tegra-bootfiles_35.4.1.bbappend</code>:</p>
+<p><div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a># Hack: The fetch task is disabled on this recipe, so the following is just for the task signature.
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>FILESEXTRAPATHS:prepend := &quot;${THISDIR}/${BPN}:&quot;
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>SRC_URI:append:${machine} = &quot;\
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    file://tegra234-${machine}-gpio-default.dtsi \
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    file://tegra234-${machine}-padvoltage-default.dtsi \
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    file://tegra234-${machine}-pinmux.dtsi \
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>&quot;
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a># Hack: As the fetch task is disabled for this recipe, we have to directly access the files.
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>CUSTOM_DTSI_DIR := &quot;${THISDIR}/${BPN}&quot;
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>do_install:append:${machine}() {
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    install -m 0644 ${CUSTOM_DTSI_DIR}/tegra234-${machine}-gpio-default.dtsi ${D}${datadir}/tegraflash/
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>    install -m 0644 ${CUSTOM_DTSI_DIR}/tegra234-${machine}-padvoltage-default.dtsi ${D}${datadir}/tegraflash/
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>    install -m 0644 ${CUSTOM_DTSI_DIR}/tegra234-${machine}-pinmux.dtsi ${D}${datadir}/tegraflash/
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>}
+</span></code></pre></div>
+<em>(Remember to replace <code>${machine}</code> with your machine name.)</em></p>
+<h3 id="5-modify-flashvars">5. Modify Flashvars<a class="headerlink" href="#5-modify-flashvars" title="Permanent link">&para;</a></h3>
+<p>Then modify <code>flashvars</code> to use the files:
+- <code>PINMUX_CONFIG</code> should be set to your <code>tegra234-${machine}-pinmux.dtsi</code>
+- <code>PMC_CONFIG</code> should be set to your <code>tegra234-${machine}-padvoltage-default.dtsi</code>
+- In case of the TX2i Device Series tegracode is tegra186.</p>
+<h3 id="6-optionally-disable-board-eeprom-usage">6. (Optionally) Disable Board EEPROM Usage<a class="headerlink" href="#6-optionally-disable-board-eeprom-usage" title="Permanent link">&para;</a></h3>
+<p>As explained in the <em>Platform Adaptation and Bring-Up Guide</em> by NVIDIA, you might want to disable the usage of the board EEPROM. For that, create a copy of the file used in <code>flashvars</code> for <code>MB2BCT_CFG</code> and modify it according to the NVIDIA guide. Include this new file in Yocto the same way as explained in <strong>Add Pinmux DTSI Files</strong> and update <code>MB2BCT_CFG</code> in <code>flashvars</code> with the new file name.</p>
+<h3 id="7-use-a-custom-device-tree">7. Use a Custom Device Tree<a class="headerlink" href="#7-use-a-custom-device-tree" title="Permanent link">&para;</a></h3>
+<p>See the custom device tree documentation and apply the described changes to your <code>${machine}.conf</code>.</p>
+<h3 id="8-customizing-the-kernel">8. Customizing the Kernel<a class="headerlink" href="#8-customizing-the-kernel" title="Permanent link">&para;</a></h3>
+<p>For custom hardware, you'll probably need to modify the kernel in at least one of the following ways:
+- Custom kernel configuration
+- Custom device tree
+- Adding patches</p>
+<p>Starting with L4T R32.3.1-based branches, you can use the Yocto Linux tools to apply patches and configuration changes during the build, although it may be simpler to fork the <code>linux-tegra-4.9</code> repository to apply patches and supply your own <code>defconfig</code> file for the kernel configuration. Having your own fork of the kernel sources should also be easier for creating a custom device tree (you should also set the <code>KERNEL_DEVICETREE</code> variable in your machine configuration file appropriately).</p>
+<h2 id="part-2-identify-and-attempt-to-use-existing-work-the-meta-cti-layer">Part 2 - Identify and attempt to use existing work - The meta-cti layer<a class="headerlink" href="#part-2-identify-and-attempt-to-use-existing-work-the-meta-cti-layer" title="Permanent link">&para;</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Acknowledgement - Damien LeFevre - contributor of the meta-cti layer on Github, whose work was primaily adapted and extended to the TX2i.</p>
+<ul>
+<li>
+<p>https://github.com/lfdmn/meta-cti/tree/l4t-r32.2-cti-v126 </p>
+</li>
+<li>
+<p>This repository puts into practice the above listed steps to support a custom carrier board -ConnectTech Astro and Elroy for the TX2 - NVIDIA Reference Number P3310.</p>
+</li>
+<li>
+<p>Cloning this repository and adding a custom machine configuration can enable this extension to most CTI DTB based boards.</p>
+</li>
+</ul>
+</div>
+<h3 id="meta-cti-layer-structure"><code>meta-cti</code> Layer Structure<a class="headerlink" href="#meta-cti-layer-structure" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>meta-cti
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>|   LICENSE
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>|   README.md
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>+---conf
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>|   |   layer.conf
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>|   +---distro
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>|   |   \---include
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>|   |           astro-tx2.conf
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>|   |           elroy-mpcie-tx2.conf
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>|   |           elroy-tx2.conf
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>|   |           rudi-tx2.conf
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>|   \---machine
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>|           astro-tx2.conf
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>|           elroy-mpcie-tx2.conf
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>|           elroy-tx2.conf
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>|           rudi-tx2.conf
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>+---recipes-bsp
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>|   \---tegra-binaries
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>|       |   tegra-flashvars_32.2.0.bbappend
+</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>|       \---files
+</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a>|           |   flashvars
+</span><span id="__span-3-22"><a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a>|           +---astro-tx2
+</span><span id="__span-3-23"><a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a>|           |       flashvars
+</span><span id="__span-3-24"><a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a>|           +---elroy-mpcie-tx2.conf
+</span><span id="__span-3-25"><a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a>|           |       flashvars
+</span><span id="__span-3-26"><a id="__codelineno-3-26" name="__codelineno-3-26" href="#__codelineno-3-26"></a>|           +---elroy-tx2
+</span><span id="__span-3-27"><a id="__codelineno-3-27" name="__codelineno-3-27" href="#__codelineno-3-27"></a>|           |       flashvars
+</span><span id="__span-3-28"><a id="__codelineno-3-28" name="__codelineno-3-28" href="#__codelineno-3-28"></a>|           \---rudi-tx2
+</span><span id="__span-3-29"><a id="__codelineno-3-29" name="__codelineno-3-29" href="#__codelineno-3-29"></a>|                   flashvars
+</span><span id="__span-3-30"><a id="__codelineno-3-30" name="__codelineno-3-30" href="#__codelineno-3-30"></a>\---recipes-kernel
+</span><span id="__span-3-31"><a id="__codelineno-3-31" name="__codelineno-3-31" href="#__codelineno-3-31"></a>    \---linux
+</span><span id="__span-3-32"><a id="__codelineno-3-32" name="__codelineno-3-32" href="#__codelineno-3-32"></a>        |   linux-tegra_4.9.bbappend
+</span><span id="__span-3-33"><a id="__codelineno-3-33" name="__codelineno-3-33" href="#__codelineno-3-33"></a>        \---files
+</span><span id="__span-3-34"><a id="__codelineno-3-34" name="__codelineno-3-34" href="#__codelineno-3-34"></a>            \---tegra186
+</span><span id="__span-3-35"><a id="__codelineno-3-35" name="__codelineno-3-35" href="#__codelineno-3-35"></a>                    tegra186_cti_defconfig
+</span></code></pre></div>
+<h3 id="detailed-explanation-of-the-configuration">Detailed Explanation of the Configuration<a class="headerlink" href="#detailed-explanation-of-the-configuration" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p><strong>Layer Configuration (<code>conf/layer.conf</code>)</strong>: This file integrates the custom layer into the Yocto environment, indicating it targets the <code>warrior</code> series and has a priority dependency on the <code>meta-tegra</code> layer.</p>
+</li>
+<li>
+<p><strong>Machine Configuration (<code>conf/machine/elroy-tx2.conf</code>)</strong>: The layer defines custom hardware configurations. For example, <code>elroy-tx2.conf</code> uses the base SoC configuration (<code>require conf/machine/include/tegra186.inc</code>) from <code>meta-tegra</code>. Here, the layer specifically sets the <code>KERNEL_DEVICETREE</code> variable:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>KERNEL_DEVICETREE ?= &quot;_ddot_/_ddot_/_ddot_/_ddot_/nvidia/platform/t18x/quill/kernel-dts/tegra186-tx2-cti-ASG002-revF+.dtb&quot;
+</span></code></pre></div>
+  This explicit assignment overrides the default device tree and forces the Yocto kernel build system to compile and deploy the exact <code>.dtb</code> required for the ConnectTech Elroy carrier board.</p>
+</li>
+<li>
+<p><strong>Flashvars and DTBs (<code>recipes-bsp/tegra-binaries</code>)</strong>: <em>Flashvars</em> define the specific boot-time and early-boot hardware configuration files that NVIDIA's flashing tools (<code>tegra186-flash-helper</code>) use to initialize the hardware before the kernel boots. </p>
+</li>
+</ul>
+<p>The layer uses a <code>tegra-flashvars_32.2.0.bbappend</code> recipe to prepend its own <code>files/</code> directory to the search path:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>FILESEXTRAPATHS_prepend := &quot;${THISDIR}/files/:&quot;
+</span></code></pre></div>
+  Because of this prepend, when Yocto processes the <code>elroy-tx2</code> machine, it finds and uses the custom flashvars file at <code>files/elroy-tx2/flashvars</code> instead of the default NVIDIA one. </p>
+<p>Inside <code>files/elroy-tx2/flashvars</code>, the layer sets the following crucial variables:
+  <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nv">FLASHVARS</span><span class="o">=</span><span class="s2">&quot;BPFDTB_FILE PINMUX_CONFIG PMIC_CONFIG PMC_CONFIG PROD_CONFIG BOOTROM_CONFIG MISC_CONFIG SCR_CONFIG SCR_COLD_BOOT_CONFIG DEV_PARAMS&quot;</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nv">BPFDTB_FILE</span><span class="o">=</span>tegra186-a02-bpmp-quill-p3310-1000-@BPFDTBREV@-00-te770d-ucm2.dtb
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="nv">PINMUX_CONFIG</span><span class="o">=</span>tegra186-mb1-bct-pinmux-quill-p3310-1000-@BOARDREV@.cfg
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="nv">PMIC_CONFIG</span><span class="o">=</span>tegra186-mb1-bct-pmic-quill-p3310-1000-@PMICREV@.cfg
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="nv">PMC_CONFIG</span><span class="o">=</span>tegra186-mb1-bct-pad-quill-p3310-1000-@BOARDREV@.cfg
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="nv">PROD_CONFIG</span><span class="o">=</span>tegra186-mb1-bct-prod-quill-p3310-1000-@BOARDREV@.cfg
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="nv">BOOTROM_CONFIG</span><span class="o">=</span>tegra186-mb1-bct-bootrom-quill-p3310-1000-@BOARDREV@.cfg
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="nv">MISC_CONFIG</span><span class="o">=</span>tegra186-mb1-bct-misc-si-l4t.cfg
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="nv">SCR_CONFIG</span><span class="o">=</span>minimal_scr.cfg
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="nv">SCR_COLD_BOOT_CONFIG</span><span class="o">=</span>mobile_scr.cfg
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="nv">DEV_PARAMS</span><span class="o">=</span>emmc.cfg
+</span></code></pre></div>
+  <strong>What these variables mean:</strong>
+  - <code>BPFDTB_FILE</code>: The Boot and Power Management Processor (BPMP) device tree. It controls low-level clocks and power domains.
+  - <code>PINMUX_CONFIG</code>: Pin multiplexing configuration file, defining how the SoC pins are electrically routed (GPIO vs. I2C vs. SPI).
+  - <code>PMIC_CONFIG</code>: Power Management IC configuration, defining voltage rails and sequencing.
+  - <code>PMC_CONFIG</code>: Power Management Controller pad configurations.
+  - <code>PROD_CONFIG</code>: Production configuration and tuning values for the SoC components.
+  - <code>BOOTROM_CONFIG</code>: Early boot ROM configuration settings.
+  - <code>MISC_CONFIG</code> / <code>SCR_CONFIG</code> / <code>DEV_PARAMS</code>: Miscellaneous security parameters, cold boot constraints, and eMMC storage configurations.</p>
+<ul>
+<li><strong>Kernel Defconfig (<code>recipes-kernel/linux/linux-tegra_4.9.bbappend</code>)</strong>: To configure the kernel properly for the Elroy board, the layer provides a custom <code>tegra186_cti_defconfig</code> file inside <code>recipes-kernel/linux/files/tegra186/</code>. </li>
+</ul>
+<p>The <code>.bbappend</code> uses the <code>SRC_URI</code> variable to pull both the modified kernel source from a GitHub fork and this local physical defconfig file:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>KERNEL_REPO = &quot;git@github.com:lfdmn/linux-tegra-4.9.git&quot;
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>SRC_URI = &quot;git://${KERNEL_REPO};protocol=ssh;branch=${SRCBRANCH} \
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>          file://tegra186_cti_defconfig \
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>&quot;
+</span></code></pre></div>
+  During the <code>do_configure_prepend()</code> task, the <code>.bbappend</code> script moves the pulled <code>tegra186_cti_defconfig</code> directly to <code>${WORKDIR}/defconfig</code>:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>do_configure_prepend(){
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    mv ${WORKDIR}/tegra186_cti_defconfig ${WORKDIR}/defconfig
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>}
+</span></code></pre></div>
+  Because Yocto's kernel build system inherently looks for a file named <code>defconfig</code> in the work directory to initialize the kernel configuration (<code>.config</code>), this simple rename forces the entire build to compile against the custom ConnectTech hardware settings instead of NVIDIA's defaults.</p>
+<h2 id="part-3-adding-the-tx2i-machine">Part 3 : Adding the TX2i Machine<a class="headerlink" href="#part-3-adding-the-tx2i-machine" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>### 1. Define the Machine Configuration (`elroy-tx2i.conf`)
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>Inside the custom layer, the machine configuration file is created at `conf/machine/elroy-tx2i.conf`. This configuration represents the target hardware combo, explicitly specifying the TX2i board ID (`3489`):
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>```text
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>#@TYPE: Machine
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>#@NAME: Nvidia Elroy TX2i
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>#@DESCRIPTION: Nvidia Jetson TX2i on ConnectTech Elroy (ASG002)
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a># TX2i uses P3489 module (storm) instead of P3310 (quill)
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>TEGRA_BOARDID = &quot;3489&quot;
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>TEGRA_FAB ?= &quot;A00&quot;
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>
+</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a># Comes from meta-tegra
+</span><span id="__span-9-15"><a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>require conf/machine/include/tegra186.inc
+</span><span id="__span-9-16"><a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>
+</span><span id="__span-9-17"><a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>KERNEL_DEVICETREE ?= &quot;_ddot_/_ddot_/_ddot_/_ddot_/nvidia/platform/t18x/quill/kernel-dts/tegra186-tx2i-cti-ASG002-revF+.dtb&quot;
+</span><span id="__span-9-18"><a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a>KERNEL_ARGS ?= &quot;console=ttyS0,115200 console=tty0 OS=l4t fbcon=map:0&quot;
+</span><span id="__span-9-19"><a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a>
+</span><span id="__span-9-20"><a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a>MACHINE_FEATURES += &quot;ext2 ext3 vfat&quot;
+</span><span id="__span-9-21"><a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a>
+</span><span id="__span-9-22"><a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a>UBOOT_MACHINE = &quot;p2771-0000-500_defconfig&quot;
+</span><span id="__span-9-23"><a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a>
+</span><span id="__span-9-24"><a id="__codelineno-9-24" name="__codelineno-9-24" href="#__codelineno-9-24"></a>EMMC_SIZE ?= &quot;31276924928&quot;
+</span><span id="__span-9-25"><a id="__codelineno-9-25" name="__codelineno-9-25" href="#__codelineno-9-25"></a>EMMC_DEVSECT_SIZE ?= &quot;512&quot;
+</span><span id="__span-9-26"><a id="__codelineno-9-26" name="__codelineno-9-26" href="#__codelineno-9-26"></a>BOOTPART_SIZE ?= &quot;8388608&quot;
+</span><span id="__span-9-27"><a id="__codelineno-9-27" name="__codelineno-9-27" href="#__codelineno-9-27"></a>BOOTPART_LIMIT ?= &quot;10485760&quot;
+</span><span id="__span-9-28"><a id="__codelineno-9-28" name="__codelineno-9-28" href="#__codelineno-9-28"></a>ROOTFSPART_SIZE ?= &quot;30064771072&quot;
+</span><span id="__span-9-29"><a id="__codelineno-9-29" name="__codelineno-9-29" href="#__codelineno-9-29"></a>ODMDATA ?= &quot;0x1090000&quot;
+</span><span id="__span-9-30"><a id="__codelineno-9-30" name="__codelineno-9-30" href="#__codelineno-9-30"></a>EMMC_BCT ?= &quot;P3489_A00_8GB_Samsung_8GB_lpddr4_204Mhz_P134_A02_ECC_en_l4t.cfg&quot;
+</span><span id="__span-9-31"><a id="__codelineno-9-31" name="__codelineno-9-31" href="#__codelineno-9-31"></a>NVIDIA_BOARD ?= &quot;t186ref&quot;
+</span><span id="__span-9-32"><a id="__codelineno-9-32" name="__codelineno-9-32" href="#__codelineno-9-32"></a>TEGRA186_REDUNDANT_BOOT ?= &quot;0&quot;
+</span><span id="__span-9-33"><a id="__codelineno-9-33" name="__codelineno-9-33" href="#__codelineno-9-33"></a>PARTITION_LAYOUT_TEMPLATE ?= &quot;flash_l4t_t186.xml&quot;
+</span></code></pre></div>
+<blockquote>
+<p><strong>Note on ODMDATA</strong>: The <code>ODMDATA</code> defines low-level hardware muxing (such as PCIe lanes and USB ports). This value (<code>0x1090000</code> for Elroy) remains the same for both the TX2 and the TX2i on this carrier board, as the base carrier board hardware does not change.</p>
+</blockquote>
+<h3 id="2-configure-the-flashvars-for-the-tx2i-elroy-tx2iflashvars">2. Configure the Flashvars for the TX2i (<code>elroy-tx2i/flashvars</code>)<a class="headerlink" href="#2-configure-the-flashvars-for-the-tx2i-elroy-tx2iflashvars" title="Permanent link">&para;</a></h3>
+<p>To ensure NVIDIA's flashing tools configure the early-boot hardware properly, we must override the flashvars. The standard TX2 uses the <strong>P3310</strong> module, but the <strong>TX2i</strong> uses the <strong>P3489</strong> module. </p>
+<p>The <code>flashvars</code> file is placed at <code>recipes-bsp/tegra-binaries/files/elroy-tx2i/flashvars</code> to map the ConnectTech-specific TX2i configurations:</p>
+<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nv">FLASHVARS</span><span class="o">=</span><span class="s2">&quot;BPFDTB_FILE PINMUX_CONFIG PMIC_CONFIG PMC_CONFIG PROD_CONFIG BOOTROM_CONFIG MISC_CONFIG SCR_CONFIG SCR_COLD_BOOT_CONFIG DEV_PARAMS&quot;</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="nv">BPFDTB_FILE</span><span class="o">=</span>tegra186-a02-bpmp-storm-p3489-@BPFDTBREV@-00-ta795sa-ucm1.dtb
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="nv">PINMUX_CONFIG</span><span class="o">=</span>tegra186-mb1-bct-pinmux-quill-p3489-1000-@BOARDREV@.cfg
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="nv">PMIC_CONFIG</span><span class="o">=</span>tegra186-mb1-bct-pmic-quill-p3489-1000-@PMICREV@.cfg
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="nv">PMC_CONFIG</span><span class="o">=</span>tegra186-mb1-bct-pad-quill-p3489-1000-@BOARDREV@.cfg
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="nv">PROD_CONFIG</span><span class="o">=</span>tegra186-mb1-bct-prod-storm-p3489-1000-@BOARDREV@.cfg
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="nv">BOOTROM_CONFIG</span><span class="o">=</span>tegra186-mb1-bct-bootrom-quill-p3489-1000-@BOARDREV@.cfg
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="nv">MISC_CONFIG</span><span class="o">=</span>tegra186-mb1-bct-misc-si-l4t.cfg
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="nv">SCR_CONFIG</span><span class="o">=</span>minimal_scr.cfg
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="nv">SCR_COLD_BOOT_CONFIG</span><span class="o">=</span>mobile_scr.cfg
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="nv">DEV_PARAMS</span><span class="o">=</span>emmc.cfg
+</span></code></pre></div>
+<em>Notice how the BPFDTB file specifically references the <code>storm</code> module code alongside <code>p3489</code>, indicating the industrial TX2i variant.</em></p>
+<h3 id="3-injecting-files-via-bbappend">3. Injecting Files via <code>.bbappend</code><a class="headerlink" href="#3-injecting-files-via-bbappend" title="Permanent link">&para;</a></h3>
+<p>To force the build to use our new <code>elroy-tx2i/flashvars</code> file and our custom kernel modifications, two <code>.bbappend</code> files are added:</p>
+<p><strong>A. Flashvars bbappend (<code>tegra-flashvars_32.2.0.bbappend</code>)</strong>:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>FILESEXTRAPATHS_prepend := &quot;${THISDIR}/files/:&quot;
+</span></code></pre></div>
+This prepend ensures that when Yocto processes the <code>elroy-tx2i</code> machine, it finds and bundles our <code>p3489</code>-specific flashvars file into the final flash package.</p>
+<p><strong>B. Kernel bbappend (<code>linux-tegra_4.9.bbappend</code>)</strong>:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>FILESEXTRAPATHS_prepend := &quot;${THISDIR}/files/tegra186:&quot;
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>SRCBRANCH = &quot;patches-${L4T_VERSION}-cti-v126&quot;
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>SRCREV = &quot;92f5594641f58e1f7ff9e1813dc0fd6803b25149&quot;
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>KERNEL_REPO = &quot;github.com/lfdmn/linux-tegra-4.9.git&quot;
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>SRC_URI = &quot;git://${KERNEL_REPO};protocol=https;branch=${SRCBRANCH} \
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>          file://tegra186_cti_defconfig \
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>&quot;
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>
+</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>KERNEL_ROOTSPEC = &quot;root=/dev/mmcblk${@uboot_var(&#39;devnum&#39;)}p${@uboot_var(&#39;distro_bootpart&#39;)} rw rootwait&quot;
+</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>
+</span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>do_configure_prepend(){
+</span><span id="__span-12-14"><a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>    mv ${WORKDIR}/tegra186_cti_defconfig ${WORKDIR}/defconfig
+</span><span id="__span-12-15"><a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a>}
+</span></code></pre></div>
+This forces the build to fetch Damien Lefevre's patched kernel branch, pulls in the <code>tegra186_cti_defconfig</code> file from our local layer, and renames it to <code>defconfig</code> so the Yocto kernel system builds against it.</p>
+<h3 id="4-final-layer-directory-structure-checklist">4. Final Layer Directory Structure Checklist<a class="headerlink" href="#4-final-layer-directory-structure-checklist" title="Permanent link">&para;</a></h3>
+<p>Here is the exact layout of the custom <code>meta-cti</code> layer, highlighting specifically where the new files were added to support the <code>elroy-tx2i</code>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>meta-cti/
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>├── conf/
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>│   ├── layer.conf
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>│   └── machine/
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>│       ├── astro-tx2.conf
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>│       ├── elroy-tx2.conf
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>│       └── elroy-tx2i.conf                          &lt;-- [ADDED] TX2i Machine config
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>├── recipes-bsp/
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>│   └── tegra-binaries/
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>│       ├── tegra-flashvars_32.2.0.bbappend          &lt;-- [ADDED] Injects flashvars paths
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>│       └── files/
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>│           ├── astro-tx2/
+</span><span id="__span-13-13"><a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a>│           │   └── flashvars
+</span><span id="__span-13-14"><a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a>│           ├── elroy-tx2/
+</span><span id="__span-13-15"><a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a>│           │   └── flashvars
+</span><span id="__span-13-16"><a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a>│           └── elroy-tx2i/                          &lt;-- [ADDED] TX2i specific folder
+</span><span id="__span-13-17"><a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a>│               └── flashvars                        &lt;-- [ADDED] TX2i (P3489) flashvars
+</span><span id="__span-13-18"><a id="__codelineno-13-18" name="__codelineno-13-18" href="#__codelineno-13-18"></a>└── recipes-kernel/
+</span><span id="__span-13-19"><a id="__codelineno-13-19" name="__codelineno-13-19" href="#__codelineno-13-19"></a>    └── linux/
+</span><span id="__span-13-20"><a id="__codelineno-13-20" name="__codelineno-13-20" href="#__codelineno-13-20"></a>        ├── linux-tegra_4.9.bbappend                 &lt;-- [ADDED] Injects defconfig &amp; repo
+</span><span id="__span-13-21"><a id="__codelineno-13-21" name="__codelineno-13-21" href="#__codelineno-13-21"></a>        └── files/
+</span><span id="__span-13-22"><a id="__codelineno-13-22" name="__codelineno-13-22" href="#__codelineno-13-22"></a>            └── tegra186/
+</span><span id="__span-13-23"><a id="__codelineno-13-23" name="__codelineno-13-23" href="#__codelineno-13-23"></a>                └── tegra186_cti_defconfig           &lt;-- [ADDED] Custom Elroy kernel config
+</span></code></pre></div>
+<p>This structure cleanly adapts the existing ConnectTech support (which was originally just for the TX2) to the TX2i.</p>
+<hr />
+<p><a class="md-button" href="../01-device-trees-and-configuration/">← Device Trees &amp; Configuration</a>
+<a class="md-button md-button--primary" href="../03-executing-the-build/">Next: Executing the Build →</a></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../01-device-trees-and-configuration/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Device Trees, DTBs &amp; Configuration">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Device Trees, DTBs & Configuration
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../03-executing-the-build/" class="md-footer__link md-footer__link--next" aria-label="Next: Executing the Build &amp; Build Problems">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Executing the Build & Build Problems
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 Space Linux Build Documentation
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/ajaymrk95/yocto-project-build-docs" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.footer", "navigation.indexes", "toc.follow", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
