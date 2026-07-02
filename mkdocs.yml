@@ -98,33 +98,33 @@ nav:
   - Latest Trends: latest-trends.md
   - Phase 0:
     - phase0/index.md
-    - Research Papers: phase0/papers.md
+    - Research Papers Overview: phase0/papers.md
   - Phase 1:
     - phase1/index.md
     - What Is Yocto?: phase1/01-what-is-yocto.md
-    - Prerequisites: phase1/02-prerequisite-reading.md
-    - Host Setup: phase1/03-host-setup.md
+    - Important Links: phase1/02-prerequisite-reading.md
+    - Build Computer Setup: phase1/03-host-setup.md
     - Quick Build: phase1/04-quick-build.md
     - Cloning & Branching: phase1/05-cloning-and-branching.md
-    - Adding Layers: phase1/06-adding-layers.md
-    - "local.conf Deep Dive": phase1/07-local-conf.md
-    - Build Process: phase1/08-build-process.md
-    - Output & Flashing: phase1/09-navigating-output-and-flashing.md
+    - Adding Layers & bblayers.conf: phase1/06-adding-layers.md
+    - "Deep Dive: local.conf": phase1/07-local-conf.md
+    - Build Process Explained: phase1/08-build-process.md
+    - Build Output & Flashing: phase1/09-navigating-output-and-flashing.md
   - Phase 2:
     - phase2/index.md
-    - "DTBs & Config": phase2/01-device-trees-and-configuration.md
-    - "Custom Machine": phase2/02-custom-machine-setup.md
-    - "Executing Build": phase2/03-executing-the-build.md
-    - Artifact Mods: phase2/04-build-artifact-modification.md
-    - "ConnectTech Flashing": phase2/05-connecttech-flash-scripts.md
+    - "Device Trees, DTBs & Configuration": phase2/01-device-trees-and-configuration.md
+    - "Custom Machine Setup": phase2/02-custom-machine-setup.md
+    - "Executing the Build & Build Problems": phase2/03-executing-the-build.md
+    - Build Artifact Modification: phase2/04-build-artifact-modification.md
+    - "Setting up NVIDIA Flashing Directory, ConnectTech Utilities, Machine Confs & Flashing": phase2/05-connecttech-flash-scripts.md
   - Phase 3:
     - phase3/index.md
     - Native RT Patching: phase3/01-native-rt-patching.md
     - Yocto RT Integration: phase3/02-yocto-rt-integration.md
-    - Scheduling Concepts: phase3/03-real-time-scheduling.md
-    - Latency Testing: phase3/04-osadl-latency-testing.md
-    - Hardware Interfacing: phase3/05-hardware-robotics-interfacing.md
+    - Real-Time Scheduling Concepts: phase3/03-real-time-scheduling.md
+    - OSADL Latency Testing: phase3/04-osadl-latency-testing.md
+    - Hardware Interfacing & Results: phase3/05-hardware-robotics-interfacing.md
   - Phase 4:
     - phase4/index.md
-    - Bootloader & RootFS: phase4/01-bootloader-rootfs-redundancy.md
-    - Conclusion: phase4/02-yocto-integration-outline.md
+    - Bootloader & RootFS Redundancy: phase4/01-bootloader-rootfs-redundancy.md
+    - Yocto Integration Outline & Phase Conclusion: phase4/02-yocto-integration-outline.md
