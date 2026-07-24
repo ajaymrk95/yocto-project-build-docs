@@ -1,0 +1,2829 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A guide to building a minimal Linux system image for the NVIDIA Jetson TX2i on NVIDIA Devkit and Connect Tech Elroy carrier board using the Yocto Project.">
+      
+      
+      
+        <link rel="canonical" href="https://ajaymrk95.github.io/yocto-project-build-docs/phase0/papers/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../../phase1/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Research Papers Overview - Space Linux — Yocto Build Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Plus+Jakarta+Sans:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Plus Jakarta Sans";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#research-papers-overview-detailed-summary" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Space Linux — Yocto Build Documentation" class="md-header__button md-logo" aria-label="Space Linux — Yocto Build Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Space Linux — Yocto Build Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Research Papers Overview
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ajaymrk95/yocto-project-build-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ajaymrk95/yocto-project-build-docs
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Overview
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../roadmap/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Roadmap
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../latest-trends/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Latest Trends
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Phase 0
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../phase1/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Phase 1
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../phase2/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Phase 2
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../phase3/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Phase 3
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../phase4/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Phase 4
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Space Linux — Yocto Build Documentation" class="md-nav__button md-logo" aria-label="Space Linux — Yocto Build Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Space Linux — Yocto Build Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ajaymrk95/yocto-project-build-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ajaymrk95/yocto-project-build-docs
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../latest-trends/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Latest Trends
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 0
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Phase 0
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Research Papers Overview
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Research Papers Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-space-operating-linux-sol-a-yocto-based-os-for-leo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Space-Operating Linux (SOL) — A Yocto-Based OS for LEO
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Space-Operating Linux (SOL) — A Yocto-Based OS for LEO">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#citation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Citation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#core-contribution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Contribution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#11-why-cots-hardware-and-why-the-jetson-tx2i" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Why COTS Hardware and Why the Jetson TX2i?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-building-sol-with-the-yocto-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Building SOL with the Yocto Project
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-software-triple-modular-redundancy-tmr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Software Triple Modular Redundancy (TMR)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-volatile-ram-based-root-filesystem-tmpfs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 Volatile RAM-Based Root Filesystem (tmpfs)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#15-proton-irradiation-testing-at-triumf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.5 Proton Irradiation Testing at TRIUMF
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-accelerated-flight-computer-hardware-watchdog-supervisor-afccorgi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The Accelerated Flight Computer — Hardware Watchdog &amp; Supervisor (AFC/CORGI)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. The Accelerated Flight Computer — Hardware Watchdog &amp; Supervisor (AFC/CORGI)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#citation_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Citation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#core-contribution_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Contribution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#21-the-need-for-a-hardware-supervisor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 The Need for a Hardware Supervisor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-heterogeneous-system-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Heterogeneous System Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-watchdog-timer-latch-up-protection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Watchdog Timer &amp; Latch-Up Protection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-shared-spi-flash-memory-hardware-multiplexer-mux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Shared SPI Flash Memory &amp; Hardware Multiplexer (MUX)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-linux-boot-failures-under-proton-irradiation-the-most-vulnerable-phase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Linux Boot Failures Under Proton Irradiation — The Most Vulnerable Phase
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Linux Boot Failures Under Proton Irradiation — The Most Vulnerable Phase">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#citation_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Citation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#core-contribution_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Contribution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#31-the-ecc-memory-initialization-gap-the-ecc-blind-window" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 The ECC Memory Initialization Gap (The "ECC Blind Window")
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-emmc-controller-driver-failures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 eMMC Controller Driver Failures
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-fault-cascades-and-fault-bleeding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Fault Cascades and "Fault Bleeding"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-power-signature-analysis-for-external-boot-diagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Power Signature Analysis for External Boot Diagnostics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-boot-failure-log-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 Boot Failure Log Examples
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#37-storage-host-controller-register-failure-deep-dive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.7 Storage Host Controller Register Failure — Deep Dive
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-synthesis-combined-system-design-recommendations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Synthesis — Combined System Design Recommendations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-appendix-technical-reference-glossary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Appendix: Technical Reference Glossary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../phase1/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 1
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Phase 1
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/01-what-is-yocto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What Is Yocto?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/02-prerequisite-reading/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Important Links
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/03-host-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build Computer Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/04-quick-build/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Build
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/05-cloning-and-branching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloning & Branching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/06-adding-layers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Adding Layers & bblayers.conf
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/07-local-conf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deep Dive: local.conf
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/08-build-process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build Process Explained
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase1/09-navigating-output-and-flashing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build Output & Flashing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../phase2/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 2
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Phase 2
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase2/01-device-trees-and-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Device Trees, DTBs & Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase2/02-custom-machine-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom Machine Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase2/03-executing-the-build/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Executing the Build & Build Problems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase2/04-build-artifact-modification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build Artifact Modification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase2/05-connecttech-flash-scripts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Setting up NVIDIA Flashing Directory, ConnectTech Utilities, Machine Confs & Flashing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../phase3/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 3
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Phase 3
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase3/01-native-rt-patching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Native RT Patching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase3/02-yocto-rt-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Yocto RT Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase3/03-real-time-scheduling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Real-Time Scheduling Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase3/04-osadl-latency-testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OSADL Latency Testing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase3/05-hardware-robotics-interfacing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hardware Interfacing & Results
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../phase4/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 4
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Phase 4
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase4/01-bootloader-rootfs-redundancy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bootloader & RootFS Redundancy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../phase4/02-yocto-integration-outline/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Yocto Integration Outline & Phase Conclusion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-space-operating-linux-sol-a-yocto-based-os-for-leo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Space-Operating Linux (SOL) — A Yocto-Based OS for LEO
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Space-Operating Linux (SOL) — A Yocto-Based OS for LEO">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#citation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Citation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#core-contribution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Contribution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#11-why-cots-hardware-and-why-the-jetson-tx2i" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Why COTS Hardware and Why the Jetson TX2i?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-building-sol-with-the-yocto-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Building SOL with the Yocto Project
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-software-triple-modular-redundancy-tmr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Software Triple Modular Redundancy (TMR)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-volatile-ram-based-root-filesystem-tmpfs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 Volatile RAM-Based Root Filesystem (tmpfs)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#15-proton-irradiation-testing-at-triumf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.5 Proton Irradiation Testing at TRIUMF
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-accelerated-flight-computer-hardware-watchdog-supervisor-afccorgi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The Accelerated Flight Computer — Hardware Watchdog &amp; Supervisor (AFC/CORGI)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. The Accelerated Flight Computer — Hardware Watchdog &amp; Supervisor (AFC/CORGI)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#citation_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Citation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#core-contribution_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Contribution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#21-the-need-for-a-hardware-supervisor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 The Need for a Hardware Supervisor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-heterogeneous-system-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Heterogeneous System Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-watchdog-timer-latch-up-protection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Watchdog Timer &amp; Latch-Up Protection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-shared-spi-flash-memory-hardware-multiplexer-mux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Shared SPI Flash Memory &amp; Hardware Multiplexer (MUX)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-linux-boot-failures-under-proton-irradiation-the-most-vulnerable-phase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Linux Boot Failures Under Proton Irradiation — The Most Vulnerable Phase
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Linux Boot Failures Under Proton Irradiation — The Most Vulnerable Phase">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#citation_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Citation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#core-contribution_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Contribution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#31-the-ecc-memory-initialization-gap-the-ecc-blind-window" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 The ECC Memory Initialization Gap (The "ECC Blind Window")
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-emmc-controller-driver-failures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 eMMC Controller Driver Failures
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-fault-cascades-and-fault-bleeding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Fault Cascades and "Fault Bleeding"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-power-signature-analysis-for-external-boot-diagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Power Signature Analysis for External Boot Diagnostics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-boot-failure-log-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 Boot Failure Log Examples
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#37-storage-host-controller-register-failure-deep-dive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.7 Storage Host Controller Register Failure — Deep Dive
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-synthesis-combined-system-design-recommendations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Synthesis — Combined System Design Recommendations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-appendix-technical-reference-glossary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Appendix: Technical Reference Glossary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="research-papers-overview-detailed-summary">Research Papers Overview &amp; Detailed Summary<a class="headerlink" href="#research-papers-overview-detailed-summary" title="Permanent link">&para;</a></h1>
+<p><span class="phase-label">Phase 0 · Literature Review</span></p>
+<p>This page provides an in-depth review of the three foundational research papers that form the theoretical basis of this project. The review is structured to follow the logical progression of the research: first, how a software-hardened Linux operating system was built using Yocto for space (<strong>Paper 1 — SOL</strong>); second, how the hardware supervisor platform that hosts it was designed and validated (<strong>Paper 2 — AFC/CORGI</strong>); and third, what critical boot-phase vulnerabilities remain unsolved and were only recently discovered under live proton irradiation (<strong>Paper 3 — Boot Failures</strong>).</p>
+<hr />
+<h2 id="1-space-operating-linux-sol-a-yocto-based-os-for-leo">1. Space-Operating Linux (SOL) — A Yocto-Based OS for LEO<a class="headerlink" href="#1-space-operating-linux-sol-a-yocto-based-os-for-leo" title="Permanent link">&para;</a></h2>
+<h3 id="citation">Citation<a class="headerlink" href="#citation" title="Permanent link">&para;</a></h3>
+<p><a href="https://ieeexplore.ieee.org/document/10115703"><strong>E. Miller, C. Heistand and D. Mishra, "Space-operating Linux: An Operating System for Computer Vision on Commercial-Grade Equipment in LEO," <em>2023 IEEE Aerospace Conference</em>, Big Sky, MT, USA, 2023, pp. 1-12</strong></a></p>
+<h3 id="core-contribution">Core Contribution<a class="headerlink" href="#core-contribution" title="Permanent link">&para;</a></h3>
+<p>The authors designed <strong>Space Operating Linux (SOL)</strong>, a minimized, radiation-resilient Linux operating system purpose-built to run on the <strong>NVIDIA Jetson TX2i</strong> module aboard LEO CubeSat missions. SOL is the primary software artifact that this project aims to reproduce and extend. It addresses the central challenge of flying commercial hardware in space: how do you keep a non-radiation-hardened processor running reliably when high-energy particles are constantly striking the silicon?</p>
+<p>SOL answers this with three interlocking software strategies, all implemented within the <strong>Yocto Project</strong> build system:</p>
+<ol>
+<li><strong>Software Triple Modular Redundancy (TMR)</strong> for boot-critical files on flash storage.</li>
+<li><strong>A volatile RAM-based root filesystem (<code>tmpfs</code>)</strong> that eliminates runtime flash access.</li>
+<li><strong>A <code>PREEMPT_RT</code> real-time kernel</strong> that provides deterministic scheduling for hardware control loops.</li>
+</ol>
+<hr />
+<h3 id="11-why-cots-hardware-and-why-the-jetson-tx2i">1.1 Why COTS Hardware and Why the Jetson TX2i?<a class="headerlink" href="#11-why-cots-hardware-and-why-the-jetson-tx2i" title="Permanent link">&para;</a></h3>
+<p>For decades, space missions relied on specialized, radiation-hardened microprocessors such as the BAE RAD750. These chips are physically modified during manufacturing — using Silicon-on-Insulator (SOI) substrates, logical redundancy on the die, and intentionally wide transistor geometries — to withstand the space radiation environment. However, this physical hardening is extremely slow and expensive. Radiation-hardened chips typically run several generations behind commercial technology (often under 200 MHz) and lack the computational power required for modern algorithms like real-time computer vision, autonomous navigation, and on-board AI inference.</p>
+<p>The demand for on-board edge computing is growing rapidly. If a satellite can process raw sensor data on-board and only downlink the high-value results, the required downlink bandwidth drops by orders of magnitude, dramatically improving mission efficiency.</p>
+<p>To bridge this gap, the authors turned to <strong>Commercial Off-The-Shelf (COTS)</strong> hardware. The <strong>NVIDIA Jetson TX2i</strong> was selected for its combination of high performance and industrial-grade features:</p>
+<ul>
+<li><strong>Processor Architecture</strong>: A 64-bit ARMv8 heterogeneous multi-processor (dual-core NVIDIA Denver 2 + quad-core ARM Cortex-A57 CPU) paired with a 256-core CUDA-compatible NVIDIA Pascal GPU.</li>
+<li><strong>Shared Memory</strong>: 8GB LPDDR4 unified memory shared between CPU and GPU, eliminating the latency and power draw of copying data over external buses.</li>
+<li><strong>Industrial Grade (TX2i) Upgrades</strong>: Unlike the standard Jetson TX2, the TX2i includes <strong>inline ECC memory support</strong>, a wider operational temperature range (-40°C to 85°C), a 10-year operating lifetime, and high vibration resistance — features that make it viable for aerospace environments.</li>
+</ul>
+<p>The critical trade-off is that COTS chips are manufactured using tiny transistor geometries (16nm for the Tegra Parker SoC), making them highly sensitive to space radiation. Protons, heavy ions, and galactic cosmic rays can easily cause electrical disturbances in the thin silicon layers. SOL exists to mitigate these disturbances entirely in software.</p>
+<hr />
+<h3 id="12-building-sol-with-the-yocto-project">1.2 Building SOL with the Yocto Project<a class="headerlink" href="#12-building-sol-with-the-yocto-project" title="Permanent link">&para;</a></h3>
+<h4 id="os-minimization-via-a-custom-yocto-layer">OS Minimization via a Custom Yocto Layer<a class="headerlink" href="#os-minimization-via-a-custom-yocto-layer" title="Permanent link">&para;</a></h4>
+<p>The authors built SOL using the <strong>Yocto Project</strong>, an industry-standard framework for creating custom embedded Linux distributions. Yocto allows developers to define exactly which packages, drivers, and libraries are included in the final system image, producing a minimal, purpose-built OS with no unnecessary components.</p>
+<p>The SOL build system is structured as a custom Yocto layer named <strong><code>meta-sol</code></strong>, built on top of NVIDIA's board support package layer <strong><code>meta-tegra</code></strong>. Key minimization decisions included:</p>
+<ul>
+<li><strong>BusyBox</strong>: All standard core UNIX utilities (<code>ls</code>, <code>cp</code>, <code>cat</code>, <code>grep</code>, etc.) were replaced with <strong>BusyBox</strong>, which combines tiny versions of many common utilities into a single, highly optimized executable. This dramatically reduces the filesystem footprint.</li>
+<li><strong>Stripped Packages</strong>: All desktop utilities, graphical environments, documentation, and unnecessary kernel modules were removed from the image recipe. Only the packages strictly required for the mission payload (CUDA, TensorRT, OpenCV for GPU inference) and system operation were retained.</li>
+<li><strong>Custom Image Recipe</strong>: The Yocto image recipe defines the exact package set, filesystem layout, and boot configuration, ensuring reproducible builds.</li>
+</ul>
+<h4 id="preempt_rt-kernel-integration">PREEMPT_RT Kernel Integration<a class="headerlink" href="#preempt_rt-kernel-integration" title="Permanent link">&para;</a></h4>
+<p>In space systems, software tasks must execute within strict, deterministic time constraints. A background OS task that interrupts a critical attitude-control loop or sensor query can cause system instability or missed deadlines. SOL integrates the <strong><code>PREEMPT_RT</code></strong> patch set into the Linux kernel, converting it into a fully preemptible, real-time operating system.</p>
+<p>The <code>PREEMPT_RT</code> patch was applied within the Yocto build system by modifying the kernel recipe in <code>meta-sol</code> to fetch, apply, and compile the RT patch against the NVIDIA L4T kernel source. The key features of the RT-patched kernel are:</p>
+<ul>
+<li><strong>Priority Inheritance</strong>: In standard Linux, a phenomenon called <em>Priority Inversion</em> can occur — a low-priority task holding a mutex lock gets preempted by a medium-priority task, causing a high-priority task waiting for that lock to be blocked indefinitely. The RT patch implements <strong>Priority Inheritance</strong>, which temporarily boosts the low-priority lock-holder's priority to match the highest-priority waiter, ensuring the lock is released promptly.</li>
+<li><strong>Threaded Interrupt Handlers</strong>: The RT patch converts hardware Interrupt Service Routines (ISRs) into schedulable kernel threads. This allows the scheduler to prioritize critical payload control loops over incoming Ethernet packets, disk I/O, or other interrupts that would otherwise preempt all running code.</li>
+</ul>
+<hr />
+<h3 id="13-software-triple-modular-redundancy-tmr">1.3 Software Triple Modular Redundancy (TMR)<a class="headerlink" href="#13-software-triple-modular-redundancy-tmr" title="Permanent link">&para;</a></h3>
+<h4 id="the-radiation-problem-for-storage">The Radiation Problem for Storage<a class="headerlink" href="#the-radiation-problem-for-storage" title="Permanent link">&para;</a></h4>
+<p>The primary non-volatile storage on the Jetson TX2i is an <strong>eMMC (embedded MultiMediaCard)</strong> flash chip soldered to the module. In the space radiation environment, high-energy particles can cause <strong>Single Event Upsets (SEUs)</strong> — bit-flips that change a <code>0</code> to a <code>1</code> or vice versa — in the flash memory cells. A single bit-flip in a critical boot file (the kernel image, the device tree, or the root filesystem archive) can render the entire system unbootable.</p>
+<h4 id="the-tmr-scheme">The TMR Scheme<a class="headerlink" href="#the-tmr-scheme" title="Permanent link">&para;</a></h4>
+<p>To protect against this, SOL implements a <strong>Software Triple Modular Redundancy (TMR)</strong> scheme on the eMMC storage. Instead of storing a single copy of each boot-critical asset, the eMMC storage is partitioned to hold <strong>three identical copies</strong> of each asset along with their corresponding <strong>MD5 hash checksums</strong>.</p>
+<h4 id="the-checksum-and-bit-voting-boot-flow">The Checksum and Bit-Voting Boot Flow<a class="headerlink" href="#the-checksum-and-bit-voting-boot-flow" title="Permanent link">&para;</a></h4>
+<p>During startup, the custom U-Boot bootloader environment validates these copies before proceeding:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>               [Power On / Startup]
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>                        │
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>                        ▼
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>             [Read Triplicated BLOBs]
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>             (Copy A, Copy B, Copy C)
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>                        │
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>                        ▼
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>           [Calculate MD5 Checksums]
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>                        │
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>         ┌──────────────┴──────────────┐
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>         ▼                             ▼
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>   [Hash Match?]                [All Hashes Fail!]
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>   Yes: Load Copy                      │
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>   No: Try Next Copy                   ▼
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>                               [Execute Bit-Voting]
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>                         (Bit-by-Bit Majority Election)
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>                                       │
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>                                       ▼
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>                             [Reconstruct in RAM]
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>                                       │
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>                                       ▼
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>                                 [Boot Kernel]
+</span></code></pre></div>
+<ol>
+<li><strong>Read and Checksum</strong>: The bootloader reads each of the three copies and calculates their MD5 checksums.</li>
+<li><strong>Validation</strong>: If any copy's calculated hash matches its pre-stored checksum, that copy is known-good and is loaded into RAM for booting.</li>
+<li><strong>Bit-Voting Fallback</strong>: If <em>all three</em> copies are corrupted (none match their stored checksums), the bootloader falls back to a <strong>bit-by-bit majority voting algorithm</strong>. It loads all three copies into volatile RAM and reconstructs a corrected version:<ul>
+<li>Let the three corrupted copies be byte arrays $A$, $B$, and $C$ of size $N$ bytes.</li>
+<li>The reconstructed array $O$ is computed using fast bitwise majority logic:
+    <code>O[i] = (A[i] &amp; B[i]) | (B[i] &amp; C[i]) | (C[i] &amp; A[i])</code></li>
+<li>This single bitwise operation computes the majority vote for all 8 bits of each byte simultaneously, keeping bootloader overhead minimal. As long as no more than one copy has a bit-flip at the same position, the correct value is recovered.</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h3 id="14-volatile-ram-based-root-filesystem-tmpfs">1.4 Volatile RAM-Based Root Filesystem (<code>tmpfs</code>)<a class="headerlink" href="#14-volatile-ram-based-root-filesystem-tmpfs" title="Permanent link">&para;</a></h3>
+<h4 id="the-problem-runtime-flash-vulnerability">The Problem: Runtime Flash Vulnerability<a class="headerlink" href="#the-problem-runtime-flash-vulnerability" title="Permanent link">&para;</a></h4>
+<p>Even after a successful TMR-validated boot, running the active OS directly from the eMMC disk during orbital operations is a major hazard. Continuous file reads (library loading, logging, temporary files) keep the eMMC controller active, raising the probability that a radiation strike will corrupt a live block while it is being read or written.</p>
+<h4 id="the-solution-extract-to-ram-and-silence-the-disk">The Solution: Extract to RAM and Silence the Disk<a class="headerlink" href="#the-solution-extract-to-ram-and-silence-the-disk" title="Permanent link">&para;</a></h4>
+<p>SOL uses a <strong>RAM-based filesystem</strong> strategy to isolate the eMMC after boot:</p>
+<ol>
+<li><strong>Boot into <code>initramfs</code></strong>: The kernel boots into a minimal initial RAM disk (<code>initramfs</code>) — a small, self-contained filesystem loaded entirely in RAM.</li>
+<li><strong>Validate and Extract</strong>: A startup script within the <code>initramfs</code> locates the compressed root filesystem archive on the eMMC, validates its integrity (using the TMR checksums), and extracts it into a virtual RAM drive (<code>tmpfs</code>).</li>
+<li><strong>Pivot Root (<code>switch_root</code>)</strong>: The system pivots its root filesystem into the RAM-based <code>tmpfs</code>, making all subsequent file operations happen entirely in volatile memory.</li>
+<li><strong>Operational Isolation</strong>: Once the pivot is complete, the eMMC disk is effectively silenced. All runtime file reads, library accesses, and log writes happen in ECC-protected RAM, not on the vulnerable flash storage.</li>
+</ol>
+<h4 id="write-back-partitions">Write-Back Partitions<a class="headerlink" href="#write-back-partitions" title="Permanent link">&para;</a></h4>
+<p>For data that must persist across reboots (telemetry, captured images), SOL mounts small, dedicated eMMC partitions for quick, controlled write operations. These writes are minimized and batched to keep the flash exposure window as short as possible.</p>
+<h4 id="memory-constraints">Memory Constraints<a class="headerlink" href="#memory-constraints" title="Permanent link">&para;</a></h4>
+<p>The primary trade-off of running the entire OS in RAM is memory consumption:</p>
+<ul>
+<li>The Jetson TX2i has <strong>8GB</strong> of LPDDR4 memory.</li>
+<li>The proprietary NVIDIA CUDA, TensorRT, and OpenCV libraries required for GPU-accelerated inference are very large.</li>
+<li>Including these libraries produces a root filesystem exceeding <strong>1 Gigabyte</strong> in size.</li>
+<li>This consumes a static <strong>~15%</strong> of the available RAM before any payload applications are started. Developers must keep their application footprint small and carefully manage memory allocation.</li>
+</ul>
+<hr />
+<h3 id="15-proton-irradiation-testing-at-triumf">1.5 Proton Irradiation Testing at TRIUMF<a class="headerlink" href="#15-proton-irradiation-testing-at-triumf" title="Permanent link">&para;</a></h3>
+<p>The authors validated their SOL-loaded Jetson TX2i modules under active proton radiation to measure real-world error rates and board survivability.</p>
+<h4 id="testing-environment-parameters">Testing Environment &amp; Parameters<a class="headerlink" href="#testing-environment-parameters" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Facility</strong>: TRIUMF's Proton Irradiation Facility, Vancouver, BC.</li>
+<li><strong>Beam Line</strong>: Line 2C.</li>
+<li><strong>Proton Energy Levels</strong>: 63 MeV and 105 MeV.</li>
+<li><strong>Devices Under Test (DUTs)</strong>: Four TX2i modules:<ul>
+<li>DUT 1 and DUT 2 — loaded with SOL (brand-new condition).</li>
+<li>DUT 3 and DUT 5 — loaded with standard L4T (controls).</li>
+<li>DUT 3 had been previously irradiated to 50 kRad during JHU APL testing.</li>
+</ul>
+</li>
+<li><strong>Stress Workloads</strong>: General CPU stress (<code>stress-ng</code>), GPU memory sorting and bandwidth tests, and memory stressors (<code>memtester</code>). Telemetry was logged over Ethernet to an external laptop running InfluxDB.</li>
+</ul>
+<h4 id="key-findings">Key Findings<a class="headerlink" href="#key-findings" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>No Permanent Failures</strong>: Unlike prior tests conducted by the Johns Hopkins Applied Physics Lab (APL) — which saw permanent board failures after an average of four runs under proton radiation — the TRIUMF runs resulted in <strong>zero permanent failures</strong> across all devices.</li>
+<li><strong>The Collimator Beam Disparity</strong>: The authors traced this difference to the beam collimator size. The TRIUMF test used a narrow <strong>1cm × 1cm</strong> square collimator targeting the Tegra SoC die directly, shielding the surrounding board components. The JHU APL test used a wider beam that exposed the peripheral eMMC flash memory and power management controllers.</li>
+<li><strong>Flash Memory Is the Weak Link</strong>: This confirmed a critical finding — <strong>the off-chip peripheral flash memory (eMMC) and power management chips, not the primary Tegra SoC, are the primary contributors to permanent hardware failure on the Jetson under radiation</strong>. This directly validates SOL's design decision to extract the filesystem into RAM and silence the eMMC during operation.</li>
+</ul>
+<h4 id="error-log-characterization">Error Log Characterization<a class="headerlink" href="#error-log-characterization" title="Permanent link">&para;</a></h4>
+<p>The irradiation logs recorded multiple error categories under radiation, which the authors categorized as follows:</p>
+<ul>
+<li><strong>Primary Failures</strong>: CPU memory faults, processor check errors (<code>ROC:CCE</code>), GPU power management controller freezes (<code>GPU PMU</code>), and GPU queue errors (<code>GPU FIFO</code>).</li>
+<li><strong>Watchdog Events</strong>: In run 4 of the L4T-3 control, the board experienced a watchdog reset after a CPU memory crash.</li>
+<li><strong>SOL Resilience</strong>: While SOL rebooted more frequently (because the <code>PREEMPT_RT</code> patch detected faults early and triggered clean shutdowns), it had a much lower rate of <em>uncorrectable</em> errors, preventing the permanent system locks observed in standard L4T.</li>
+</ul>
+<hr />
+<h2 id="2-the-accelerated-flight-computer-hardware-watchdog-supervisor-afccorgi">2. The Accelerated Flight Computer — Hardware Watchdog &amp; Supervisor (AFC/CORGI)<a class="headerlink" href="#2-the-accelerated-flight-computer-hardware-watchdog-supervisor-afccorgi" title="Permanent link">&para;</a></h2>
+<h3 id="citation_1">Citation<a class="headerlink" href="#citation_1" title="Permanent link">&para;</a></h3>
+<p><a href="https://ieeexplore.ieee.org/document/8741765"><strong>C. Adams, A. Spain, J. Parker, M. Hevert, J. Roach and D. Cotten, "Towards an Integrated GPU Accelerated SoC as a Flight Computer for Small Satellites," 2019 IEEE Aerospace Conference, Big Sky, MT, USA, 2019, pp. 1-7, doi: 10.1109/AERO.2019.8741765.</strong></a></p>
+<h3 id="core-contribution_1">Core Contribution<a class="headerlink" href="#core-contribution_1" title="Permanent link">&para;</a></h3>
+<p>This paper, published four years before SOL, documents the design of the <strong>Accelerated Flight Computer (AFC)</strong> and its precursor board, the <strong>CORGI (Core GPU Interface)</strong>, developed by the University of Georgia's Small Satellite Research Laboratory (UGA SSRL). It provides the <strong>hardware-level supervisor and watchdog architecture</strong> that protects the commercial NVIDIA Jetson module from destructive radiation effects — specifically, the latch-ups and system freezes that no amount of software can recover from.</p>
+<p>While SOL (Paper 1) provides the software resilience layer, the AFC provides the physical infrastructure that keeps the Jetson alive. Together, they form the complete system architecture: the AFC powers and monitors the Jetson, while SOL runs on it.</p>
+<hr />
+<h3 id="21-the-need-for-a-hardware-supervisor">2.1 The Need for a Hardware Supervisor<a class="headerlink" href="#21-the-need-for-a-hardware-supervisor" title="Permanent link">&para;</a></h3>
+<p>The NVIDIA Jetson TX2i is a COTS device. It cannot be trusted to run core satellite flight controls on its own. Two classes of radiation effects demand hardware-level intervention:</p>
+<ol>
+<li><strong>Single Event Latch-ups (SELs)</strong>: A high-energy particle strikes a parasitic thyristor structure within the CMOS silicon, triggering a direct short-circuit between the power rail and ground. This causes a massive, sudden surge in current. If the current is not physically cut within milliseconds, the excess heat will permanently melt the silicon, destroying the chip. <strong>No software running on the affected chip can recover from this — the power must be physically disconnected.</strong></li>
+<li><strong>Single Event Functional Interrupts (SEFIs)</strong>: A particle corrupts the control logic of the processor itself (e.g., the memory controller or clock generator), causing the chip to freeze, hang, or enter an infinite reset loop. The Jetson remains powered but stops executing code. Again, a physical power cycle is the only recovery mechanism.</li>
+</ol>
+<p>If the Jetson freezes due to a SEFI, the satellite loses its payload computer. If it experiences an unchecked SEL, it loses the hardware permanently. The AFC solves both problems with a heterogeneous dual-processor architecture.</p>
+<hr />
+<h3 id="22-heterogeneous-system-architecture">2.2 Heterogeneous System Architecture<a class="headerlink" href="#22-heterogeneous-system-architecture" title="Permanent link">&para;</a></h3>
+<p>The AFC divides responsibilities between two fundamentally different processors:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>     +--------------------------------------------------------+
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>     |             ACCELERATED FLIGHT COMPUTER (AFC)          |
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>     |                                                        |
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>     |  +-----------------------+      +-------------------+  |
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>     |  |    SmartFusion2       |      |    NVIDIA Tegra   |  |
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>     |  |   (Rad-Tolerant)      |      |       TX2i        |  |
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>     |  |                       |      | (Commercial GPU)  |  |
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>     |  |  [ARM Cortex-M3]      |      |                   |  |
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>     |  |  [FPGA Watchdog]      |      |  - GPU Workloads  |  |
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>     |  +-----------#-----------+      +---------#---------+  |
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>     |              │                            │            |
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>     |              └──────────────┬─────────────┘            |
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>     |                             │                          |
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>     |                     [Level Shifters]                   |
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>     |                      (1.8V &lt;-&gt; 3.3V)                   |
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>     |                             │                          |
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>     |                             ▼                          |
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>     |                   [Hardware SPI MUX]                   |
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>     |                             │                          |
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>     |                             ▼                          |
+</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>     |                 [Cypress SPI NOR Flash]                |
+</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>     |                                                        |
+</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>     +--------------------------------------------------------+
+</span></code></pre></div>
+<h4 id="1-the-smartfusion2-sf2-radiation-tolerant-supervisor">1. The SmartFusion2 (SF2) — Radiation-Tolerant Supervisor<a class="headerlink" href="#1-the-smartfusion2-sf2-radiation-tolerant-supervisor" title="Permanent link">&para;</a></h4>
+<p>The core flight controller is the <strong>Microsemi SmartFusion2 SoC (M2S150T)</strong>, a mixed-signal FPGA with an embedded ARM Cortex-M3 microcontroller:</p>
+<ul>
+<li><strong>Radiation Tolerance</strong>: The SmartFusion2 uses flash-based FPGA fabric (not SRAM-based), making it inherently resistant to SEU-induced configuration bit-flips. Its embedded SRAM and DDR memory bridges are protected against SEUs at the hardware level.</li>
+<li><strong>Ultra-Low Power</strong>: It operates at a static power draw of only <strong>7mW</strong>, making it viable for always-on satellite operation where power budgets are extremely tight.</li>
+<li><strong>Role</strong>: The SF2 handles satellite I/O, health monitoring, attitude control telemetry, and acts as the master node. It only enables the power supply to the Jetson TX2i when high-performance GPU computation (like image processing or neural network inference) is required.</li>
+</ul>
+<h4 id="2-the-nvidia-jetson-tx2i-high-performance-payload-co-processor">2. The NVIDIA Jetson TX2i — High-Performance Payload Co-Processor<a class="headerlink" href="#2-the-nvidia-jetson-tx2i-high-performance-payload-co-processor" title="Permanent link">&para;</a></h4>
+<p>The Jetson TX2i acts strictly as a <strong>co-processor</strong>. It does not run flight-critical control loops. It receives compute tasks from the SmartFusion2, processes them using CUDA-accelerated code, and writes results back. If the Jetson crashes, the satellite continues operating on the SF2 alone.</p>
+<h4 id="3-signal-level-shifters">3. Signal Level Shifters<a class="headerlink" href="#3-signal-level-shifters" title="Permanent link">&para;</a></h4>
+<p>Because the Jetson TX2i operates on modern 1.8V CMOS logic and the SmartFusion2 operates on robust 3.3V LVTTL logic, they cannot be connected directly. The AFC incorporates <strong>bidirectional logic level shifters</strong> to convert voltage levels on all SPI, I2C, UART, and GPIO lines between the two processors.</p>
+<hr />
+<h3 id="23-watchdog-timer-latch-up-protection">2.3 Watchdog Timer &amp; Latch-Up Protection<a class="headerlink" href="#23-watchdog-timer-latch-up-protection" title="Permanent link">&para;</a></h3>
+<h4 id="latch-up-protection-loop-current-sensing">Latch-Up Protection Loop (Current Sensing)<a class="headerlink" href="#latch-up-protection-loop-current-sensing" title="Permanent link">&para;</a></h4>
+<p>The SF2 implements a dedicated <strong>current-monitoring circuit</strong> on the power rail of the Jetson TX2i:</p>
+<ul>
+<li><strong>Current Sensing</strong>: A sense resistor or current monitor IC measures the real-time power draw of the Jetson.</li>
+<li><strong>Threshold Trigger</strong>: If the current draw spikes above <strong>7.5 Watts</strong> (indicating a latch-up short-circuit), the SF2 registers an SEL event.</li>
+<li><strong>Physical Power Cut</strong>: The SF2 FPGA fabric immediately drives a GPIO control line low. This line is connected to a physical <strong>Field-Effect Transistor (FET) switch</strong> on the power supply line of the Jetson. Driving the gate low opens the FET, cutting all power to the Jetson instantly — preventing thermal destruction and clearing the latch-up state.</li>
+</ul>
+<h4 id="heartbeat-watchdog-state-machine">Heartbeat Watchdog State Machine<a class="headerlink" href="#heartbeat-watchdog-state-machine" title="Permanent link">&para;</a></h4>
+<p>To detect software-level freezes (SEFIs) where the Jetson remains powered but stops executing, the FPGA implements a <strong>watchdog state machine</strong>:</p>
+<ul>
+<li>The Linux software running on the Jetson must regularly toggle a dedicated GPIO pin, producing a square-wave "heartbeat" signal that the SF2 FPGA monitors.</li>
+<li>The watchdog operates through four states:</li>
+</ul>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>               +----------------------------------+
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>               |             IDLE                 |
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>               |       (Jetson Powered Off)       |
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>               +----------------┬-----------------+
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>                                │
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>                        Start Command
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>                                │
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>                                ▼
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>               +----------------------------------+
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>               |            STARTUP               |
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>               |      (Boot Timer Running)        |
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>               +----------------┬-----------------+
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>                                │
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>                         Boot Successful
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>                                │
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>                                ▼
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>               +----------------------------------+
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>               |           MONITORING             |
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>               |       (Active Watchdog)          |
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>               +----------------┬-----------------+
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>                                │
+</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>                      Timeout / Power Surge
+</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>                                │
+</span><span id="__span-2-24"><a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>                                ▼
+</span><span id="__span-2-25"><a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>               +----------------------------------+
+</span><span id="__span-2-26"><a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>               |              RESET               |
+</span><span id="__span-2-27"><a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a>               |       (Power Cut for 5s)         |
+</span><span id="__span-2-28"><a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a>               +----------------------------------+
+</span></code></pre></div>
+<ol>
+<li><strong>IDLE</strong>: The Jetson is powered off. The SF2 operates alone.</li>
+<li><strong>STARTUP</strong>: The Jetson is powered on. A boot timer runs, allowing up to <strong>120 seconds</strong> for the OS to boot and begin sending heartbeats.</li>
+<li><strong>MONITORING</strong>: The FPGA actively monitors the heartbeat signal. If a pulse is received within the watchdog window (typically <strong>100 milliseconds</strong>), the timer resets. Normal operation continues.</li>
+<li><strong>RESET</strong>: If the timer expires (no heartbeat received) <em>or</em> the current sensor detects a latch-up surge, the FPGA drives the power control FET off, cutting power for <strong>5 seconds</strong>. It then transitions back to <strong>STARTUP</strong> to attempt a clean reboot.</li>
+</ol>
+<hr />
+<h3 id="24-shared-spi-flash-memory-hardware-multiplexer-mux">2.4 Shared SPI Flash Memory &amp; Hardware Multiplexer (MUX)<a class="headerlink" href="#24-shared-spi-flash-memory-hardware-multiplexer-mux" title="Permanent link">&para;</a></h3>
+<p>To prevent data corruption during a Jetson crash, the two processors do not share a direct memory bus. Instead, they share access to a radiation-hardened <strong>Cypress SPI NOR Flash memory chip</strong> (CYRS16B256) through a physical hardware multiplexer:</p>
+<ul>
+<li>The SPI bus lines of the NOR flash are routed through a hardware <strong>Multiplexer (MUX)</strong>.</li>
+<li>The MUX select lines are wired directly to GPIO pins on the radiation-tolerant SmartFusion2.</li>
+<li><strong>Mediated Access Protocol</strong>:<ol>
+<li>The SF2 writes a task (e.g., an image to process) to the NOR flash.</li>
+<li>It toggles the MUX select line to route the SPI bus to the Jetson.</li>
+<li>The Jetson reads the data, processes it on the GPU, and writes the output back to the NOR flash.</li>
+<li>The Jetson signals completion. The SF2 toggles the MUX to reclaim the bus.</li>
+</ol>
+</li>
+<li><strong>Physical Isolation Guarantee</strong>: If the Jetson undergoes a radiation-induced crash or write latch-up while connected to the flash, the SF2 can simply toggle the MUX to disconnect it. This guarantees that a crashing Jetson cannot write garbage data to the shared flash or corrupt the flight computer's critical files.</li>
+</ul>
+<hr />
+<h2 id="3-linux-boot-failures-under-proton-irradiation-the-most-vulnerable-phase">3. Linux Boot Failures Under Proton Irradiation — The Most Vulnerable Phase<a class="headerlink" href="#3-linux-boot-failures-under-proton-irradiation-the-most-vulnerable-phase" title="Permanent link">&para;</a></h2>
+<h3 id="citation_2">Citation<a class="headerlink" href="#citation_2" title="Permanent link">&para;</a></h3>
+<p><a href="https://ieeexplore.ieee.org/document/11480247"><strong>A. Bhattacharya et al., "Linux Boot Failures Under Proton Irradiation," 2025 IEEE Space Computing Conference (SCC), Los Angeles, CA, USA, 2025, pp. 35-45, doi: 10.1109/SCC66396.2025.00011.</strong></a></p>
+<h3 id="core-contribution_2">Core Contribution<a class="headerlink" href="#core-contribution_2" title="Permanent link">&para;</a></h3>
+<p>This paper, published in 2025, presents a critical finding that challenges the assumptions of the previous two papers. While SOL (Paper 1) assumes that protecting files on disk via TMR and running from RAM is sufficient, and the AFC (Paper 2) assumes that a hardware watchdog can reset the system after any failure, this study proves that <strong>the boot sequence itself is the most vulnerable phase of operation under radiation</strong> — a phase where neither TMR nor the watchdog can help, because the system has not yet finished initializing.</p>
+<p>The authors conducted proton beam irradiation tests on an <strong>NXP i.MX8M Plus</strong> compute module (four ARM Cortex-A53 cores at 1.6 GHz, one ARM Cortex-M7 core at 800 MHz) at the <strong>AIC-144 cyclotron facility</strong> of the Henryk Niewodniczański Institute of Nuclear Physics (IFJ PAN) in Krakow, Poland. Their findings expose several software and hardware vulnerabilities that had been missed by previous research.</p>
+<hr />
+<h3 id="31-the-ecc-memory-initialization-gap-the-ecc-blind-window">3.1 The ECC Memory Initialization Gap (The "ECC Blind Window")<a class="headerlink" href="#31-the-ecc-memory-initialization-gap-the-ecc-blind-window" title="Permanent link">&para;</a></h3>
+<p>Industrial SoMs like the Jetson TX2i and the i.MX8M Plus support <strong>inline Error-Correcting Code (ECC)</strong> RAM. ECC is highly effective at correcting single-bit flips (SEUs) in memory — when it is enabled.</p>
+<ul>
+<li><strong>The Flaw</strong>: In default Linux Board Support Packages (BSPs), the DDR ECC controller is initialized <strong>late</strong> in the startup sequence — typically during the transition from kernel space to user-space.</li>
+<li><strong>The Blind Window</strong>: During the entire early kernel boot phase — when the kernel decompresses itself into RAM, parses the Device Tree Blob (DTB), and initializes basic memory maps — <strong>ECC is disabled</strong>. The hardware protection that everyone assumes is active simply is not running yet.</li>
+<li><strong>The Consequence</strong>: Any radiation-induced bit-flip in RAM during this early window will go undetected and uncorrected, causing an immediate kernel panic and boot failure.</li>
+<li><strong>The Mitigation</strong>: The ECC controller must be initialized at the <strong>earliest possible stage</strong> — ideally within the primary bootloader (U-Boot's SPL or the SoC's boot ROM) — before the Linux kernel is even loaded into memory.</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Critical Implication</p>
+<p>The assumption that "ECC RAM protects the system from memory errors during boot" is <strong>false</strong> under default BSP configurations. Software must be explicitly configured to enable ECC before the kernel starts.</p>
+</div>
+<hr />
+<h3 id="32-emmc-controller-driver-failures">3.2 eMMC Controller Driver Failures<a class="headerlink" href="#32-emmc-controller-driver-failures" title="Permanent link">&para;</a></h3>
+<p>Previous papers (including SOL) assumed that file-level TMR on the eMMC flash disk solves storage corruption. This paper reveals a deeper problem: the physical <strong>host memory controller chip</strong> on the eMMC drive itself is highly vulnerable to radiation.</p>
+<ul>
+<li><strong>The Mechanism</strong>: Protons striking the eMMC's internal control logic cause the drive to lock up entirely. This is not a data corruption issue — it is a <strong>controller hardware freeze</strong>.</li>
+<li><strong>The Symptoms</strong>: The Linux MMC host driver (<code>drivers/mmc/host/sdhci.c</code>) reports communication timeouts:<ul>
+<li><code>mmc2: cache flush error -110</code> — a write timeout indicating the controller is not responding.</li>
+<li><code>blk_update_request: I/O error</code> — a read failure indicating the block device is inaccessible.</li>
+</ul>
+</li>
+<li><strong>The Impact</strong>: The kernel loses access to the entire storage device. The EXT4 filesystem driver forces a read-only remount to prevent further corruption.</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Why This Matters for SOL</p>
+<p>SOL's TMR scheme protects against bit-flips <em>in the stored data</em>. But if the eMMC controller itself freezes, the bootloader cannot read <em>any</em> of the three copies — TMR becomes useless. This validates SOL's decision to extract to RAM as quickly as possible, but also highlights that the boot phase (before extraction is complete) remains critically exposed.</p>
+</div>
+<hr />
+<h3 id="33-fault-cascades-and-fault-bleeding">3.3 Fault Cascades and "Fault Bleeding"<a class="headerlink" href="#33-fault-cascades-and-fault-bleeding" title="Permanent link">&para;</a></h3>
+<p>The most insidious discovery in this paper is <strong>fault bleeding</strong> — a cascading failure path where a silent, undetected bit-flip early in boot propagates through multiple system layers, eventually crashing high-level services long after the "successful" boot completes.</p>
+<p>The authors define four escalation levels:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>[Proton Strike] → SEU in RAM → Driver Misconfigures → Service Timeout → Daemon Crash → Boot Aborted
+</span></code></pre></div>
+<ul>
+<li><strong>Level 0 — Unobserved</strong>: A bit-flip corrupts a non-essential driver configuration (e.g., a clock divisor in the Device Tree) in RAM during early boot. The kernel continues booting without error because the corrupted value is still syntactically valid.</li>
+<li><strong>Level 1 — Device Driver Failure</strong>: The affected driver initializes with wrong parameters (e.g., an I2C bus running at 1.2 MHz instead of 400 kHz). The driver itself reports no error.</li>
+<li><strong>Level 2 — Hardware Communication Degradation</strong>: Sensors or peripherals on the misconfigured bus fail to respond, producing timeouts and empty data arrays.</li>
+<li><strong>Level 3 — User-Space Service Crash</strong>: High-level daemons (telemetry, containerd, Docker) attempt to use the degraded hardware interface. They receive empty or corrupt data, encounter unhandled exceptions, and crash. Systemd attempts restarts, which fail repeatedly, potentially triggering an infinite reboot loop.</li>
+</ul>
+<div class="admonition danger">
+<p class="admonition-title">Why Fault Bleeding Is So Dangerous</p>
+<p>The system appears to boot successfully. Kernel logs show no errors. But the satellite's payload services fail to start, and the root cause — a single bit-flip that occurred seconds into boot — is invisible in the boot log. This makes diagnosis from ground extremely difficult.</p>
+</div>
+<h4 id="concrete-walkthrough">Concrete Walkthrough<a class="headerlink" href="#concrete-walkthrough" title="Permanent link">&para;</a></h4>
+<ol>
+<li>A proton strikes the RAM region holding the decompressed Device Tree Blob. It flips a bit in the register offset of the I2C-1 host bus interface.</li>
+<li>The I2C driver initializes without error, but drives the SCL clock line at 1.2 MHz instead of 400 kHz.</li>
+<li>The telemetry daemon starts and queries IMU/thermal sensors over I2C-1. The sensors cannot keep up with the excessive clock speed and fail to respond.</li>
+<li>The telemetry daemon receives empty buffers, lacks error handling for this case, and segfaults. Systemd restarts it repeatedly. After N failures, the system triggers an automated reboot — entering an infinite loop.</li>
+</ol>
+<hr />
+<h3 id="34-power-signature-analysis-for-external-boot-diagnostics">3.4 Power Signature Analysis for External Boot Diagnostics<a class="headerlink" href="#34-power-signature-analysis-for-external-boot-diagnostics" title="Permanent link">&para;</a></h3>
+<p>The authors proved that an external supervisor (like the AFC's SmartFusion2) can diagnose SoC boot health by measuring the <strong>power current draw profile</strong> during startup:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Boot Outcome</th>
+<th style="text-align: left;">Power Signature</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Successful Cold Start</strong></td>
+<td style="text-align: left;">Smooth, distinct power peaks (2.8W–3.0W) as modules initialize, settling into a stable plateau</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Successful Soft Reboot</strong></td>
+<td style="text-align: left;">Moderate draw (1.5W–2.0W), fewer peaks</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Failed Bootloader Loop</strong></td>
+<td style="text-align: left;">Continuous, erratic power oscillations that never stabilize</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Failed Kernel (Freeze)</strong></td>
+<td style="text-align: left;">Power spikes high and remains flat indefinitely — frozen processor</td>
+</tr>
+</tbody>
+</table>
+<p>This finding directly informs the design of the AFC's watchdog: by monitoring current draw patterns (not just heartbeat presence), the supervisor FPGA can distinguish between a healthy boot, a boot loop, and a hard freeze — enabling smarter recovery decisions.</p>
+<hr />
+<h3 id="35-boot-failure-log-examples">3.5 Boot Failure Log Examples<a class="headerlink" href="#35-boot-failure-log-examples" title="Permanent link">&para;</a></h3>
+<p>The following error traces illustrate actual kernel logs obtained during proton irradiation:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a># Storage Controller Timeout
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>[   41.685291] blk_update_request: I/O error, dev mmcblk2, sector 8192 op 0x1:(WRITE) flags 0x23800
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>[   41.696197] Buffer I/O error on dev mmcblk2p1, logical block 0, lost sync page write
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>[   41.774248] EXT4-fs (mmcblk2p1): Remounting filesystem read-only
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a># Journal Superblock Corruption
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>[   39.561741] JBD2: Error -5 detected when updating journal superblock for mmcblk2p1-8.
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>[   41.738854] EXT4-fs error (device mmcblk2p1): ext4_journal_check_start:83: comm systemd: Detected aborted journal
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a># User-Space Service Failure (Fault Bleeding)
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>[   49.244343] systemd[1]: Failed to start container runtime (containerd.service)
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>[   49.255812] systemd[1]: Dependency failed for Docker Application Container Engine (docker.service)
+</span></code></pre></div>
+<hr />
+<h3 id="37-storage-host-controller-register-failure-deep-dive">3.7 Storage Host Controller Register Failure — Deep Dive<a class="headerlink" href="#37-storage-host-controller-register-failure-deep-dive" title="Permanent link">&para;</a></h3>
+<p>The <code>mmc2: cache flush error -110</code> failure is a detailed illustration of how radiation disrupts hardware controller registers at the MMIO level.</p>
+<p>When the Linux kernel writes dirty pages to the eMMC, it invokes the MMC host controller driver (<code>drivers/mmc/host/sdhci.c</code>). The driver communicates with the SDHCI host interface through Memory-Mapped I/O (MMIO) registers:</p>
+<ol>
+<li>The driver prepares a command packet and writes to the <code>SDHCI_COMMAND</code> register (offset <code>0x0E</code>).</li>
+<li>It writes the command argument to the <code>SDHCI_ARGUMENT</code> register (offset <code>0x08</code>).</li>
+<li>It polls the <code>SDHCI_PRESENT_STATE</code> register (offset <code>0x24</code>), checking the <code>Command Inhibit (CMD)</code> bit and waiting for the command to complete.</li>
+<li><strong>Under radiation</strong>: A proton strikes the <code>SDHCI_PRESENT_STATE</code> register or the internal command-state logic of the host controller. The register locks up, showing the <code>Command Inhibit</code> bit as permanently high.</li>
+<li><strong>The Timeout</strong>: The driver timeout expires after 250ms. The function <code>sdhci_send_command()</code> fails. The kernel aborts the active write, producing the <code>blk_update_request: I/O error</code> log, and the EXT4 driver forces a read-only remount to prevent further storage corruption.</li>
+</ol>
+<hr />
+<h2 id="4-synthesis-combined-system-design-recommendations">4. Synthesis — Combined System Design Recommendations<a class="headerlink" href="#4-synthesis-combined-system-design-recommendations" title="Permanent link">&para;</a></h2>
+<p>Drawing from all three papers, a robust Space Linux system on the NVIDIA Jetson TX2i requires the following combined strategy:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Recommendation</th>
+<th style="text-align: left;">Source Paper</th>
+<th style="text-align: left;">Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Extract root filesystem to RAM (<code>tmpfs</code>) at boot</strong></td>
+<td style="text-align: left;">SOL (Paper 1)</td>
+<td style="text-align: left;">Prevents eMMC controller timeouts and write errors during operation by silencing the flash after boot</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Build a minimal OS image with Yocto + BusyBox</strong></td>
+<td style="text-align: left;">SOL (Paper 1)</td>
+<td style="text-align: left;">Reduces RAM footprint of the in-memory rootfs, leaving maximum memory for payload applications</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Apply <code>PREEMPT_RT</code> kernel patch</strong></td>
+<td style="text-align: left;">SOL (Paper 1)</td>
+<td style="text-align: left;">Provides deterministic scheduling for hardware control loops, preventing priority inversion</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Implement TMR with bit-voting on boot assets</strong></td>
+<td style="text-align: left;">SOL (Paper 1)</td>
+<td style="text-align: left;">Protects kernel, DTB, and rootfs archive against SEU-induced bit-flips on flash storage</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Use an external radiation-tolerant supervisor (SmartFusion2)</strong></td>
+<td style="text-align: left;">AFC (Paper 2)</td>
+<td style="text-align: left;">Provides physical power-cycle capability for SEL recovery and heartbeat-based SEFI detection</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Monitor Jetson current draw; cut power above 7.5W</strong></td>
+<td style="text-align: left;">AFC (Paper 2)</td>
+<td style="text-align: left;">Prevents thermal destruction from latch-up short-circuits</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Isolate shared storage via hardware MUX</strong></td>
+<td style="text-align: left;">AFC (Paper 2)</td>
+<td style="text-align: left;">Prevents a crashing Jetson from corrupting the flight computer's data</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Enable ECC in U-Boot before kernel load</strong></td>
+<td style="text-align: left;">Boot Failures (Paper 3)</td>
+<td style="text-align: left;">Closes the "ECC blind window" during early kernel decompression</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Suppress infinite boot loops (halt after N failures)</strong></td>
+<td style="text-align: left;">Boot Failures (Paper 3)</td>
+<td style="text-align: left;">Prevents the system from wasting power and time on unrecoverable boot attempts</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Use power signature analysis for boot diagnostics</strong></td>
+<td style="text-align: left;">Boot Failures (Paper 3)</td>
+<td style="text-align: left;">Enables the supervisor FPGA to distinguish healthy boots from boot loops and freezes</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-appendix-technical-reference-glossary">5. Appendix: Technical Reference Glossary<a class="headerlink" href="#5-appendix-technical-reference-glossary" title="Permanent link">&para;</a></h2>
+<p>To assist non-CS aerospace and mechanical engineers in navigating this documentation, the following glossary defines the core hardware and software terminology used in this literature review:</p>
+<ul>
+<li><strong>COTS (Commercial Off-The-Shelf)</strong>: Standard, mass-produced electronics designed for terrestrial consumers (e.g., cell phones or automotive controllers). They offer high processing speeds at low cost but lack physical radiation hardening.</li>
+<li><strong>eMMC (embedded MultiMediaCard)</strong>: A non-volatile storage chip soldered directly onto the system board, acting as the system's hard drive. Under radiation, its internal control circuit is highly vulnerable to transient lockups.</li>
+<li><strong>EDAC (Error Detection and Correction)</strong>: Circuitry or software that detects memory data corruption (such as bit-flips) and automatically restores the correct data.</li>
+<li><strong>Inline ECC (Error-Correcting Code)</strong>: A hardware memory feature that calculates and stores parity bits next to data bytes. In system RAM, inline ECC can automatically correct single-bit flips and detect double-bit flips in real-time.</li>
+<li><strong>PREEMPT_RT</strong>: A patch set that converts the standard monolithic Linux kernel into a deterministic, real-time operating system. It guarantees that high-priority tasks are executed within precise time constraints.</li>
+<li><strong>SEE (Single Event Effect)</strong>: An electrical anomaly caused by a single high-energy particle striking a sensitive node in a microchip. Includes SEUs, SELs, SEFIs, and SETs.</li>
+<li><strong>SEU (Single Event Upset)</strong>: A soft error where a particle strike flips a memory bit from 0 to 1 or vice versa.</li>
+<li><strong>SEL (Single Event Latch-up)</strong>: A hard error where a particle triggers a parasitic short-circuit in CMOS silicon, causing destructive overcurrent.</li>
+<li><strong>SEFI (Single Event Functional Interrupt)</strong>: A particle strike that corrupts device control logic, causing freezes or lockups.</li>
+<li><strong>TID (Total Ionizing Dose)</strong>: The cumulative radiation dose absorbed over a mission's lifetime, causing gradual parameter shifts and eventual failure.</li>
+<li><strong>TMR (Triple Modular Redundancy)</strong>: A redundancy scheme where a process or memory block is triplicated, and a voting circuit or script determines the true output based on a majority vote.</li>
+<li><strong>tmpfs</strong>: A Linux kernel driver that creates a virtual storage partition directly within volatile RAM. Accessing files in <code>tmpfs</code> is extremely fast and generates zero physical storage write cycles.</li>
+<li><strong>U-Boot</strong>: An open-source bootloader responsible for initializing hardware registers and booting the Linux kernel from persistent storage.</li>
+</ul>
+<hr />
+<p><a class="md-button" href="../">← Phase 0 Overview</a>
+<a class="md-button md-button--primary" href="../../phase1/">Next: Phase 1 — Minimal Build →</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Phase 0 — Literature &amp; Redundancy Concepts">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Phase 0 — Literature & Redundancy Concepts
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../phase1/" class="md-footer__link md-footer__link--next" aria-label="Next: Phase 1 — Minimal Yocto Build">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Phase 1 — Minimal Yocto Build
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 Space Linux Build Documentation
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/ajaymrk95/yocto-project-build-docs" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.footer", "navigation.indexes", "toc.follow", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
